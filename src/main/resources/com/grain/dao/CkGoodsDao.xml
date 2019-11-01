@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkGoodsDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkGoodsEntity">
+		select * from ck_goods where goods_id = #{value} ORDER BY g_sort
+	</select>
+
+	<select id="queryList" resultType="com.grain.entity.CkGoodsEntity">
+		select * from ck_goods ORDER BY g_sort
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_goods
+    </select>
+
+
+	<select id="queryTypeGoods" resultType="com.grain.entity.CkGoodsEntity">
+		select * from ck_goods where type = #{type} and father_id = #{fatherId} ORDER BY g_sort
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryCateGoods" resultType="com.grain.entity.CkGoodsEntity">
+		select * from ck_goods where father_id = 0 ORDER BY g_sort;
+	</select>
+
+	<resultMap id="goods" type="CkGoodsEntity">
+		<id property="goodsId" column="goods_id"/>
+		<result property="goodsName" column="goods_name"/>
+		<result property="standardName" column="standard_name"/>
+		<result property="applyStandardName" column="apply_standard_name"/>
+		<result property="price" column="price"/>
+		<result property="priceStandard" column="price_standard"/>
+		<result property="alarmWeight" column="alarm_weidht"/>
+		<result property="gSort" column="g_sort"/>
+		<result property="pinyin" column="pinyin"/>
+		<result property="headPinyin" column="head_pinyin"/>
+		<association property="storeDepEntity" javaType="CkStoreDepEntity">
+			<id property="depId" column="dep_id"/>
+			<result property="depName" column="dep_name"/>
+		</association>
+	</resultMap>
+
+
+	<select id="queryCateGoodsList" resultMap="goods">
+		select * from ck_goods as g
+		LEFT JOIN ck_store_dep  as d ON g.out_dep_id = d.dep_id
+		where father_id =  #{fatherId} ORDER BY g_sort
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>	 </select>
+	<select id="queryPinyin" resultType="com.grain.entity.CkGoodsEntity">
+		select * from ck_goods where pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
+		                          or head_pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
+
+	</select>
+	<select id="queryHeadPinyin" resultType="com.grain.entity.CkGoodsEntity">
+		select * from ck_goods where head_pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
+	</select>
+
+
+	<insert id="save" parameterType="com.grain.entity.CkGoodsEntity">
+		insert into ck_goods
+		(
+			`goods_id`, 
+			`goods_name`, 
+			`father_id`, 
+			`standard_name`, 
+			`apply_standard_name`, 
+			`type`, 
+			`is_weight`,
+			`status`,
+		    `out_dep_id`,
+		 	`alarm_weight`,
+		    `quality_period`,
+		 	`price`,
+		 	`price_standard`,
+		 	`g_sort`,
+		 	`pinyin`,
+		 	`head_pinyin`
+		)
+		values
+		(
+			#{goodsId}, 
+			#{goodsName}, 
+			#{fatherId}, 
+			#{standardName}, 
+			#{applyStandardName}, 
+			#{type}, 
+			#{isWeight},
+			#{status},
+		 	#{gOutDepId},
+		    #{alarmWeight},
+		    #{qualityPeriod},
+		    #{price},
+		    #{priceStandard},
+		 	#{gSort},
+		 	#{pinyin},
+		 	#{headPinyin}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkGoodsEntity">
+		update ck_goods 
+		<set>
+			<if test="goodsName != null">`goods_name` = #{goodsName}, </if>
+			<if test="fatherId != null">`father_id` = #{fatherId}, </if>
+			<if test="standardName != null">`standard_name` = #{standardName}, </if>
+			<if test="applyStandardName != null">`apply_standard_name` = #{applyStandardName}, </if>
+			<if test="type != null">`type` = #{type}, </if>
+			<if test="isWeight != null">`is_weight` = #{isWeight}, </if>
+			<if test="outDepId != null">`out_dep_id` = #{outDepId}, </if>
+			<if test="qualityPeriod != null">`quality_period` = #{qualityPeriod}, </if>
+			<if test="alarmWeight != null">`alarm_weight` = #{alarmWeight}, </if>
+			<if test="price != null">`price` = #{price}, </if>
+			<if test="priceStandard != null">`price_standard` = #{priceStandard}, </if>
+			<if test="status != null">`status` = #{status}</if>
+			<if test="gSort != null">`g_sort` = #{gSort}</if>
+			<if test="pinyin != null">`pinyin` = #{pinyin}</if>
+			<if test="headPinyin != null">`head_pinyin` = #{headPinyin}</if>
+		</set>
+		where goods_id = #{goodsId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_goods where goods_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_goods where goods_id in 
+		<foreach item="goodsId" collection="array" open="(" separator="," close=")">
+			#{goodsId}
+		</foreach>
+	</delete>
+
+</mapper>

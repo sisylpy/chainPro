@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkApplysDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkApplysEntity">
+		select * from ck_applys where apply_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.grain.entity.CkApplysEntity">
+		select * from ck_applys 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_applys 
+	</select>
+
+	<resultMap id="applys" type="CkApplysEntity">
+		<id property="applyId" column="apply_id"/>
+		<result property="applyNumber" column="apply_number"/>
+		<result property="applyStandardname" column="apply_standardname"/>
+		<result property="applyTime" column="apply_time"/>
+		<result property="deliveryDate" column="delivery_date"/>
+		<result property="outDepId" column="out_dep_id"/>
+		<result property="applyStatus" column="apply_status"/>
+		<result property="applyStoreId" column="apply_store_id"/>
+		<result property="applyLineId" column="apply_line_id"/>
+		<association property="ckGoodsEntity" javaType="CkGoodsEntity">
+			<id property="goodsId" column="goods_id"/>
+			<result property="goodsName" column="goods_name"/>
+			<result property="standardName" column="standard_name"/>
+		</association>
+		<association property="pickEntity" javaType="CkPickEntity">
+			<id property="pApplyId" column="p_apply_id"/>
+			<result property="pickNumber" column="pick_number"/>
+			<result property="pickStatus" column="pick_status"/>
+			<result property="pickTime" column="pick_time"/>
+		</association>
+	</resultMap>
+
+	<select id="storeGetApplys" resultMap="applys">
+		select * from ck_applys AS a
+		LEFT JOIN ck_goods as g ON  a.apply_goods_id = g.goods_id
+		LEFT JOIN ck_pick as p on  a.apply_id = p.p_apply_id
+		where apply_store_id = #{storeId}
+	</select>
+
+	<resultMap id="outDepApplys" type="CkApplysEntity">
+		<id property="applyId" column="apply_id"/>
+		<result property="applyGoodsId" column="apply_goods_id"/>
+		<result property="applyNumber" column="apply_number"/>
+		<result property="applyLineId" column="apply_line_id"/>
+		<result property="applyStatus" column="apply_status"/>
+		<result property="applyTime" column="apply_time"/>
+		<result property="deliveryDate" column="delivery_date"/>
+		<result property="applyStoreId" column="apply_store_id"/>
+		<association property="ckGoodsEntity" javaType="CkGoodsEntity">
+			<id property="goodsId" column="goods_id"/>
+			<result property="goodsName" column="goods_name"/>
+			<result property="applyStandardName" column="apply_standard_name"/>
+		</association>
+		<association property="storeEntity" javaType="CkStoreEntity">
+			<id property="storeId" column="store_id"/>
+			<result property="storeName" column="store_name"/>
+			<result property="printLabel" column="print_label"/>
+			<result property="outLabel" column="out_label"/>
+		</association>
+	</resultMap>
+
+	<select id="queryOutDepApplysWithStatus" resultMap="outDepApplys">
+		SELECT * from ck_applys AS a
+			LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+			LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where a.apply_status = #{status} and a.out_dep_id = #{depId}
+	</select>
+
+	<insert id="save" parameterType="com.grain.entity.CkApplysEntity">
+		insert into ck_applys
+		(
+			`apply_id`, 
+			`apply_goods_id`, 
+			`apply_number`,
+			`apply_standardName`, 
+			`apply_store_id`, 
+			`out_dep_id`, 
+			`apply_time`, 
+			`delivery_date`,
+			`apply_remark`,
+		 	`apply_status`,
+		 	`apply_line_id`
+		)
+		values
+		(
+			#{applyId}, 
+			#{applyGoodsId}, 
+			#{applyNumber},
+			#{applyStandardname}, 
+			#{applyStoreId}, 
+			#{outDepId}, 
+			#{applyTime}, 
+			#{deliveryDate},
+			#{applyRemark},
+		 	#{applyStatus},
+		 	#{applyLineId}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkApplysEntity">
+		update ck_applys 
+		<set>
+			<if test="applyGoodsId != null">`apply_goods_id` = #{applyGoodsId}, </if>
+			<if test="applyNumber != null">`apply_number` = #{applyNumber}, </if>
+			<if test="applyStandardname != null">`apply_standardName` = #{applyStandardname}, </if>
+			<if test="applyStoreId != null">`apply_store_id` = #{applyStoreId}, </if>
+			<if test="outDepId != null">`out_dep_id` = #{outDepId}, </if>
+			<if test="applyTime != null">`apply_time` = #{applyTime}, </if>
+			<if test="deliveryDate != null">`delivery_data` = #{deliveryDate}, </if>
+			<if test="applyStatus != null">`apply_status` = #{applyStatus}, </if>
+			<if test="applyLineId != null">`apply_line_id` = #{applyLineId}, </if>
+			<if test="applyRemark != null">`apply_remark` = #{applyRemark}</if>
+		</set>
+		where apply_id = #{applyId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_applys where apply_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_applys where apply_id in 
+		<foreach item="applyId" collection="array" open="(" separator="," close=")">
+			#{applyId}
+		</foreach>
+	</delete>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkUserDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkUserEntity">
+		select * from ck_user where ck_user_id = #{value}
+	</select>
+
+	<resultMap id="ckUser" type="CkUserEntity">
+		<id property="ckUserId" column="ck_user_id"/>
+		<result property="ckUserName" column="ck_user_name"/>
+		<result property="userStatus" column="user_status"/>
+		<association property="ckStoreDepEntity" javaType="CkStoreDepEntity">
+			<id property="depId" column="dep_id"/>
+			<result property="depName" column="dep_name"/>
+		</association>
+		<collection property="roleEntities" javaType="ArrayList" ofType="SysRoleEntity">
+			<id property="roleId" column="role_id"/>
+			<result property="roleName" column="role_name"/>
+		</collection>
+	</resultMap>
+
+
+	<select id="queryList" resultMap="ckUser">
+		SELECT * FROM ck_user AS u
+		LEFT JOIN ck_store_dep AS sd ON sd.dep_id = u.user_dep_id
+		LEFT JOIN ck_user_role AS r ON r.role_user_id = u.ck_user_id
+		LEFT JOIN sys_role AS sr ON sr.role_id = r.sys_role_id
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_user 
+	</select>
+	 
+	<insert id="save" parameterType="com.grain.entity.CkUserEntity"
+		useGeneratedKeys="true" keyColumn="ck_user_id" keyProperty="ckUserId"
+	>
+		insert into ck_user
+		(
+			`ck_user_id`, 
+			`ck_user_name`, 
+			`ck_password`, 
+			`user_dep_id`, 
+			`user_status`, 
+			`u_create_time`
+		)
+		values
+		(
+			#{ckUserId}, 
+			#{ckUserName}, 
+			#{ckPassword}, 
+			#{userDepId}, 
+			#{userStatus}, 
+			#{uCreateTime}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkUserEntity">
+		update ck_user 
+		<set>
+			<if test="ckUserName != null">`ck_user_name` = #{ckUserName}, </if>
+			<if test="ckPassword != null">`ck_password` = #{ckPassword}, </if>
+			<if test="userDepId != null">`user_dep_id` = #{userDepId}, </if>
+			<if test="userStatus != null">`user_status` = #{userStatus}, </if>
+			<if test="uCreateTime != null">`u_create_time` = #{uCreateTime}</if>
+		</set>
+		where ck_user_id = #{ckUserId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_user where ck_user_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_user where ck_user_id in 
+		<foreach item="ckUserId" collection="array" open="(" separator="," close=")">
+			#{ckUserId}
+		</foreach>
+	</delete>
+
+</mapper>

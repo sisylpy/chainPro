@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkLineStoreDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkLineStoreEntity">
+		select * from ck_line_store where line_store_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.grain.entity.CkLineStoreEntity">
+		select * from ck_line_store 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_line_store 
+	</select>
+	 
+	<insert id="save" parameterType="com.grain.entity.CkLineStoreEntity">
+		insert into ck_line_store
+		(
+			`line_store_id`, 
+			`re_line_id`, 
+			`re_store_id`, 
+			`sort`
+		)
+		values
+		(
+			#{lineStoreId}, 
+			#{reLineId}, 
+			#{reStoreId}, 
+			#{sort}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkLineStoreEntity">
+		update ck_line_store 
+		<set>
+			<if test="reLineId != null">`re_line_id` = #{reLineId}, </if>
+			<if test="reStoreId != null">`re_store_id` = #{reStoreId}, </if>
+			<if test="sort != null">`sort` = #{sort}</if>
+		</set>
+		where line_store_id = #{lineStoreId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_line_store where line_store_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_line_store where line_store_id in 
+		<foreach item="lineStoreId" collection="array" open="(" separator="," close=")">
+			#{lineStoreId}
+		</foreach>
+	</delete>
+
+</mapper>

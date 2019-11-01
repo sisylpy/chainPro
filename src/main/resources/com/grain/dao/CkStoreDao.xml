@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkStoreDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkStoreEntity">
+		select * from ck_store where store_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.grain.entity.CkStoreEntity">
+		select * from ck_store 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_store 
+	</select>
+
+    <select id="storeLogin" resultType="com.grain.entity.CkStoreEntity">
+		select * from ck_store where phone  = #{phone}
+	</select>
+	<select id="queryLineStore" resultType="com.grain.entity.CkStoreEntity">
+		select * from ck_store where join_line = 0;
+	</select>
+
+	<insert id="save" parameterType="com.grain.entity.CkStoreEntity">
+		insert into ck_store
+		(
+			`store_id`, 
+			`store_name`, 
+			`address`, 
+			`phone`, 
+			`lat`, 
+			`lun`, 
+			`district`, 
+			`city`, 
+			`wx_nick_name`, 
+			`wx_openId`, 
+			`wx_avatar_url`, 
+			`wx_number`, 
+			`print_label`, 
+			`out_label`,
+		 	`join_line`
+		)
+		values
+		(
+			#{storeId}, 
+			#{storeName}, 
+			#{address}, 
+			#{phone}, 
+			#{lat}, 
+			#{lun}, 
+			#{district}, 
+			#{city}, 
+			#{wxNickName}, 
+			#{wxOpenid}, 
+			#{wxAvatarUrl}, 
+			#{wxNumber}, 
+			#{printLabel}, 
+			#{outLabel},
+		 	#{joinLine}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkStoreEntity">
+		update ck_store 
+		<set>
+			<if test="storeName != null">`store_name` = #{storeName}, </if>
+			<if test="address != null">`address` = #{address}, </if>
+			<if test="phone != null">`phone` = #{phone}, </if>
+			<if test="lat != null">`lat` = #{lat}, </if>
+			<if test="lun != null">`lun` = #{lun}, </if>
+			<if test="district != null">`district` = #{district}, </if>
+			<if test="city != null">`city` = #{city}, </if>
+			<if test="wxNickName != null">`wx_nick_name` = #{wxNickName}, </if>
+			<if test="wxOpenid != null">`wx_openId` = #{wxOpenid}, </if>
+			<if test="wxAvatarUrl != null">`wx_avatar_url` = #{wxAvatarUrl}, </if>
+			<if test="wxNumber != null">`wx_number` = #{wxNumber}, </if>
+			<if test="printLabel != null">`print_label` = #{printLabel}, </if>
+			<if test="joinLine != null">`join_line` = #{joinLine}, </if>
+			<if test="outLabel != null">`out_label` = #{outLabel}</if>
+		</set>
+		where store_id = #{storeId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_store where store_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_store where store_id in 
+		<foreach item="storeId" collection="array" open="(" separator="," close=")">
+			#{storeId}
+		</foreach>
+	</delete>
+
+</mapper>

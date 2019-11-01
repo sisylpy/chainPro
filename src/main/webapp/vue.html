@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+
+<script src="statics/libs/jquery.min.js"></script>
+<script src="statics/libs/vue.min.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+
+<body>
+
+<div id="app">
+
+    {{message}}
+    <c></c>
+    <router-link to="/header/foo">Go to Foo</router-link>
+    <router-link to="/bar">Go to Bar</router-link>
+    <router-view></router-view>
+</div>
+
+
+<script>
+
+    var header = {
+        template: "<div>" +
+            "<h1> header  </h1>" +
+            " <router-view></router-view>" +
+            "</div>"
+    }
+    var c = {
+        template: "<div>cccc</div>"
+    }
+    var Foo = {template: '<div>foo</div>'}
+
+    var routes = [
+        {
+            path: '/header',
+            component: header,
+            children: [
+                {
+                    path: 'foo',
+                    component: Foo
+                }
+            ]
+        },
+    ];
+
+    var router = new VueRouter({
+        routes: routes
+    });
+
+    var app = new Vue({
+        el: '#app',
+        data: {
+            message: 'Hello Vue!'
+        },
+        components: {
+            c: c
+        } ,
+        router: router,
+    })
+</script>
+
+
+</body>
+</html>

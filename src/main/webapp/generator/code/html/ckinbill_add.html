@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+#parse("/header.html")
+</head>
+<body>
+<div class="panel panel-default" id="rrapp" v-cloak>
+	<div class="panel-heading">{{title}}</div>
+	<form class="form-horizontal">
+		<div class="form-group">
+		   	<div class="col-sm-2 control-label">入库供货商id</div>
+		   	<div class="col-sm-10">
+		      <input type="text" class="form-control" v-model="ckInBill.inSupplierId" placeholder="入库供货商id"/>
+		    </div>
+		</div>
+		<div class="form-group">
+		   	<div class="col-sm-2 control-label">入库时间</div>
+		   	<div class="col-sm-10">
+		      <input type="text" class="form-control" v-model="ckInBill.inDatetime" placeholder="入库时间"/>
+		    </div>
+		</div>
+		<div class="form-group">
+		   	<div class="col-sm-2 control-label">入库部门id</div>
+		   	<div class="col-sm-10">
+		      <input type="text" class="form-control" v-model="ckInBill.inDepId" placeholder="入库部门id"/>
+		    </div>
+		</div>
+		<div class="form-group">
+		   	<div class="col-sm-2 control-label">入库操作员id</div>
+		   	<div class="col-sm-10">
+		      <input type="text" class="form-control" v-model="ckInBill.inUserId" placeholder="入库操作员id"/>
+		    </div>
+		</div>
+		<div class="form-group">
+		   	<div class="col-sm-2 control-label">是否支付</div>
+		   	<div class="col-sm-10">
+		      <input type="text" class="form-control" v-model="ckInBill.isPay" placeholder="是否支付"/>
+		    </div>
+		</div>
+		<div class="form-group">
+		   	<div class="col-sm-2 control-label">支付方式：“1:现金”，“2, 记账”“3，微信”</div>
+		   	<div class="col-sm-10">
+		      <input type="text" class="form-control" v-model="ckInBill.payMode" placeholder="支付方式：“1:现金”，“2, 记账”“3，微信”"/>
+		    </div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-2 control-label"></div> 
+			<input type="button" class="btn btn-primary" @click="saveOrUpdate" value="确定"/>
+			&nbsp;&nbsp;<input type="button" class="btn btn-warning" @click="back" value="返回"/>
+		</div>
+	</form>
+</div>
+
+<script src="${rc.contextPath}/js/ckinbill/ckinbill_add.js?_${date.systemTime}"></script>
+</body>
+</html>

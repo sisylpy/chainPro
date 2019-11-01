@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkStoreDepDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkStoreDepEntity">
+		select * from ck_store_dep where dep_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.grain.entity.CkStoreDepEntity">
+		select * from ck_store_dep 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_store_dep 
+	</select>
+    <select id="queryTypeList" resultType="com.grain.entity.CkStoreDepEntity">
+		select * from ck_store_dep where dep_type = #{type}
+	</select>
+
+    <insert id="save" parameterType="com.grain.entity.CkStoreDepEntity">
+		insert into ck_store_dep
+		(
+			`dep_id`, 
+			`dep_type`, 
+			`dep_name`
+		)
+		values
+		(
+			#{depId}, 
+			#{depType}, 
+			#{depName}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkStoreDepEntity">
+		update ck_store_dep 
+		<set>
+			<if test="depType != null">`dep_type` = #{depType}, </if>
+			<if test="depName != null">`dep_name` = #{depName}</if>
+		</set>
+		where dep_id = #{depId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_store_dep where dep_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_store_dep where dep_id in 
+		<foreach item="depId" collection="array" open="(" separator="," close=")">
+			#{depId}
+		</foreach>
+	</delete>
+
+</mapper>

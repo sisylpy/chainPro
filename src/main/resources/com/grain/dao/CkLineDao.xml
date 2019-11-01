@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkLineDao">
+
+    <select id="queryObject" resultType="com.grain.entity.CkLineEntity">
+        select *
+        from ck_line
+        where line_id = #{value}
+    </select>
+
+    <select id="queryList" resultType="com.grain.entity.CkLineEntity">
+        select * from ck_line
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*)
+        from ck_line
+    </select>
+
+
+    <resultMap id="lineList" type="CkLineEntity">
+        <id property="lineId" column="line_id"/>
+        <result property="lineName" column="line_name"/>
+        <collection property="storeEntityList"  ofType="CkStoreEntity" javaType="ArrayList">
+            <id column="store_id" property="storeId"/>
+            <result property="storeName" column="store_name"/>
+        </collection>
+    </resultMap>
+    <select id="querLineList" resultMap="lineList" >
+        SELECT *
+        FROM ck_line as l
+            LEFT JOIN ck_line_store as ls ON l.line_id = ls.re_line_id
+            LEFT JOIN ck_store as s ON ls.re_store_id = s.store_id
+    </select>
+
+
+
+
+
+
+    <resultMap id="lineStore" type="CkLineStoreEntity">
+        <id property="lineStoreId" column="line_store_id"/>
+        <result property="sort" column="sort"/>
+    </resultMap>
+
+
+
+
+
+    <insert id="save" parameterType="com.grain.entity.CkLineEntity"
+            useGeneratedKeys="true" keyProperty="lineId" keyColumn="line_id">
+        insert into ck_line
+        (`line_id`,
+         `line_name`,
+         `origin_point`)
+        values (#{lineId},
+                #{lineName},
+                #{originPoint})
+    </insert>
+
+    <update id="update" parameterType="com.grain.entity.CkLineEntity">
+        update ck_line
+        <set>
+            <if test="lineName != null">`line_name` = #{lineName},</if>
+            <if test="originPoint != null">`origin_point` = #{originPoint}</if>
+        </set>
+        where line_id = #{lineId}
+    </update>
+
+    <delete id="delete">
+        delete
+        from ck_line
+        where line_id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from ck_line where line_id in
+        <foreach item="lineId" collection="array" open="(" separator="," close=")">
+            #{lineId}
+        </foreach>
+    </delete>
+
+</mapper>

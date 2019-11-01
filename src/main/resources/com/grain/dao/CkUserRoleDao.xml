@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkUserRoleDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkUserRoleEntity">
+		select * from ck_user_role where user_role_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.grain.entity.CkUserRoleEntity">
+		select * from ck_user_role 
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_user_role 
+	</select>
+	<select id="queryRoleIdList" resultType="java.lang.Long">
+		select sys_role_id from ck_user_role where role_user_id = #{userId}
+	</select>
+
+	<insert id="save" parameterType="com.grain.entity.CkUserRoleEntity">
+		insert into ck_user_role
+		(
+			`role_user_id`,
+			`sys_role_id`
+		)
+		values
+		       <foreach collection="roleIdList" item="item" index="index" separator=",">
+				   (
+				   #{userId},
+				   #{item}
+
+				   )
+			   </foreach>
+
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkUserRoleEntity">
+		update ck_user_role 
+		<set>
+			<if test="roleUserId != null">`role_user_id` = #{roleUserId}, </if>
+			<if test="sysRoleId != null">`sys_role_id` = #{sysRoleId}</if>
+		</set>
+		where user_role_id = #{userRoleId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_user_role where user_role_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_user_role where user_role_id in 
+		<foreach item="userRoleId" collection="array" open="(" separator="," close=")">
+			#{userRoleId}
+		</foreach>
+	</delete>
+
+</mapper>

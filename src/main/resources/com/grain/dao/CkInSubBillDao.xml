@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkInSubBillDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkInSubBillEntity">
+		select * from ck_in_sub_bill where in_sub_bill_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.grain.entity.CkInSubBillEntity">
+		select * from ck_in_sub_bill
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_in_sub_bill
+	</select>
+	 
+	<insert id="save" parameterType="com.grain.entity.CkInSubBillEntity"
+	useGeneratedKeys="true" keyProperty="inSubBillId" keyColumn="in_sub_bill_id">
+		insert into ck_in_sub_bill
+		(
+			`in_sub_bill_id`,
+			`main_bill_id`, 
+			`s_goods_id`, 
+			`in_quantity`,
+			`stock_quantity`,
+		 	`unit_price`
+		)
+		values
+		(
+			#{inSubBillId},
+			#{mainBillId}, 
+			#{sGoodsId}, 
+			#{inQuantity},
+			#{stockQuantity},
+		 	#{unitPrice}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkInSubBillEntity">
+		update ck_in_sub_bill
+		<set>
+			<if test="mainBillId != null">`main_bill_id` = #{mainBillId}, </if>
+			<if test="sGoodsId != null">`s_goods_id` = #{sGoodsId}, </if>
+			<if test="inQuantity != null">`in_quantity` = #{inQuantity}, </if>
+			<if test="stockQuantity != null">`stock_quantity` = #{stockQuantity}</if>
+			<if test="unitPrice != null">`unit_price` = #{unitPrice}</if>
+		</set>
+		where in_sub_bill_id = #{inSubBillId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_in_sub_bill where in_sub_bill_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_in_sub_bill where in_sub_bill_id in
+		<foreach item="inSubBillId" collection="array" open="(" separator="," close=")">
+			#{inSubBillId}
+		</foreach>
+	</delete>
+
+</mapper>
