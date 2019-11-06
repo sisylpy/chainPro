@@ -27,17 +27,21 @@
 	</select>
 
     <select id="queryCateGoods" resultType="com.grain.entity.CkGoodsEntity">
-		select * from ck_goods where father_id = 0 ORDER BY g_sort;
+		select * from ck_goods where father_id = 0 and type = #{type} ORDER BY g_sort;
 	</select>
 
 	<resultMap id="goods" type="CkGoodsEntity">
 		<id property="goodsId" column="goods_id"/>
 		<result property="goodsName" column="goods_name"/>
-		<result property="standardName" column="standard_name"/>
+		<result property="purStandardName" column="pur_standard_name"/>
+		<result property="sellStandardName" column="sell_standard_name"/>
 		<result property="applyStandardName" column="apply_standard_name"/>
+		<result property="stockPurStandard" column="stock_pur_standard"/>
+		<result property="stockApplyStandard" column="stock_apply_standard"/>
+		<result property="stockSellStandard" column="stock_sell_standard"/>
 		<result property="price" column="price"/>
 		<result property="priceStandard" column="price_standard"/>
-		<result property="alarmWeight" column="alarm_weidht"/>
+		<result property="alarmWeight" column="alarm_weight"/>
 		<result property="gSort" column="g_sort"/>
 		<result property="pinyin" column="pinyin"/>
 		<result property="headPinyin" column="head_pinyin"/>
@@ -48,7 +52,7 @@
 	</resultMap>
 
 
-	<select id="queryCateGoodsList" resultMap="goods">
+	<select id="queryGoodsList" resultMap="goods">
 		select * from ck_goods as g
 		LEFT JOIN ck_store_dep  as d ON g.out_dep_id = d.dep_id
 		where father_id =  #{fatherId} ORDER BY g_sort
@@ -64,24 +68,44 @@
 	<select id="queryHeadPinyin" resultType="com.grain.entity.CkGoodsEntity">
 		select * from ck_goods where head_pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
 	</select>
+	<select id="queryOutDepCateList" resultType="com.grain.entity.CkGoodsEntity">
+		select  * from  ck_goods where out_dep_id = #{depId} and father_id = 0
+	</select>
+	<select id="queryOutDepGoodsListAll" resultType="com.grain.entity.CkGoodsEntity">
+		select * from  ck_goods where out_dep_id = #{depId} and father_id != 0
+	</select>
+	<select id="queryOutDepGoodsListByFatherId" resultType="com.grain.entity.CkGoodsEntity">
+		select  * from ck_goods where out_dep_id = #{depId} and father_id = #{fatherId}
+		ORDER BY g_sort
+
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+
+	</select>
 
 
-	<insert id="save" parameterType="com.grain.entity.CkGoodsEntity">
+
+
+    <insert id="save" parameterType="com.grain.entity.CkGoodsEntity">
 		insert into ck_goods
 		(
 			`goods_id`, 
 			`goods_name`, 
 			`father_id`, 
-			`standard_name`, 
-			`apply_standard_name`, 
-			`type`, 
+			`apply_standard_name`,
+			`pur_standard_name`,
+			`sell_standard_name`,
+			`stock_apply_standard`,
+			`stock_pur_standard`,
+			`stock_sell_standard`,
+			`type`,
 			`is_weight`,
 			`status`,
 		    `out_dep_id`,
 		 	`alarm_weight`,
 		    `quality_period`,
 		 	`price`,
-		 	`price_standard`,
 		 	`g_sort`,
 		 	`pinyin`,
 		 	`head_pinyin`
@@ -91,16 +115,19 @@
 			#{goodsId}, 
 			#{goodsName}, 
 			#{fatherId}, 
-			#{standardName}, 
-			#{applyStandardName}, 
-			#{type}, 
+			#{applyStandardName},
+			#{purStandardName},
+			#{sellStandardName},
+			#{stockApplyStandard},
+			#{stockPurStandard},
+			#{stockSellStandard},
+			#{type},
 			#{isWeight},
 			#{status},
 		 	#{gOutDepId},
 		    #{alarmWeight},
 		    #{qualityPeriod},
 		    #{price},
-		    #{priceStandard},
 		 	#{gSort},
 		 	#{pinyin},
 		 	#{headPinyin}
@@ -112,8 +139,12 @@
 		<set>
 			<if test="goodsName != null">`goods_name` = #{goodsName}, </if>
 			<if test="fatherId != null">`father_id` = #{fatherId}, </if>
-			<if test="standardName != null">`standard_name` = #{standardName}, </if>
 			<if test="applyStandardName != null">`apply_standard_name` = #{applyStandardName}, </if>
+			<if test="purStandardName != null">`pur_standard_name` = #{purStandardName}, </if>
+			<if test="sellStandardName != null">`sell_standard_name` = #{sellStandardName}, </if>
+			<if test="stockApplyStandard != null">`stock_apply_standard` = #{stockApplyStandard}, </if>
+			<if test="stockPurStandard != null">`stock_pur_standard` = #{stockPurStandard}, </if>
+			<if test="stockSellStandard != null">`stock_sell_standard` = #{stockSellStandard}, </if>
 			<if test="type != null">`type` = #{type}, </if>
 			<if test="isWeight != null">`is_weight` = #{isWeight}, </if>
 			<if test="outDepId != null">`out_dep_id` = #{outDepId}, </if>

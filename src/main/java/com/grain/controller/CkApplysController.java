@@ -8,12 +8,12 @@ package com.grain.controller;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
+import com.grain.entity.CkGoodsEntity;
 import com.grain.entity.CkStoreEntity;
-import com.grain.utils.ParseObject;
+import com.grain.service.CkGoodsService;
 import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -29,143 +29,97 @@ import com.grain.utils.R;
 public class CkApplysController {
     @Autowired
     private CkApplysService ckApplysService;
+    @Autowired
+    private CkGoodsService ckGoodsService;
 
 
-
-    @RequestMapping(value = "/outDepQueryApplys", method = RequestMethod.POST)
+    @RequestMapping(value = "/outDepQueryStores", method = RequestMethod.POST)
     @ResponseBody
-    public R outDepQueryApplys(@RequestParam Integer status, @RequestParam Integer depId) {
+    public R outDepQueryStores(@RequestParam Integer status, @RequestParam Integer depId) {
         Map<String, Object> map = new HashMap<>();
         map.put("status", status);
         map.put("depId", depId);
 
-
-
-
-        List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepApplysWithStatus(map);
-
-        List<Map<String, Object>> goodsApplys = new ArrayList<>();
-        List<Map<String, Object>> lines = new ArrayList<>();
-
-        if (applysEntities.size() > 0) {
-
-            for (CkApplysEntity apply : applysEntities) {
-
-                if(goodsApplys.size() > 0) {
-
-                    for(Map<String, Object> goodsApply : goodsApplys) {
-                        Integer goodsId = (Integer) goodsApply.get("goodsId");
-                        if(goodsId.equals(apply.getApplyGoodsId())){
-                            List<CkApplysEntity>  mapApplys = (List<CkApplysEntity>) goodsApply.get("applys");
-                            mapApplys.add(apply);
-                            goodsApply.put("applys", mapApplys);
-                            Float totalAmount = (Float) goodsApply.get("totalAmount");
-                            Float applyNumber = apply.getApplyNumber();
-                            totalAmount += applyNumber;
-                            goodsApply.put("totalAmount", totalAmount);
-
-                        }else {
-                            Map<String, Object> map1 = saveNewApply(apply);
-                            goodsApplys.add(map1);
-                        }
-                        break;
-                    }
-                }else {
-                    Map<String, Object> map1 = saveNewApply(apply);
-                    goodsApplys.add(map1);
-                }
-
-                if(lines.size() > 0) {
-                    for(Map<String, Object> line : lines) {
-                        Integer lineId = (Integer) line.get("lineId");
-                        if(lineId.equals(apply.getApplyLineId())){
-                            List<Map<String, Object>> stores1 = (List<Map<String, Object>>) line.get("stores");
-                            for(Map<String, Object> store : stores1){
-                                Integer storeId = (Integer) store.get("storeId");
-                                if(!storeId.equals(apply.getStoreEntity().getStoreId())){
-                                    List<Map<String, Object>> stores = (List<Map<String, Object>>) line.get("stores");
-                                    Map<String, Object> map2 = saveNewStore(apply);
-                                    stores.add(map2);
-                                    line.put("stores", stores);
-                                }
-                                break;
-                            }
-
-                        }else {
-                            Map<String, Object> newLine = saveNewLine(apply);
-                            lines.add(newLine);
-                        }
-                        break;
-                    }
-
-//                    break;
-                }else{
-                    Map<String, Object> map1 = saveNewLine(apply);
-                    lines.add(map1);
-                    System.out.println("haha");
-                }
-
-            }
+        List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepStores(map);
+        Set<CkStoreEntity> storeList = new HashSet<>();
+        for (CkApplysEntity apply : applysEntities) {
+            storeList.add(apply.getStoreEntity());
         }
 
-
-        Map<String, Object> orderMap = new HashMap<>();
-        orderMap.put("applys",goodsApplys);
-        orderMap.put("lines", lines);
-
-        return R.ok().put("data",orderMap);
-
-    }
-
-    public Map<String, Object> saveNewApply(CkApplysEntity apply) {
-        Map<String, Object> tempMap = new HashMap<>();
-        tempMap.put("goodsId", apply.getApplyGoodsId());
-        tempMap.put("goodsName", apply.getCkGoodsEntity().getGoodsName());
-        tempMap.put("applyStandardName", apply.getCkGoodsEntity().getApplyStandardName());
-        tempMap.put("totalAmount",apply.getApplyNumber());
-        List<CkApplysEntity> tempApplys = new ArrayList<>();
-        tempApplys.add(apply);
-        tempMap.put("applys", tempApplys);
-
-        return tempMap;
-
+        return R.ok().put("data", storeList);
     }
 
 
     /**
-     *
-     * @param apply
-     * @return
+     * ;;;;;;
      */
-    private Map<String, Object> saveNewLine(CkApplysEntity apply) {
 
-        Map<String, Object> lineMap = new HashMap<>();
-        Map<String, Object> storeMap = new HashMap<>();
-        List<Map<String, Object>> stores = new ArrayList<>();
 
-        lineMap.put("lineId", apply.getApplyLineId());
+    @RequestMapping(value = "/outDepQueryApplys", method = RequestMethod.POST)
+    @ResponseBody
+    public R outDepQueryApplys(@RequestParam Integer status, @RequestParam Integer depId,
+                                @RequestParam Integer page, @RequestParam  Integer limit) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("offset", (page - 1) * limit);
+        map.put("limit", limit);
+        map.put("status", status);
+        map.put("depId", depId);
 
-        storeMap.put("storeId", apply.getApplyStoreId());
-        storeMap.put("storeName", apply.getStoreEntity().getStoreName());
-        storeMap.put("printLabel", apply.getStoreEntity().getPrintLabel());
-        stores.add(storeMap);
 
-        lineMap.put("lineId", apply.getApplyLineId());
-        lineMap.put("stores",stores);
+        List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepApplysWithStatus(map);
+        System.out.println("===========================>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 
-        return lineMap;
+        System.out.println(applysEntities.size());
+
+        //遍历商品set
+//        HashSet<CkGoodsEntity> goodsEntityHashSet = new HashSet<>();
+        TreeSet<CkGoodsEntity> goodsEntityHashSet = new TreeSet<>();
+
+        //存放申请list
+        List<Map<String, Object>> goodsForapplys = new ArrayList<>();
+
+        if (applysEntities.size() > 0) {
+
+            //1.获取商品list
+            for (CkApplysEntity apply : applysEntities) {
+                goodsEntityHashSet.add(apply.getCkGoodsEntity());
+                Integer applyGoodsId = apply.getApplyGoodsId();
+
+            }
+
+
+            //2，遍历相同商品，存放申请
+            for (CkGoodsEntity goods : goodsEntityHashSet) {
+
+                Map<String, Object> goodsApplyMap = new HashMap<>();
+                List<CkApplysEntity> applys = new ArrayList<>();
+                goodsApplyMap.put("goodsId", goods.getGoodsId());
+                goodsApplyMap.put("applyStandardName" , goods.getApplyStandardName());
+                goodsApplyMap.put("stockApplyStandard" , goods.getStockApplyStandard());
+                goodsApplyMap.put("status", goods.getStatus());
+                goodsApplyMap.put("goodsName", goods.getGoodsName());
+
+                Float applyNumber =0f;
+                for (CkApplysEntity apply : applysEntities) {
+                    if (apply.getApplyGoodsId().equals(goods.getGoodsId())) {
+                        applyNumber += apply.getApplyNumber();
+                        applys.add(apply);
+                    }
+                }
+                goodsApplyMap.put("totalNumber", applyNumber);
+                goodsApplyMap.put("applys", applys);
+                goodsForapplys.add(goodsApplyMap);
+            }
+        }
+
+
+
+        int total = ckApplysService.outDepQueryTotalByStatus(map);
+        PageUtils pageUtil = new PageUtils(goodsForapplys, total, limit, page);
+
+        return R.ok().put("page", pageUtil);
 
     }
-
-    private Map<String, Object> saveNewStore(CkApplysEntity apply) {
-
-        Map<String, Object> storeMap = new HashMap<>();
-        storeMap.put("storeId", apply.getApplyStoreId());
-        storeMap.put("storeName", apply.getStoreEntity().getStoreName());
-        storeMap.put("printLabel", apply.getStoreEntity().getPrintLabel());
-        return storeMap;
-    }
-
 
 
 

@@ -6,6 +6,7 @@ package com.grain.controller;
  */
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +37,52 @@ public class CkGoodsController {
     private CkGoodsService ckGoodsService;
 
 
+
+    @RequestMapping(value = "/outDepCateList/{depId}")
+    @ResponseBody
+    public R outDepCateList(@PathVariable Integer depId) {
+
+        List<CkGoodsEntity> cateGoodsList = ckGoodsService.queryOutDepCateList(depId);
+
+        return R.ok().put("data", cateGoodsList);
+    }
+
+    @RequestMapping(value = "/outDepGoodsList", method = RequestMethod.POST)
+    @ResponseBody
+    public R outDepGoodsList(@RequestParam Integer page,@RequestParam Integer limit,
+                             @RequestParam Integer depId, @RequestParam Integer fatherId) {
+
+        if(fatherId.equals(-1)){
+            Map<String, Object> map = new HashMap<>();
+            map.put("offset", (page - 1) * limit);
+            map.put("limit", limit);
+            map.put("depId", depId);
+            List<CkGoodsEntity> allGoods = ckGoodsService.queryOutDepGoodsListAll(map);
+            int total = ckGoodsService.queryTotal(map);
+
+            PageUtils pageUtil = new PageUtils(allGoods, total, limit, page);
+            return R.ok().put("page", pageUtil);
+
+        }else {
+            Map<String, Object> map = new HashMap<>();
+            map.put("offset", (page - 1) * limit);
+            map.put("limit", limit);
+            map.put("depId", depId);
+            map.put("fatherId", fatherId);
+            List<CkGoodsEntity> byFatherGoods = ckGoodsService.queryOutDepGoodsListByFatherId(map);
+            int total = ckGoodsService.queryTotal(map);
+
+            PageUtils pageUtil = new PageUtils(byFatherGoods, total, limit, page);
+            return R.ok().put("page", pageUtil);
+        }
+
+
+
+
+    }
+
+
+
     @RequestMapping(value = "/goodsList", method = RequestMethod.POST)
     @ResponseBody
     public R getCateGoods(@RequestParam Integer page,@RequestParam Integer limit,@RequestParam Integer fatherId) {
@@ -46,7 +93,7 @@ public class CkGoodsController {
         map.put("offset", (page - 1) * limit);
         map.put("limit", limit);
         map.put("fatherId", fatherId);
-        List<CkGoodsEntity> cateGoodsList = ckGoodsService.queryCateGoodsList(map);
+        List<CkGoodsEntity> cateGoodsList = ckGoodsService.queryGoodsList(map);
         int total = ckGoodsService.queryTotal(map);
 
         PageUtils pageUtil = new PageUtils(cateGoodsList, total, limit, page);
@@ -65,10 +112,12 @@ public class CkGoodsController {
     }
 
 
-    @RequestMapping("/cateList")
+    @RequestMapping("/cateList/{type}")
     @ResponseBody
-    public R cateGoods() {
-        List<CkGoodsEntity> list = ckGoodsService.queryCateGoods();
+    public R cateGoods(@PathVariable Integer type) {
+        List<CkGoodsEntity> list = ckGoodsService.queryCateGoods(type);
+
+
         return R.ok().put("data", list);
     }
 

@@ -64,4 +64,16 @@ public class CkApplysServiceImpl implements CkApplysService {
 		return ckApplysDao.queryOutDepApplysWithStatus(map);
     }
 
+	@Override
+	public List<CkApplysEntity> queryOutDepStores(Map<String, Object> map) {
+
+		return  ckApplysDao.queryOutDepStores(map);
+	}
+
+    @Override
+    public int outDepQueryTotalByStatus(Map<String, Object> map) {
+
+		return  ckApplysDao.queryOutDepTotalByStatus(map);
+    }
+
 }

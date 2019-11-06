@@ -33,4 +33,8 @@ public interface CkApplysService {
 	List<CkApplysEntity> getStoreApplys(Integer storeId);
 
 	List<CkApplysEntity> queryOutDepApplysWithStatus(Map<String, Object> map);
+
+	List<CkApplysEntity> queryOutDepStores(Map<String, Object> map);
+
+	int outDepQueryTotalByStatus(Map<String, Object> map);
 }

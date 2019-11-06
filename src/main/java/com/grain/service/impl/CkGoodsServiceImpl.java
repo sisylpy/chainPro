@@ -61,15 +61,15 @@ public class CkGoodsServiceImpl implements CkGoodsService {
 //	}
 
     @Override
-    public List<CkGoodsEntity> queryCateGoods() {
+    public List<CkGoodsEntity> queryCateGoods(Integer type) {
 
-		return ckGoodsDao.queryCateGoods();
+		return ckGoodsDao.queryCateGoods(type);
     }
 
     @Override
-    public List<CkGoodsEntity> queryCateGoodsList(Map<String, Object> map) {
+    public List<CkGoodsEntity> queryGoodsList(Map<String, Object> map) {
 
-		return ckGoodsDao.queryCateGoodsList(map);
+		return ckGoodsDao.queryGoodsList(map);
     }
 
     @Override
@@ -84,6 +84,23 @@ public class CkGoodsServiceImpl implements CkGoodsService {
 
 
     }
+
+	@Override
+	public List<CkGoodsEntity> queryOutDepCateList(Integer depId) {
+
+		return ckGoodsDao.queryOutDepCateList(depId);
+	}
+
+	@Override
+	public List<CkGoodsEntity> queryOutDepGoodsListAll(Map<String, Object> map) {
+
+		return ckGoodsDao.queryOutDepGoodsListAll(map);
+	}
+
+	@Override
+	public List<CkGoodsEntity> queryOutDepGoodsListByFatherId(Map<String, Object> map) {
+		return ckGoodsDao.queryOutDepGoodsListByFatherId(map);
+	}
 
 
 

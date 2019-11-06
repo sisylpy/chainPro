@@ -12,10 +12,11 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 
 @Setter@Getter@ToString
-public class CkGoodsEntity implements Serializable {
+public class CkGoodsEntity implements Serializable, Comparable{
 	private static final long serialVersionUID = 1L;
 	
 	/**
@@ -31,15 +32,33 @@ public class CkGoodsEntity implements Serializable {
 	 */
 	private Integer fatherId;
 	/**
-	 *  规格
+	 *  进货规格
 	 */
-	private String standardName;
+	private String purStandardName;
+
 	/**
 	 *  申请规格
 	 */
 	private String applyStandardName;
 	/**
-	 *  "1"正常销售，“2”库存报警，“3”断货
+	 *  销售规格
+	 */
+	private String sellStandardName;
+	/**
+	 *  进货规格库存数量
+	 */
+	private String stockPurStandard;
+
+	/**
+	 *  申请规格库存数量
+	 */
+	private String stockApplyStandard;
+	/**
+	 *  销售规格库存数量
+	 */
+	private String stockSellStandard;
+	/**
+	 *  "1"产品，“2”原料
 	 */
 	private Integer type;
 	/**
@@ -88,4 +107,44 @@ public class CkGoodsEntity implements Serializable {
 	 */
 	private CkStoreDepEntity storeDepEntity;
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CkGoodsEntity that = (CkGoodsEntity) o;
+		return Objects.equals(goodsId, that.goodsId) &&
+				Objects.equals(goodsName, that.goodsName) &&
+				Objects.equals(fatherId, that.fatherId) &&
+				Objects.equals(purStandardName, that.purStandardName) &&
+				Objects.equals(applyStandardName, that.applyStandardName) &&
+				Objects.equals(sellStandardName, that.sellStandardName) &&
+				Objects.equals(stockPurStandard, that.stockPurStandard) &&
+				Objects.equals(stockApplyStandard, that.stockApplyStandard) &&
+				Objects.equals(stockSellStandard, that.stockSellStandard) &&
+				Objects.equals(type, that.type) &&
+				Objects.equals(isWeight, that.isWeight) &&
+				Objects.equals(status, that.status) &&
+				Objects.equals(gOutDepId, that.gOutDepId) &&
+				Objects.equals(alarmWeight, that.alarmWeight) &&
+				Objects.equals(qualityPeriod, that.qualityPeriod) &&
+				Objects.equals(price, that.price) &&
+				Objects.equals(priceStandard, that.priceStandard) &&
+				Objects.equals(gSort, that.gSort) &&
+				Objects.equals(pinyin, that.pinyin) &&
+				Objects.equals(headPinyin, that.headPinyin) &&
+				Objects.equals(storeDepEntity, that.storeDepEntity);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(goodsId, goodsName, fatherId, purStandardName, applyStandardName, sellStandardName, stockPurStandard, stockApplyStandard, stockSellStandard, type, isWeight, status, gOutDepId, alarmWeight, qualityPeriod, price, priceStandard, gSort, pinyin, headPinyin, storeDepEntity);
+	}
+
+	@Override
+	public int compareTo(Object o) {
+		if (o instanceof CkGoodsEntity) {
+			CkGoodsEntity e = (CkGoodsEntity) o;
+			return this.goodsId.compareTo(e.goodsId);
+		}
+		return 0;	}
 }

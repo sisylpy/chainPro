@@ -15,7 +15,7 @@ import java.util.Date;
 
 
 @Setter@Getter@ToString
-public class CkApplysEntity implements Serializable {
+public class CkApplysEntity implements Serializable  {
 	private static final long serialVersionUID = 1L;
 	
 	/**
@@ -70,6 +70,10 @@ public class CkApplysEntity implements Serializable {
 	 * 路线id
 	 */
 	private Integer applyLineId;
+	/**
+	 * 打印页码
+	 */
+	private Integer pageNumber;
 
 	/**
 	 * store实例
