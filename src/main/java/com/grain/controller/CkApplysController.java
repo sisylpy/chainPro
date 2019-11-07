@@ -60,16 +60,15 @@ public class CkApplysController {
     public R outDepQueryApplys(@RequestParam Integer status, @RequestParam Integer depId,
                                 @RequestParam Integer page, @RequestParam  Integer limit) {
         Map<String, Object> map = new HashMap<>();
-        map.put("offset", (page - 1) * limit);
-        map.put("limit", limit);
+//        map.put("offset", (page - 1) * limit);
+//        map.put("limit", limit);
         map.put("status", status);
         map.put("depId", depId);
 
 
         List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepApplysWithStatus(map);
-        System.out.println("===========================>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println("===>"+ applysEntities.size());
 
-        System.out.println(applysEntities.size());
 
         //遍历商品set
 //        HashSet<CkGoodsEntity> goodsEntityHashSet = new HashSet<>();
@@ -98,6 +97,7 @@ public class CkApplysController {
                 goodsApplyMap.put("stockApplyStandard" , goods.getStockApplyStandard());
                 goodsApplyMap.put("status", goods.getStatus());
                 goodsApplyMap.put("goodsName", goods.getGoodsName());
+                goodsApplyMap.put("purStandardName", goods.getPurStandardName());
 
                 Float applyNumber =0f;
                 for (CkApplysEntity apply : applysEntities) {
