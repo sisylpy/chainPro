@@ -66,6 +66,7 @@
 			<result property="applyStandardName" column="apply_standard_name"/>
 			<result property="stockApplyStandard" column="stock_apply_standard"/>
 			<result property="purStandardName" column="pur_standard_name"/>
+			<result property="price" column="price"/>
 		</association>
 		<association property="storeEntity" javaType="CkStoreEntity">
 			<id property="storeId" column="store_id"/>

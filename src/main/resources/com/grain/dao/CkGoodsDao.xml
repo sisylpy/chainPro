@@ -45,7 +45,7 @@
 		<result property="gSort" column="g_sort"/>
 		<result property="pinyin" column="pinyin"/>
 		<result property="headPinyin" column="head_pinyin"/>
-		<association property="storeDepEntity" javaType="CkStoreDepEntity">
+		<association property="depEntity" javaType="CkDepEntity">
 			<id property="depId" column="dep_id"/>
 			<result property="depName" column="dep_name"/>
 		</association>
@@ -54,7 +54,7 @@
 
 	<select id="queryGoodsList" resultMap="goods">
 		select * from ck_goods as g
-		LEFT JOIN ck_store_dep  as d ON g.out_dep_id = d.dep_id
+		LEFT JOIN ck_dep  as d ON g.out_dep_id = d.dep_id
 		where father_id =  #{fatherId} ORDER BY g_sort
 
 		<if test="offset != null and limit != null">

@@ -98,6 +98,7 @@ public class CkApplysController {
                 goodsApplyMap.put("status", goods.getStatus());
                 goodsApplyMap.put("goodsName", goods.getGoodsName());
                 goodsApplyMap.put("purStandardName", goods.getPurStandardName());
+                goodsApplyMap.put("price", goods.getPrice());
 
                 Float applyNumber =0f;
                 for (CkApplysEntity apply : applysEntities) {

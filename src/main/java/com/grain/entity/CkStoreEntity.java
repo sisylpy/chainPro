@@ -16,7 +16,7 @@ import java.util.Objects;
 
 
 @Setter@Getter@ToString
-public class CkStoreEntity implements Serializable {
+public class CkStoreEntity implements Serializable, Comparable {
 	private static final long serialVersionUID = 1L;
 	
 	/**
@@ -107,14 +107,12 @@ public class CkStoreEntity implements Serializable {
 		return Objects.hash(storeId, storeName, address, phone, lat, lun, district, city, wxNickName, wxOpenid, wxAvatarUrl, wxNumber, printLabel, outLabel, joinLine);
 	}
 
-	//	public boolean equals(Object obj) {
-//		         User u = (User) obj;
-//		         return name.equals(u.name);
-//		     }
-//
-//		     public int hashCode() {
-//		 String in = name;
-//		        return in.hashCode();
-//		    }
-
+	@Override
+	public int compareTo(Object o) {
+		if (o instanceof CkStoreEntity) {
+			CkStoreEntity e = (CkStoreEntity) o;
+			return this.storeId.compareTo(e.storeId);
+		}
+		return 0;
+	}
 }

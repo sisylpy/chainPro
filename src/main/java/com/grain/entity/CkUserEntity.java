@@ -49,7 +49,7 @@ public class CkUserEntity implements Serializable {
 	/**
 	 * 部门实例
 	 */
-	private CkStoreDepEntity ckStoreDepEntity;
+	private CkDepEntity ckStoreDepEntity;
 
 	/**
 	 * 角色

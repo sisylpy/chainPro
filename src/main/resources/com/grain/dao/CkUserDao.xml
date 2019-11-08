@@ -11,7 +11,7 @@
 		<id property="ckUserId" column="ck_user_id"/>
 		<result property="ckUserName" column="ck_user_name"/>
 		<result property="userStatus" column="user_status"/>
-		<association property="ckStoreDepEntity" javaType="CkStoreDepEntity">
+		<association property="ckStoreDepEntity" javaType="CkDepEntity">
 			<id property="depId" column="dep_id"/>
 			<result property="depName" column="dep_name"/>
 		</association>
@@ -24,7 +24,7 @@
 
 	<select id="queryList" resultMap="ckUser">
 		SELECT * FROM ck_user AS u
-		LEFT JOIN ck_store_dep AS sd ON sd.dep_id = u.user_dep_id
+		LEFT JOIN ck_dep AS sd ON sd.dep_id = u.user_dep_id
 		LEFT JOIN ck_user_role AS r ON r.role_user_id = u.ck_user_id
 		LEFT JOIN sys_role AS sr ON sr.role_id = r.sys_role_id
 		<if test="offset != null and limit != null">

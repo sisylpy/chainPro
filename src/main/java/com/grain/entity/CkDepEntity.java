@@ -15,7 +15,7 @@ import java.util.Date;
 
 
 @Setter@Getter@ToString
-public class CkStoreDepEntity implements Serializable {
+public class CkDepEntity implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	/**

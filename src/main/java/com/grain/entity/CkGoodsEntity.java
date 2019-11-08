@@ -84,7 +84,7 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	/**
 	 *  零售价
 	 */
-	private Float price;
+	private String price;
 	/**
 	 *  零售价单位
 	 */
@@ -105,7 +105,7 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	/**
 	 * 出货部门
 	 */
-	private CkStoreDepEntity storeDepEntity;
+	private CkDepEntity depEntity;
 
 	@Override
 	public boolean equals(Object o) {
@@ -132,12 +132,12 @@ public class CkGoodsEntity implements Serializable, Comparable{
 				Objects.equals(gSort, that.gSort) &&
 				Objects.equals(pinyin, that.pinyin) &&
 				Objects.equals(headPinyin, that.headPinyin) &&
-				Objects.equals(storeDepEntity, that.storeDepEntity);
+				Objects.equals(depEntity, that.depEntity);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(goodsId, goodsName, fatherId, purStandardName, applyStandardName, sellStandardName, stockPurStandard, stockApplyStandard, stockSellStandard, type, isWeight, status, gOutDepId, alarmWeight, qualityPeriod, price, priceStandard, gSort, pinyin, headPinyin, storeDepEntity);
+		return Objects.hash(goodsId, goodsName, fatherId, purStandardName, applyStandardName, sellStandardName, stockPurStandard, stockApplyStandard, stockSellStandard, type, isWeight, status, gOutDepId, alarmWeight, qualityPeriod, price, priceStandard, gSort, pinyin, headPinyin, depEntity);
 	}
 
 	@Override
