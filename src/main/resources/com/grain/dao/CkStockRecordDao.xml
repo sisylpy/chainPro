@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.grain.dao.CkStockRecordDao">
+
+	<select id="queryObject" resultType="com.grain.entity.CkStockRecordEntity">
+		select * from ck_stock_record where stock_record_id = #{value}
+	</select>
+
+
+	<resultMap id="records" type="CkStockRecordEntity">
+		<id property="stockRecordId" column="stock_record_id"/>
+		<result property="stApplyId" column="st_apply_id"/>
+		<result property="inStoreId" column="in_store_id"/>
+		<result property="quantity" column="quantity"/>
+		<result property="outTime" column="out_time"/>
+		<result property="isDiscount" column="is_discount"/>
+		<result property="discountPrice" column="discount_price"/>
+		<association property="storeEntity" javaType="CkStoreEntity">
+			<id property="storeId" column="store_id"/>
+			<result property="storeName" column="store_name"/>
+			<result property="printLabel" column="print_label"/>
+		</association>
+		<association property="goodsEntity" javaType="CkGoodsEntity">
+			<id property="goodsId" column="goods_id"/>
+			<result property="goodsName" column="goods_name"/>
+			<result property="price" column="price"/>
+			<result property="purStandardName" column="pur_standard_name"/>
+			<result property="applyStandardName" column="apply_standard_name"/>
+			<result property="price" column="price"/>
+		</association>
+		<association property="applysEntity" javaType="CkApplysEntity">
+			<id property="applyId" column="apply_id"/>
+			<result property="applyNumber" column="apply_number"/>
+			<result property="applyTime" column="apply_time"/>
+		</association>
+		<association property="storeDepEntity" javaType="CkDepEntity">
+			<id property="depId" column="dep_id"/>
+			<result property="depName" column="dep_name"/>
+		</association>
+	</resultMap>
+
+	<select id="queryList" resultMap="records">
+		select * from ck_stock_record as r
+		left join ck_goods as g on g.goods_id = r.st_goods_id
+		left join ck_applys as a on a.apply_id = r.st_apply_id
+		left join ck_dep as d on d.dep_id = r.out_dep_id
+		where in_store_id = #{storeId} and delivery_status = #{status}
+		and in_out_type = 0
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from ck_stock_record 
+	</select>
+
+	<resultMap id="deliveryStores" type="CkStockRecordEntity">
+		<id property="stockRecordId" column="stock_record_id"/>
+		<result property="stApplyId" column="st_apply_id"/>
+		<result property="inStoreId" column="in_store_id"/>
+		<association property="storeEntity" javaType="CkStoreEntity">
+			<id property="storeId" column="store_id"/>
+			<result property="storeName" column="store_name"/>
+			<result property="printLabel" column="print_label"/>
+		</association>
+
+	</resultMap>
+	<select id="getDeliverStores" resultMap="deliveryStores">
+		select * from ck_stock_record as r
+		left join ck_store as t on t.store_id = r.in_store_id
+		where delivery_status = 0 and in_out_type = 0
+	</select>
+
+	<insert id="save" parameterType="com.grain.entity.CkStockRecordEntity">
+		insert into ck_stock_record
+		(
+			`stock_record_id`, 
+			`st_apply_id`, 
+			`quantity`, 
+			`out_time`, 
+			`pick_user_id`, 
+			`check_user_id`,
+			`enter_user_id`,
+		 	`in_out_type`,
+		 	`out_dep_id`,
+		 	`in_store_id`,
+		 	`st_goods_id`,
+		 	`delivery_status`,
+		 	`discount_price`,
+		 	`is_discount`
+		)
+		values
+		(
+			#{stockRecordId}, 
+			#{stApplyId}, 
+			#{quantity}, 
+			#{outTime}, 
+			#{pickUserId}, 
+			#{checkUserId}, 
+			#{enterUserId},
+		 	#{inOutType},
+		 	#{outDepId},
+		 	#{inStoreId},
+		 	#{stGoodsId},
+		 	#{deliveryStatus},
+		 	#{discountPrice},
+		 	#{isDiscount}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.grain.entity.CkStockRecordEntity">
+		update ck_stock_record 
+		<set>
+			<if test="stApplyId != null">`st_apply_id` = #{stApplyId}, </if>
+			<if test="stGoodsId != null">`st_goods_id` = #{stGoodsId}, </if>
+			<if test="quantity != null">`quantity` = #{quantity}, </if>
+			<if test="inOutType != null">`in_out_type` = #{inOutType}, </if>
+			<if test="outDepId != null">`out_dep_id` = #{outDepId}, </if>
+			<if test="inStoreId != null">`in_store_id` = #{inStoreId}, </if>
+			<if test="outTime != null">`out_time` = #{outTime}, </if>
+			<if test="pickUserId != null">`pick_user_id` = #{pickUserId}, </if>
+			<if test="checkUserId != null">`check_user_id` = #{checkUserId}, </if>
+			<if test="deliveryStatus != null">`delivery_status` = #{deliveryStatus}, </if>
+			<if test="discountPrice != null">`discount_price` = #{discountPrice}, </if>
+			<if test="isDiscount != null">`is_discount` = #{isDiscount}, </if>
+			<if test="enterUserId != null">`enter_user_id` = #{enterUserId}</if>
+		</set>
+		where stock_record_id = #{stockRecordId}
+	</update>
+	
+	<delete id="delete">
+		delete from ck_stock_record where stock_record_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from ck_stock_record where stock_record_id in 
+		<foreach item="stockRecordId" collection="array" open="(" separator="," close=")">
+			#{stockRecordId}
+		</foreach>
+	</delete>
+
+</mapper>
