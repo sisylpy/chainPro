@@ -75,10 +75,11 @@ public class CkStoreEntity implements Serializable, Comparable {
 	 *  对外名称
 	 */
 	private String outLabel;
-	/**
-	 * 加入路线
-	 */
-	private Integer joinLine;
+
+
+
+
+
 
 	@Override
 	public boolean equals(Object o) {
@@ -98,13 +99,12 @@ public class CkStoreEntity implements Serializable, Comparable {
 				Objects.equals(wxAvatarUrl, that.wxAvatarUrl) &&
 				Objects.equals(wxNumber, that.wxNumber) &&
 				Objects.equals(printLabel, that.printLabel) &&
-				Objects.equals(outLabel, that.outLabel) &&
-				Objects.equals(joinLine, that.joinLine);
+				Objects.equals(outLabel, that.outLabel);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(storeId, storeName, address, phone, lat, lun, district, city, wxNickName, wxOpenid, wxAvatarUrl, wxNumber, printLabel, outLabel, joinLine);
+		return Objects.hash(storeId, storeName, address, phone, lat, lun, district, city, wxNickName, wxOpenid, wxAvatarUrl, wxNumber, printLabel, outLabel);
 	}
 
 	@Override

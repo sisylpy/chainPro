@@ -70,10 +70,24 @@ public class CkApplysServiceImpl implements CkApplysService {
 		return  ckApplysDao.queryOutDepStores(map);
 	}
 
-    @Override
-    public int outDepQueryTotalByStatus(Map<String, Object> map) {
 
-		return  ckApplysDao.queryOutDepTotalByStatus(map);
+
+    @Override
+    public List<Integer> queryPintTimes() {
+
+		return ckApplysDao.queryPintTimes();
+    }
+
+	@Override
+	public Integer queryPintMax(String date) {
+
+		return ckApplysDao.queryPrintMax(date);
+	}
+
+    @Override
+    public List<CkApplysEntity> queryOutDepApplysByQueryIds(Map<String, Object> map) {
+
+		return ckApplysDao.queryOutDepApplysByQueryIds(map);
     }
 
 }

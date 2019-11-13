@@ -27,6 +27,10 @@ public class CkApplysEntity implements Serializable  {
 	 */
 	private Integer applyGoodsId;
 	/**
+	 * fatherid
+	 */
+	private Integer applyGoodsFatherId;
+	/**
 	 *  申请数量
 	 */
 	private Float applyNumber;
@@ -65,7 +69,7 @@ public class CkApplysEntity implements Serializable  {
 	/**
 	 * 出货实例
 	 */
-	private CkPickEntity pickEntity;
+	private CkStockRecordEntity stockRecordEntity;
 	/**
 	 * 路线id
 	 */
@@ -79,10 +83,8 @@ public class CkApplysEntity implements Serializable  {
 	 * store实例
 	 */
 	private CkStoreEntity storeEntity;
-	/**
-	 * goods实例
-	 */
-	private CkGoodsEntity goodsEntity;
+
+
 
 
 

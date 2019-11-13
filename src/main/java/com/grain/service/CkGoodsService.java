@@ -28,7 +28,7 @@ public interface CkGoodsService {
 	
 	void deleteBatch(Integer[] goodsIds);
 
-	List<CkGoodsEntity> queryCateGoods(Integer type);
+	List<CkGoodsEntity> queryCateGoods();
 
 
 	List<CkGoodsEntity> queryGoodsList(Map<String, Object> map);

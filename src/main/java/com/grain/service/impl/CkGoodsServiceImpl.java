@@ -61,9 +61,9 @@ public class CkGoodsServiceImpl implements CkGoodsService {
 //	}
 
     @Override
-    public List<CkGoodsEntity> queryCateGoods(Integer type) {
+    public List<CkGoodsEntity> queryCateGoods() {
 
-		return ckGoodsDao.queryCateGoods(type);
+		return ckGoodsDao.queryCateGoods();
     }
 
     @Override

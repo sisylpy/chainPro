@@ -30,16 +30,6 @@ import com.grain.utils.R;
 public class CkStoreController {
 	@Autowired
 	private CkStoreService ckStoreService;
-	
-//	@RequestMapping("/ckstore.html")
-//	public String list(){
-//		return "ckstore/ckstore.html";
-//	}
-//
-//	@RequestMapping("/ckstore_add.html")
-//	public String add(){
-//		return "ckstore/ckstore_add.html";
-//	}
 
 
 	/**
@@ -102,7 +92,6 @@ public class CkStoreController {
 		System.out.println(ckStore);
 		String s = ParseObject.parseObj(ckStore);
 		CkStoreEntity store = JSON.parseObject(s, CkStoreEntity.class);
-		store.setJoinLine(0);
 		ckStoreService.save(store);
 		
 		return R.ok();

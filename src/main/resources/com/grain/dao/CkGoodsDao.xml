@@ -27,7 +27,7 @@
 	</select>
 
     <select id="queryCateGoods" resultType="com.grain.entity.CkGoodsEntity">
-		select * from ck_goods where father_id = 0 and type = #{type} ORDER BY g_sort;
+		select * from ck_goods where father_id = 0  ORDER BY g_sort;
 	</select>
 
 	<resultMap id="goods" type="CkGoodsEntity">
@@ -44,6 +44,7 @@
 		<result property="alarmWeight" column="alarm_weight"/>
 		<result property="gSort" column="g_sort"/>
 		<result property="pinyin" column="pinyin"/>
+		<result property="gOutDepId" column="out_dep_id"/>
 		<result property="headPinyin" column="head_pinyin"/>
 		<association property="depEntity" javaType="CkDepEntity">
 			<id property="depId" column="dep_id"/>
@@ -59,7 +60,8 @@
 
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
-		</if>	 </select>
+		</if>
+</select>
 	<select id="queryPinyin" resultType="com.grain.entity.CkGoodsEntity">
 		select * from ck_goods where pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
 		                          or head_pinyin like  concat('%', #{pinyin}, '%') and father_id != 0

@@ -7,13 +7,15 @@ package com.grain.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Stream;
 
+import com.alibaba.fastjson.JSON;
 import com.grain.entity.CkGoodsEntity;
+import com.grain.entity.CkSortEntity;
 import com.grain.entity.CkStoreEntity;
 import com.grain.service.CkGoodsService;
-import com.sun.org.apache.xerces.internal.xs.datatypes.ObjectList;
+import com.grain.utils.ParseObject;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.omg.CORBA.OBJ_ADAPTER;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
@@ -26,6 +28,7 @@ import com.grain.utils.R;
 
 @Controller
 @RequestMapping("/sys/ckapplys")
+
 public class CkApplysController {
     @Autowired
     private CkApplysService ckApplysService;
@@ -33,62 +36,196 @@ public class CkApplysController {
     private CkGoodsService ckGoodsService;
 
 
-    @RequestMapping(value = "/outDepQueryStores", method = RequestMethod.POST)
+    @RequestMapping(value = "/applysPrintSuccess", method = RequestMethod.POST)
     @ResponseBody
-    public R outDepQueryStores(@RequestParam Integer status, @RequestParam Integer depId) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("status", status);
-        map.put("depId", depId);
-
-        List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepStores(map);
-        Set<CkStoreEntity> storeList = new HashSet<>();
-        for (CkApplysEntity apply : applysEntities) {
-            storeList.add(apply.getStoreEntity());
+    public R applysPrintSuccess(@RequestBody List<CkApplysEntity> applys) {
+        System.out.println("laile!!!" + applys);
+        for (CkApplysEntity apply : applys) {
+            apply.setApplyStatus(1);
+            ckApplysService.update(apply);
         }
-
-        return R.ok().put("data", storeList);
+        return R.ok();
     }
 
 
     /**
-     * ;;;;;;
+     * 获取当天未完成分拣的打印最大次数
      */
-
-
-    @RequestMapping(value = "/outDepQueryApplys", method = RequestMethod.POST)
     @ResponseBody
-    public R outDepQueryApplys(@RequestParam Integer status, @RequestParam Integer depId,
-                                @RequestParam Integer page, @RequestParam  Integer limit) {
+    @RequestMapping("/getPintMax")
+    public R getPintMax() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.CHINA);
+        String format = dateFormat.format(new Date());
+
+        Integer printMax = ckApplysService.queryPintMax(format);
+        System.out.println(printMax + " ???????");
+        if (printMax == null) {
+            return R.ok().put("data", 0);
+
+        } else {
+            return R.ok().put("data", printMax);
+        }
+    }
+
+
+    /**
+     * 获取未分拣完成的当日打印次数list
+     */
+    @ResponseBody
+    @RequestMapping("/getPintTimes")
+    public R getPintTimes() {
+
+        //查询列表数据
+        List<Integer> pirntTimes = ckApplysService.queryPintTimes();
+
+        List<Integer> listTemp = new ArrayList<Integer>();
+        Iterator<Integer> it = pirntTimes.iterator();
+        while (it.hasNext()) {
+            int a = it.next();
+            if (listTemp.contains(a)) {
+                it.remove();
+            } else {
+                listTemp.add(a);
+            }
+        }
+        System.out.println("distince" + listTemp);
+        return R.ok().put("data", listTemp);
+    }
+
+
+    /**
+     * 按照商品货分店获取申请
+     *
+     * @param status 申请字段是 0
+     * @param depId  出货部门id
+     * @return 如果是
+     */
+    @RequestMapping(value = "/outDepQuerySorts", method = RequestMethod.POST)
+    @ResponseBody
+    public R outDepQuerySorts(@RequestParam Integer status, @RequestParam Integer depId) {
         Map<String, Object> map = new HashMap<>();
-//        map.put("offset", (page - 1) * limit);
-//        map.put("limit", limit);
+        map.put("status", status);
+        map.put("depId", depId);
+
+        Set<CkStoreEntity> storeList = new HashSet<>();
+        TreeSet<CkGoodsEntity> goodsList = new TreeSet<>();
+        TreeSet<CkGoodsEntity> goodsFatherList = new TreeSet<>();
+
+        List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepStores(map);
+        for (CkApplysEntity apply : applysEntities) {
+            storeList.add(apply.getStoreEntity());
+            goodsList.add(apply.getCkGoodsEntity());
+        }
+        for (CkGoodsEntity goods : goodsList) {
+            Integer fatherId = goods.getFatherId();
+            CkGoodsEntity ckGoodsEntity = ckGoodsService.queryObject(fatherId);
+            goodsFatherList.add(ckGoodsEntity);
+        }
+
+
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("storeList", storeList);
+        resultMap.put("fatherGoodsList", goodsFatherList);
+
+        System.out.println(resultMap + "rewutmap???");
+
+        return R.ok().put("data", resultMap);
+
+
+    }
+
+
+    /**
+     * 根据商品类别和分店获取申请
+     * @param status 0
+     * @param depId 出货部门id
+     * @param queryFatherIds 搜索商品类别ids
+     * @param queryStoreIds  搜索分店ids
+     * @return 符合2个条件的apply
+     */
+    @RequestMapping(value = "/outDepQueryApplysBySorts", method = RequestMethod.GET)
+    @ResponseBody
+    public R outDepQueryApplysBySorts(@RequestParam  String status, @RequestParam Integer depId,
+                                      @RequestParam String queryFatherIds, @RequestParam String queryStoreIds ) {
+
+        Map<String, Object> map = new HashMap<>();
         map.put("status", status);
         map.put("depId", depId);
 
 
+         String[] reArrFather = queryFatherIds.split(",");
+         //String数组转List
+         List<String> goodsIds=new ArrayList<>();
+
+         for(String st2:reArrFather){
+             goodsIds.add(st2);
+         }
+        if (queryFatherIds.equals("-1")) {
+            System.out.println("shi -1");
+            map.put("fatherGoodsIds", null);
+
+        }else {
+            map.put("fatherGoodsIds", goodsIds);
+
+        }
+
+        String[] reArrStore = queryStoreIds.split(",");
+        List<String> storeIds=new ArrayList<>();
+        for(String st:reArrStore){
+            storeIds.add(st);
+        }
+        if(queryStoreIds.equals("-1")) {
+            map.put("applyStoreIds", null);
+        }else {
+            map.put("applyStoreIds", storeIds);
+        }
+
+        //根据查询map获取申请
+        List<CkApplysEntity> applysEntitiesBySort = ckApplysService.queryOutDepApplysByQueryIds(map);
+
+        //组装申请
+        List<Map<String, Object>> differentGoods = getDifferentGoods(applysEntitiesBySort);
+
+        return R.ok().put("data", differentGoods);
+   }
+
+
+    /**
+     * 出货部门
+     */
+    @RequestMapping(value = "/outDepQueryApplys", method = RequestMethod.POST)
+    @ResponseBody
+    public R outDepQueryApplys(@RequestParam Integer status, @RequestParam Integer depId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", status);
+        map.put("depId", depId);
+
+        //根据map查询申请
         List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepApplysWithStatus(map);
-        System.out.println("===>"+ applysEntities.size());
+
+        //组装申请
+        List<Map<String, Object>> differentGoods = getDifferentGoods(applysEntities);
+
+        return R.ok().put("data", differentGoods);
+
+    }
 
 
+    //组装申请方法
+    private List<Map<String, Object>>  getDifferentGoods(List<CkApplysEntity> applysEntitiesBySort ){
         //遍历商品set
-//        HashSet<CkGoodsEntity> goodsEntityHashSet = new HashSet<>();
-        TreeSet<CkGoodsEntity> goodsEntityHashSet = new TreeSet<>();
-
+        TreeSet<CkGoodsEntity> goodsEntityTreeSet = new TreeSet<>();
         //存放申请list
         List<Map<String, Object>> goodsForapplys = new ArrayList<>();
 
-        if (applysEntities.size() > 0) {
-
+        if (applysEntitiesBySort.size() > 0) {
             //1.获取商品list
-            for (CkApplysEntity apply : applysEntities) {
-                goodsEntityHashSet.add(apply.getCkGoodsEntity());
-                Integer applyGoodsId = apply.getApplyGoodsId();
-
+            for (CkApplysEntity apply : applysEntitiesBySort) {
+                goodsEntityTreeSet.add(apply.getCkGoodsEntity());
             }
 
-
             //2，遍历相同商品，存放申请
-            for (CkGoodsEntity goods : goodsEntityHashSet) {
+            for (CkGoodsEntity goods : goodsEntityTreeSet) {
 
                 Map<String, Object> goodsApplyMap = new HashMap<>();
                 List<CkApplysEntity> applys = new ArrayList<>();
@@ -101,7 +238,7 @@ public class CkApplysController {
                 goodsApplyMap.put("price", goods.getPrice());
 
                 Float applyNumber =0f;
-                for (CkApplysEntity apply : applysEntities) {
+                for (CkApplysEntity apply : applysEntitiesBySort) {
                     if (apply.getApplyGoodsId().equals(goods.getGoodsId())) {
                         applyNumber += apply.getApplyNumber();
                         applys.add(apply);
@@ -111,37 +248,9 @@ public class CkApplysController {
                 goodsApplyMap.put("applys", applys);
                 goodsForapplys.add(goodsApplyMap);
             }
+
         }
-
-
-
-        int total = ckApplysService.outDepQueryTotalByStatus(map);
-        PageUtils pageUtil = new PageUtils(goodsForapplys, total, limit, page);
-
-        return R.ok().put("page", pageUtil);
-
-    }
-
-
-
-    /**
-     * 列表
-     */
-    @ResponseBody
-    @RequestMapping("/list")
-    @RequiresPermissions("ckapplys:list")
-    public R list(Integer page, Integer limit) {
-        Map<String, Object> map = new HashMap<>();
-        map.put("offset", (page - 1) * limit);
-        map.put("limit", limit);
-
-        //查询列表数据
-        List<CkApplysEntity> ckApplysList = ckApplysService.queryList(map);
-        int total = ckApplysService.queryTotal(map);
-
-        PageUtils pageUtil = new PageUtils(ckApplysList, total, limit, page);
-
-        return R.ok().put("page", pageUtil);
+        return goodsForapplys;
     }
 
 
@@ -170,6 +279,8 @@ public class CkApplysController {
         ckApplys.setApplyTime(format);
         ckApplys.setDeliveryDate(format);
         ckApplys.setApplyStatus(0);
+//        ckApplys.setApplyLineId(ckApplys.getCkLineStoreEntity().getReLineId());
+
         System.out.println("===>>>>>>>>>>>>>>>>>");
         System.out.println(ckApplys);
         ckApplysService.save(ckApplys);

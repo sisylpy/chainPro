@@ -112,12 +112,12 @@ public class CkGoodsController {
     }
 
 
-    @RequestMapping("/cateList/{type}")
+    @RequestMapping("/cateList")
     @ResponseBody
-    public R cateGoods(@PathVariable Integer type) {
-        List<CkGoodsEntity> list = ckGoodsService.queryCateGoods(type);
+    public R cateGoods() {
+        List<CkGoodsEntity> list = ckGoodsService.queryCateGoods();
 
-
+        System.out.println("jinlaile??");
         return R.ok().put("data", list);
     }
 
@@ -145,7 +145,7 @@ public class CkGoodsController {
     @ResponseBody
     @RequestMapping("/save")
     @RequiresPermissions("ckgoods:save")
-    public R save(@RequestBody String param) {
+    public R save(@RequestParam String param) {
 
 
         String s = ParseObject.parseObj(param);

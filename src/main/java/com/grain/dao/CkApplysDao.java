@@ -21,5 +21,9 @@ public interface CkApplysDao extends BaseDao<CkApplysEntity> {
 
     List<CkApplysEntity> queryOutDepStores(Map<String, Object> map);
 
-    int queryOutDepTotalByStatus(Map<String, Object> map);
+    List<Integer> queryPintTimes();
+
+    Integer queryPrintMax(String date);
+
+    List<CkApplysEntity> queryOutDepApplysByQueryIds(Map<String, Object> map);
 }

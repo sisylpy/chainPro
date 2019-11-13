@@ -36,5 +36,10 @@ public interface CkApplysService {
 
 	List<CkApplysEntity> queryOutDepStores(Map<String, Object> map);
 
-	int outDepQueryTotalByStatus(Map<String, Object> map);
+
+	List<Integer> queryPintTimes();
+
+	Integer queryPintMax(String date);
+
+	List<CkApplysEntity> queryOutDepApplysByQueryIds(Map<String, Object> map);
 }

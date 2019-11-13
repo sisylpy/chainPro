@@ -33,19 +33,21 @@
 			<id property="goodsId" column="goods_id"/>
 			<result property="goodsName" column="goods_name"/>
 			<result property="applyStandardName" column="apply_standard_name"/>
+			<result property="purStandardName" column="pur_standard_name"/>
 		</association>
-		<association property="pickEntity" javaType="CkPickEntity">
-			<id property="pApplyId" column="p_apply_id"/>
-			<result property="pickNumber" column="pick_number"/>
-			<result property="pickStatus" column="pick_status"/>
-			<result property="pickTime" column="pick_time"/>
+		<association property="stockRecordEntity" javaType="CkStockRecordEntity">
+			<id property="stockRecordId" column="stock_record_id"/>
+			<result property="deliveryStatus" column="delivery_status"/>
+			<result property="quantity" column="quantity"/>
+			<result property="isDiscount" column="is_discount"/>
+			<result property="discountPrice" column="discount_price"/>
 		</association>
 	</resultMap>
 
 	<select id="storeGetApplys" resultMap="applys">
 		select * from ck_applys AS a
 		LEFT JOIN ck_goods as g ON  a.apply_goods_id = g.goods_id
-		LEFT JOIN ck_pick as p on  a.apply_id = p.p_apply_id
+		left join ck_stock_record as r on r.st_apply_id = a.apply_id
 		where apply_store_id = #{storeId}
 
 	</select>
@@ -84,6 +86,11 @@
 		order by g.goods_id
 	</select>
 
+	<!--and a.apply_store_id in <foreach collection="applyStoreIds" item="item" index="index"
+						 open="(" separator="," close=")">#{item}</foreach>
+
+				and a.apply_goods_father_id in <foreach collection="fatherGoodsIds" item="item" index="index"
+														open="(" separator="," close=")">#{item}</foreach>-->
 
 	<resultMap id="applyStores" type="CkApplysEntity">
 		<id property="applyId" column="apply_id"/>
@@ -101,24 +108,57 @@
 			<result property="printLabel" column="print_label"/>
 			<result property="outLabel" column="out_label"/>
 		</association>
+		<association property="ckGoodsEntity" javaType="CkGoodsEntity">
+			<id property="goodsId" column="goods_id"/>
+			<result property="goodsName" column="goods_name"/>
+			<result property="applyStandardName" column="apply_standard_name"/>
+			<result property="stockApplyStandard" column="stock_apply_standard"/>
+			<result property="purStandardName" column="pur_standard_name"/>
+			<result property="price" column="price"/>
+			<result property="fatherId" column="father_id"/>
+		</association>
 	</resultMap>
 
 	<select id="queryOutDepStores" resultMap="applyStores">
 		select * from ck_applys AS a
 		LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 		where a.out_dep_id = #{depId} and a.apply_status = #{status}
 	</select>
 
-	<select id="queryOutDepTotalByStatus" resultType="java.lang.Integer">
-		select count(*)
-		from ck_applys where out_dep_id = #{depId} and apply_status = #{status};
+
+
+	<select id="queryPintTimes" resultType="java.lang.Integer">
+		select page_number from ck_applys where apply_status = 1 order by page_number
 	</select>
+	<select id="queryPrintMax" resultType="java.lang.Integer">
+		SELECT MAX(page_number) FROM ck_applys WHERE apply_time = #{date}
+	</select>
+
+	<select id="queryOutDepApplysByQueryIds" resultMap="outDepApplys">
+		SELECT * from ck_applys AS a
+						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where a.apply_status = #{status} and a.out_dep_id = #{depId}
+		<if test="applyStoreIds != null">
+			and a.apply_store_id in <foreach collection="applyStoreIds" item="item" index="index"
+											 open="(" separator="," close=")">#{item}</foreach>
+		</if>
+		<if test="fatherGoodsIds != null">
+			and a.apply_goods_father_id in <foreach collection="fatherGoodsIds" item="item" index="index"
+													open="(" separator="," close=")">#{item}</foreach>
+		</if>
+		order by g.goods_id
+
+	</select>
+
 
 	<insert id="save" parameterType="com.grain.entity.CkApplysEntity">
 		insert into ck_applys
 		(
 			`apply_id`, 
-			`apply_goods_id`, 
+			`apply_goods_id`,
+		 	`apply_goods_father_id`,
 			`apply_number`,
 			`apply_standardName`, 
 			`apply_store_id`, 
@@ -133,7 +173,8 @@
 		values
 		(
 			#{applyId}, 
-			#{applyGoodsId}, 
+			#{applyGoodsId},
+		 	#{applyGoodsFatherId},
 			#{applyNumber},
 			#{applyStandardname}, 
 			#{applyStoreId}, 

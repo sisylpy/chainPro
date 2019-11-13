@@ -95,8 +95,6 @@ public class CkLineController {
 		String s = ParseObject.parseObj(param);
 		CkLineEntity ckLine = JSON.parseObject(s, CkLineEntity.class);
 
-		System.out.println("kankanba");
-		System.out.println(ckLine);
 		List<CkStoreEntity> storeEntityList = ckLine.getStoreEntityList();
 
 		ckLineService.save(ckLine);
@@ -115,7 +113,6 @@ public class CkLineController {
 			ls.setReStoreId(storeId);
 			ls.setSort(sort);
 			ckLineStoreService.save(ls);
-			cs.setJoinLine(1);
 			storeService.update(cs);
 
 			sort++;
