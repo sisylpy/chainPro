@@ -106,6 +106,7 @@ public class CkApplysController {
         Map<String, Object> map = new HashMap<>();
         map.put("status", status);
         map.put("depId", depId);
+        System.out.println("weinxin??");
 
         Set<CkStoreEntity> storeList = new HashSet<>();
         TreeSet<CkGoodsEntity> goodsList = new TreeSet<>();

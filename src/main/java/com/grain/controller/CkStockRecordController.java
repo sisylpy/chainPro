@@ -50,6 +50,9 @@ public class CkStockRecordController {
 		  stores.add(storeEntity);
 	  }
 
+		System.out.println(stores);
+
+		System.out.println("shenmostore");
 		return R.ok().put("data",stores);
 	}
 
