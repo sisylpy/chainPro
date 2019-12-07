@@ -18,6 +18,9 @@
 		select count(*) from ck_applys 
 	</select>
 
+
+
+
 	<resultMap id="applys" type="CkApplysEntity">
 		<id property="applyId" column="apply_id"/>
 		<result property="applyNumber" column="apply_number"/>
@@ -29,11 +32,14 @@
 		<result property="applyStoreId" column="apply_store_id"/>
 		<result property="applyLineId" column="apply_line_id"/>
 		<result property="pageNumber" column="page_number"/>
+		<result property="orderNumber" column="order_number"/>
 		<association property="ckGoodsEntity" javaType="CkGoodsEntity">
 			<id property="goodsId" column="goods_id"/>
 			<result property="goodsName" column="goods_name"/>
 			<result property="applyStandardName" column="apply_standard_name"/>
+			<result property="stockApplyStandard" column="stock_apply_standard"/>
 			<result property="purStandardName" column="pur_standard_name"/>
+			<result property="price" column="price"/>
 		</association>
 		<association property="stockRecordEntity" javaType="CkStockRecordEntity">
 			<id property="stockRecordId" column="stock_record_id"/>
@@ -43,6 +49,8 @@
 			<result property="discountPrice" column="discount_price"/>
 		</association>
 	</resultMap>
+
+
 
 	<select id="storeGetApplys" resultMap="applys">
 		select * from ck_applys AS a
@@ -62,52 +70,10 @@
 		<result property="deliveryDate" column="delivery_date"/>
 		<result property="applyStoreId" column="apply_store_id"/>
 		<result property="pageNumber" column="page_number"/>
-		<association property="ckGoodsEntity" javaType="CkGoodsEntity">
-			<id property="goodsId" column="goods_id"/>
-			<result property="goodsName" column="goods_name"/>
-			<result property="applyStandardName" column="apply_standard_name"/>
-			<result property="stockApplyStandard" column="stock_apply_standard"/>
-			<result property="purStandardName" column="pur_standard_name"/>
-			<result property="price" column="price"/>
-		</association>
-		<association property="storeEntity" javaType="CkStoreEntity">
-			<id property="storeId" column="store_id"/>
-			<result property="storeName" column="store_name"/>
-			<result property="printLabel" column="print_label"/>
-			<result property="outLabel" column="out_label"/>
-		</association>
-	</resultMap>
-
-	<select id="queryOutDepApplysWithStatus" resultMap="outDepApplys">
-		SELECT * from ck_applys AS a
-			LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
-			LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.apply_status = #{status} and a.out_dep_id = #{depId}
-		order by g.goods_id
-	</select>
-
-	<!--and a.apply_store_id in <foreach collection="applyStoreIds" item="item" index="index"
-						 open="(" separator="," close=")">#{item}</foreach>
-
-				and a.apply_goods_father_id in <foreach collection="fatherGoodsIds" item="item" index="index"
-														open="(" separator="," close=")">#{item}</foreach>-->
-
-	<resultMap id="applyStores" type="CkApplysEntity">
-		<id property="applyId" column="apply_id"/>
-		<result property="applyGoodsId" column="apply_goods_id"/>
-		<result property="applyNumber" column="apply_number"/>
-		<result property="applyLineId" column="apply_line_id"/>
-		<result property="applyStatus" column="apply_status"/>
-		<result property="applyTime" column="apply_time"/>
-		<result property="deliveryDate" column="delivery_date"/>
-		<result property="applyStoreId" column="apply_store_id"/>
-		<result property="pageNumber" column="page_number"/>
-		<association property="storeEntity" javaType="CkStoreEntity">
-			<id property="storeId" column="store_id"/>
-			<result property="storeName" column="store_name"/>
-			<result property="printLabel" column="print_label"/>
-			<result property="outLabel" column="out_label"/>
-		</association>
+		<result property="orderNumber" column="order_number"/>
+		<result property="applyStandardname" column="apply_standard_name"/>
+		<result property="outDepId" column="out_dep_id"/>
+		<result property="applyGoodsFatherId" column="apply_goods_father_id"/>
 		<association property="ckGoodsEntity" javaType="CkGoodsEntity">
 			<id property="goodsId" column="goods_id"/>
 			<result property="goodsName" column="goods_name"/>
@@ -116,10 +82,36 @@
 			<result property="purStandardName" column="pur_standard_name"/>
 			<result property="price" column="price"/>
 			<result property="fatherId" column="father_id"/>
+			<result property="outDepId" column="out_dep_id"/>
+		</association>
+		<association property="storeEntity" javaType="CkStoreEntity">
+			<id property="storeId" column="store_id"/>
+			<result property="storeName" column="store_name"/>
+			<result property="printLabel" column="print_label"/>
+			<result property="outLabel" column="out_label"/>
+			<result property="wxAvatarUrl" column="wx_avatar_url"/>
 		</association>
 	</resultMap>
 
-	<select id="queryOutDepStores" resultMap="applyStores">
+	<select id="querySorts" resultMap="outDepApplys">
+		select  *  from ck_applys AS a
+							LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+							LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where a.out_dep_id = #{depId} and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
+		order by a.page_number
+	</select>
+
+	<select id="queryOutDepApplysWithStatus" resultMap="outDepApplys">
+		SELECT * from ck_applys AS a
+			LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+			LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where a.apply_status = #{status} and a.out_dep_id = #{depId} and a.page_number = #{pageNumber}
+		order by g.goods_id
+	</select>
+
+
+
+	<select id="queryOutDepStores" resultMap="outDepApplys">
 		select * from ck_applys AS a
 		LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
 		LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
@@ -127,9 +119,8 @@
 	</select>
 
 
-
 	<select id="queryPintTimes" resultType="java.lang.Integer">
-		select page_number from ck_applys where apply_status = 1 order by page_number
+		select page_number from ck_applys where apply_status = 1 and out_dep_id = #{outDepId} order by page_number
 	</select>
 	<select id="queryPrintMax" resultType="java.lang.Integer">
 		SELECT MAX(page_number) FROM ck_applys WHERE apply_time = #{date}
@@ -152,6 +143,44 @@
 
 	</select>
 
+	<!-- wx按照打印次数获取录入申请 -->
+	<select id="queryEnterApplysByPageNumber" resultMap="outDepApplys">
+		select  *  from ck_applys AS a
+							LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+							LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where a.out_dep_id = #{depId} and a.page_number = #{pageNumber} and apply_status = #{status}
+		        and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
+		</select>
+
+
+	<select id="queryPickStoreListByOutDepId" resultMap="outDepApplys">
+		select * from ck_applys AS a
+		   LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where a.out_dep_id = #{depId} and apply_status = #{status}
+		  and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
+	</select>
+
+
+    <select id="queryGoodsFatherByStoreIds" resultMap="outDepApplys">
+        SELECT * from ck_applys AS a
+        LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+        where a.apply_status = #{status} and a.out_dep_id = #{depId}
+        <if test="applyStoreIds != null">
+            and a.apply_store_id in <foreach collection="storeIds" item="item" index="index"
+                                             open="(" separator="," close=")">#{item}</foreach>
+        </if>
+
+        order by g.goods_id    </select>
+    <select id="queryTodayApplysByDepId" resultMap="outDepApplys">
+        select  * from  ck_applys AS a
+                             LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+                             LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+        where a.out_dep_id = #{depId} and a.apply_status &lt; 10
+          and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
+    </select>
+
+
+
 
 	<insert id="save" parameterType="com.grain.entity.CkApplysEntity">
 		insert into ck_applys
@@ -168,7 +197,8 @@
 			`apply_remark`,
 		 	`apply_status`,
 		 	`apply_line_id`,
-		 	`page_number`
+		 	`page_number`,
+		 	`order_number`
 		)
 		values
 		(
@@ -184,7 +214,8 @@
 			#{applyRemark},
 		 	#{applyStatus},
 		 	#{applyLineId},
-		 	#{pageNumber}
+		 	#{pageNumber},
+		 	#{orderNumber}
 		)
 	</insert>
 	 
@@ -197,10 +228,11 @@
 			<if test="applyStoreId != null">`apply_store_id` = #{applyStoreId}, </if>
 			<if test="outDepId != null">`out_dep_id` = #{outDepId}, </if>
 			<if test="applyTime != null">`apply_time` = #{applyTime}, </if>
-			<if test="deliveryDate != null">`delivery_data` = #{deliveryDate}, </if>
+			<if test="deliveryDate != null">`delivery_date` = #{deliveryDate}, </if>
 			<if test="applyStatus != null">`apply_status` = #{applyStatus}, </if>
 			<if test="applyLineId != null">`apply_line_id` = #{applyLineId}, </if>
-			<if test="applyRemark != null">`apply_remark` = #{applyRemark}</if>
+			<if test="applyRemark != null">`apply_remark` = #{applyRemark}, </if>
+			<if test="orderNumber != null">`order_number` = #{orderNumber}, </if>
 			<if test="pageNumber != null">`page_number` = #{pageNumber}</if>
 
 		</set>

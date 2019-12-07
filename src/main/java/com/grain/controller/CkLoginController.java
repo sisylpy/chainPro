@@ -29,6 +29,14 @@ public class CkLoginController {
     private  CkStoreService storeService;
 
 
+//     @RequestMapping(value = "/wxgetopenGid", method = RequestMethod.POST)
+//      @ResponseBody
+//      public R wxgetopenGid (@RequestBody ) {
+//
+//        return R.ok();
+//      }
+     
+
     @RequestMapping(value = "/sys/storeLogin", method = RequestMethod.POST)
     @ResponseBody
     public R storeLogin (@RequestBody CkStoreEntity storeEntity) {

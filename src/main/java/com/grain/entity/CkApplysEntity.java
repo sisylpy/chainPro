@@ -35,6 +35,10 @@ public class CkApplysEntity implements Serializable  {
 	 */
 	private Float applyNumber;
 	/**
+	 * 申请次数
+	 */
+	private Integer orderNumber;
+	/**
 	 *  申请规格
 	 */
 	private String applyStandardname;
@@ -84,6 +88,10 @@ public class CkApplysEntity implements Serializable  {
 	 */
 	private CkStoreEntity storeEntity;
 
+	/**
+	 * weixinfocus
+	 */
+	private Boolean onFocus ;
 
 
 

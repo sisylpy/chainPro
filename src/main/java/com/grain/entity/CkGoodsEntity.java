@@ -72,7 +72,7 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	/**
 	 *  出货部门id
 	 */
-	private Integer gOutDepId;
+	private Integer outDepId;
 	/**
 	 *  库存报警重量
 	 */
@@ -88,7 +88,7 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	/**
 	 *  零售价单位
 	 */
-	private String priceStandard;
+//	private String priceStandard;
 	/**
 	 *  商品排序
 	 */
@@ -124,11 +124,10 @@ public class CkGoodsEntity implements Serializable, Comparable{
 				Objects.equals(type, that.type) &&
 				Objects.equals(isWeight, that.isWeight) &&
 				Objects.equals(status, that.status) &&
-				Objects.equals(gOutDepId, that.gOutDepId) &&
+				Objects.equals(outDepId, that.outDepId) &&
 				Objects.equals(alarmWeight, that.alarmWeight) &&
 				Objects.equals(qualityPeriod, that.qualityPeriod) &&
 				Objects.equals(price, that.price) &&
-				Objects.equals(priceStandard, that.priceStandard) &&
 				Objects.equals(gSort, that.gSort) &&
 				Objects.equals(pinyin, that.pinyin) &&
 				Objects.equals(headPinyin, that.headPinyin) &&
@@ -137,7 +136,7 @@ public class CkGoodsEntity implements Serializable, Comparable{
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(goodsId, goodsName, fatherId, purStandardName, applyStandardName, sellStandardName, stockPurStandard, stockApplyStandard, stockSellStandard, type, isWeight, status, gOutDepId, alarmWeight, qualityPeriod, price, priceStandard, gSort, pinyin, headPinyin, depEntity);
+		return Objects.hash(goodsId, goodsName, fatherId, purStandardName, applyStandardName, sellStandardName, stockPurStandard, stockApplyStandard, stockSellStandard, type, isWeight, status, outDepId, alarmWeight, qualityPeriod, price, gSort, pinyin, headPinyin, depEntity);
 	}
 
 	@Override

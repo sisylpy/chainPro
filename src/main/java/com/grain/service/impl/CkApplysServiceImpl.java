@@ -1,5 +1,7 @@
 package com.grain.service.impl;
 
+import com.grain.entity.CkGoodsEntity;
+import com.grain.entity.CkStoreEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +41,7 @@ public class CkApplysServiceImpl implements CkApplysService {
 	
 	@Override
 	public void update(CkApplysEntity ckApplys){
+
 		ckApplysDao.update(ckApplys);
 	}
 	
@@ -73,9 +76,9 @@ public class CkApplysServiceImpl implements CkApplysService {
 
 
     @Override
-    public List<Integer> queryPintTimes() {
+    public List<Integer> queryPintTimes(Integer outDepId) {
 
-		return ckApplysDao.queryPintTimes();
+		return ckApplysDao.queryPintTimes(outDepId);
     }
 
 	@Override
@@ -89,5 +92,35 @@ public class CkApplysServiceImpl implements CkApplysService {
 
 		return ckApplysDao.queryOutDepApplysByQueryIds(map);
     }
+
+    @Override
+    public List<CkApplysEntity> querySorts(Map<String, Object> map) {
+
+		return ckApplysDao.querySorts(map);
+    }
+
+    @Override
+    public List<CkApplysEntity> queryEnterApplysByPageNumber(Map<String, Object> map) {
+
+		return ckApplysDao.queryEnterApplysByPageNumber(map);
+    }
+
+    @Override
+    public List<CkApplysEntity> getPickStoreListByOutDepId(Map<String, Object> map) {
+
+		return ckApplysDao.queryPickStoreListByOutDepId(map);
+    }
+
+	@Override
+	public List<CkApplysEntity> queryGoodsFatherByStoreIds(Map<String, Object> map) {
+		return ckApplysDao.queryGoodsFatherByStoreIds(map);
+	}
+
+    @Override
+    public List<CkApplysEntity> queryApplysGoodsStatusByDepId(Map<String, Object> map) {
+
+		return ckApplysDao.queryTodayApplysByDepId(map);
+    }
+
 
 }

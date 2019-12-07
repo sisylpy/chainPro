@@ -11,7 +11,7 @@
  Target Server Version : 80012
  File Encoding         : 65001
 
- Date: 08/11/2019 20:26:40
+ Date: 29/11/2019 17:13:48
 */
 
 SET NAMES utf8mb4;
@@ -34,61 +34,17 @@ CREATE TABLE `ck_applys` (
   `apply_status` tinyint(2) DEFAULT NULL COMMENT '订货申请状态"0，新申请；1，打印出库单；2，出货完成；3，打印送货单，4，收货"',
   `apply_line_id` int(20) DEFAULT NULL COMMENT '线路id',
   `page_number` int(4) DEFAULT NULL COMMENT '打印页码',
+  `apply_goods_father_id` int(20) DEFAULT NULL COMMENT '商品类别id',
   PRIMARY KEY (`apply_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=49 DEFAULT CHARSET=utf16 COLLATE=utf16_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf16 COLLATE=utf16_czech_ci;
 
 -- ----------------------------
 -- Records of ck_applys
 -- ----------------------------
 BEGIN;
-INSERT INTO `ck_applys` VALUES (1, 2, 11.00, '斤', 1, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 2, NULL);
-INSERT INTO `ck_applys` VALUES (2, 3, 12.00, '斤', 1, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 1, NULL);
-INSERT INTO `ck_applys` VALUES (3, 4, 13.00, '斤', 1, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 1, NULL);
-INSERT INTO `ck_applys` VALUES (4, 5, 14.00, '斤', 1, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 1, NULL);
-INSERT INTO `ck_applys` VALUES (5, 6, 15.00, '斤', 1, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 2, NULL);
-INSERT INTO `ck_applys` VALUES (6, 2, 21.00, '斤', 2, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 1, NULL);
-INSERT INTO `ck_applys` VALUES (7, 3, 22.00, '斤', 2, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 1, NULL);
-INSERT INTO `ck_applys` VALUES (8, 4, 23.00, '斤', 2, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 1, NULL);
-INSERT INTO `ck_applys` VALUES (9, 5, 24.00, '斤', 2, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 1, NULL);
-INSERT INTO `ck_applys` VALUES (10, 6, 25.00, '斤', 2, 1, '十月 25, 2019', '十月 25, 2019', NULL, 2, 1, NULL);
-INSERT INTO `ck_applys` VALUES (11, 2, 31.00, '斤', 3, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (12, 3, 32.00, '斤', 3, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (13, 4, 33.00, '斤', 3, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (14, 5, 34.00, '斤', 3, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (15, 6, 35.00, '斤', 3, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (16, 2, 41.00, '斤', 4, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (17, 3, 42.00, '斤', 4, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (18, 4, 43.00, '斤', 4, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (19, 5, 44.00, '斤', 4, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (20, 6, 45.00, '斤', 4, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (21, 2, 51.00, '斤', 5, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (22, 3, 52.00, '斤', 5, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (23, 4, 53.00, '斤', 5, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (24, 5, 54.00, '斤', 5, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (25, 6, 55.00, '斤', 5, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (26, 2, 61.00, '斤', 6, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (27, 3, 62.00, '斤', 6, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (28, 4, 63.00, '斤', 6, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (29, 5, 64.00, '斤', 6, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (30, 2, 65.00, '斤', 6, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (31, 3, 71.00, '斤', 7, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (32, 4, 72.00, '斤', 7, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (33, 5, 73.00, '斤', 7, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (34, 6, 74.00, '斤', 7, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (35, 2, 75.00, '斤', 7, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (36, 3, 81.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (37, 4, 82.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (38, 5, 83.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (39, 6, 84.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (40, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (41, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (42, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (43, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (44, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (45, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (46, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (47, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
-INSERT INTO `ck_applys` VALUES (48, 6, 85.00, '斤', 8, 1, '十月 25, 2019', '十月 25, 2019', NULL, 0, 1, NULL);
+INSERT INTO `ck_applys` VALUES (1, 2, 9.00, '袋', 1, 1, '十一月 23, 2019', '十一月 22, 2019', NULL, 2, NULL, 1, NULL);
+INSERT INTO `ck_applys` VALUES (2, 3, 2.00, '袋', 1, 1, '十一月 28, 2019', '十一月 28, 2019', NULL, 0, NULL, NULL, NULL);
+INSERT INTO `ck_applys` VALUES (3, 4, 3.00, '袋', 1, 1, '十一月 28, 2019', '十一月 28, 2019', NULL, 0, NULL, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -143,9 +99,9 @@ CREATE TABLE `ck_goods` (
 -- ----------------------------
 BEGIN;
 INSERT INTO `ck_goods` VALUES (1, 1, '猪肉', 0, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 1, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (2, NULL, 'pork1', 1, '斤', '袋', NULL, NULL, 1, 1, 5, 1, '32.8', 1, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (3, NULL, 'pork2', 1, '斤', '袋', NULL, NULL, 2, 1, 50, 10, '32.8', 2, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (4, NULL, 'pork3', 1, '斤', '袋', NULL, NULL, 1, 1, 30, 90, '32.8', 3, NULL, NULL, 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (2, NULL, '精品肘子', 1, '斤', '袋', NULL, NULL, 1, 1, 5, 1, '32.8', 1, NULL, NULL, 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (3, NULL, '猪头肉', 1, '斤', '袋', NULL, NULL, 2, 1, 50, 10, '32.8', 2, 'zhutourou', 'ztr', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (4, NULL, '散猪头肉', 1, '斤', '袋', NULL, NULL, 1, 1, 30, 90, '32.8', 3, 'sanzhutourou', 'sztr', 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (5, NULL, 'pork4', 1, '斤', '袋', NULL, NULL, 2, 1, 10, 30, '32.8', 4, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (6, NULL, 'pork5', 1, '斤', '袋', NULL, NULL, 1, 1, 50, 10, '32.8', 5, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (7, NULL, 'pork6', 1, '斤', '袋', NULL, NULL, 0, 1, 5, 3, '32.8', 6, NULL, NULL, 100.00, 80.00, NULL);
@@ -163,11 +119,11 @@ INSERT INTO `ck_goods` VALUES (18, NULL, 'pork18', 1, '斤', '袋', NULL, NULL, 
 INSERT INTO `ck_goods` VALUES (19, NULL, 'pork19', 1, '斤', '袋', NULL, NULL, 1, 1, NULL, NULL, '32.8', 18, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (20, NULL, 'pork20', 1, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 19, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (21, 1, '肠', 0, '斤', '袋', NULL, NULL, 1, 1, NULL, NULL, '32.8', 2, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (22, NULL, 'chang1', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 1, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (23, NULL, 'chang2', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 2, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (24, NULL, 'chang3', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 3, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (25, NULL, 'chang4', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 4, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (26, NULL, 'chang5', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 5, NULL, NULL, 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (22, NULL, '红肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 1, 'hongchang', 'hc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (23, NULL, '蒜肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 2, 'suanchang', 'sc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (24, NULL, '老北京蒜肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 3, 'laobeijingsuanchang', 'lbjsc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (25, NULL, '盘肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 4, 'panchang', 'pc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (26, NULL, '丹麦肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 5, 'danmaichang', 'dmc', 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (27, NULL, 'chang6', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 6, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (28, NULL, 'chang7', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 7, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (29, NULL, 'chang8', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 8, NULL, NULL, 100.00, 80.00, NULL);
@@ -224,8 +180,8 @@ INSERT INTO `ck_goods` VALUES (79, NULL, 'liangcai17', 63, '斤', '袋', NULL, N
 INSERT INTO `ck_goods` VALUES (80, NULL, 'liangcai18', 63, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 18, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (81, NULL, 'liangcai19', 63, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 19, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (82, NULL, 'liangcai20', 63, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 20, 'jpppp3', 'jp3', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (83, 2, '类别1', 0, '斤', '袋', NULL, NULL, NULL, NULL, NULL, NULL, '32.8', 5, 'jjjjjp2', 'jp2', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (84, NULL, '精品红场', 21, '斤', '袋', NULL, 1, NULL, NULL, NULL, NULL, '40.00', NULL, 'jingpinhongchang', 'jphc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (83, 2, '类别1', 0, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 5, 'jjjjjp2', 'jp2', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (84, NULL, '精品红场', 21, '斤', '袋', NULL, 1, NULL, 1, NULL, NULL, '40.00', NULL, 'jingpinhongchang', 'jphc', 100.00, 80.00, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -241,7 +197,7 @@ CREATE TABLE `ck_in_bill` (
   `is_pay` tinyint(2) DEFAULT NULL COMMENT '是否支付',
   `pay_mode` tinyint(2) DEFAULT NULL COMMENT '支付方式：“1:现金”，“2, 记账”“3，微信”',
   PRIMARY KEY (`in_bill_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_in_bill
@@ -256,6 +212,8 @@ INSERT INTO `ck_in_bill` VALUES (6, 1, NULL, 1, NULL, NULL, NULL);
 INSERT INTO `ck_in_bill` VALUES (7, 1, NULL, 1, NULL, NULL, NULL);
 INSERT INTO `ck_in_bill` VALUES (8, 1, NULL, 1, NULL, NULL, NULL);
 INSERT INTO `ck_in_bill` VALUES (9, -1, NULL, 1, NULL, NULL, NULL);
+INSERT INTO `ck_in_bill` VALUES (10, -1, NULL, 1, NULL, NULL, NULL);
+INSERT INTO `ck_in_bill` VALUES (11, -1, NULL, 1, NULL, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -270,7 +228,7 @@ CREATE TABLE `ck_in_sub_bill` (
   `stock_quantity` float(10,2) DEFAULT NULL,
   `unit_price` float(10,2) DEFAULT NULL,
   PRIMARY KEY (`in_sub_bill_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_in_sub_bill
@@ -288,6 +246,8 @@ INSERT INTO `ck_in_sub_bill` VALUES (9, NULL, 82, 2222.00, NULL, NULL);
 INSERT INTO `ck_in_sub_bill` VALUES (10, 8, 82, 2.00, NULL, NULL);
 INSERT INTO `ck_in_sub_bill` VALUES (11, 8, 84, 4.00, NULL, NULL);
 INSERT INTO `ck_in_sub_bill` VALUES (12, 9, 84, 100.00, NULL, NULL);
+INSERT INTO `ck_in_sub_bill` VALUES (13, 10, 84, 9.00, NULL, NULL);
+INSERT INTO `ck_in_sub_bill` VALUES (14, 11, 84, 100.00, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -350,7 +310,7 @@ DROP TABLE IF EXISTS `ck_stock_record`;
 CREATE TABLE `ck_stock_record` (
   `stock_record_id` int(20) NOT NULL AUTO_INCREMENT,
   `st_apply_id` int(20) DEFAULT NULL COMMENT '申请id',
-  `quantity` float(20,2) DEFAULT NULL COMMENT '出库数量',
+  `quantity` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '出库数量',
   `out_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '出库时间',
   `pick_user_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '拣货人员',
   `check_user_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '检查人员',
@@ -363,22 +323,13 @@ CREATE TABLE `ck_stock_record` (
   `discount_price` varchar(10) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '出货单价',
   `is_discount` tinyint(2) DEFAULT NULL COMMENT '是否打折',
   PRIMARY KEY (`stock_record_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=36 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_stock_record
 -- ----------------------------
 BEGIN;
-INSERT INTO `ck_stock_record` VALUES (26, 1, 20.00, NULL, NULL, NULL, NULL, 0, 1, 2, 1, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (27, 6, 23.50, NULL, NULL, NULL, NULL, 0, 1, 2, 1, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (28, 2, 12.00, NULL, NULL, NULL, NULL, 0, 1, 3, 1, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (29, 7, 100.00, NULL, NULL, NULL, NULL, 0, 1, 3, 1, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (30, 3, 90.00, NULL, NULL, NULL, NULL, 0, 1, 4, 1, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (31, 8, 80.00, NULL, NULL, NULL, NULL, 0, 1, 4, 2, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (32, 9, 70.00, NULL, NULL, NULL, NULL, 0, 1, 5, 2, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (33, 4, 60.00, NULL, NULL, NULL, NULL, 0, 1, 5, 1, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (34, 10, 50.00, NULL, NULL, NULL, NULL, 0, 1, 6, 2, 0, '32.8', NULL);
-INSERT INTO `ck_stock_record` VALUES (35, 5, 40.00, NULL, NULL, NULL, NULL, 0, 1, 6, 1, 0, '32.8', NULL);
+INSERT INTO `ck_stock_record` VALUES (1, 1, '88', NULL, NULL, NULL, NULL, 0, 1, 2, 1, 0, '32.8', NULL);
 COMMIT;
 
 -- ----------------------------
@@ -408,25 +359,25 @@ CREATE TABLE `ck_store` (
 -- Records of ck_store
 -- ----------------------------
 BEGIN;
-INSERT INTO `ck_store` VALUES (1, '美林湾华联', '阿看看短发凉快', '1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'eyeseejoy', '美林', '燕郊3店', 1);
-INSERT INTO `ck_store` VALUES (2, '鲜汇', '啊啊啊啊啊', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '鲜汇', '燕郊2店', 1);
-INSERT INTO `ck_store` VALUES (3, '天丰利', '阿凡达说法是否打算发', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '天', '北京1店', 1);
-INSERT INTO `ck_store` VALUES (4, '金鱼池熟食', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '金鱼池', '北京2店', 1);
-INSERT INTO `ck_store` VALUES (5, '店铺1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '4店', '北京4店', 1);
-INSERT INTO `ck_store` VALUES (6, '店铺2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '5店', '北京5店', 1);
-INSERT INTO `ck_store` VALUES (7, '店铺3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '6店', '北京6店', 1);
-INSERT INTO `ck_store` VALUES (8, '店铺4', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '7店', '北京7店', 1);
-INSERT INTO `ck_store` VALUES (9, '店铺5', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '8店', '北京8店', 1);
-INSERT INTO `ck_store` VALUES (10, '店铺6', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
-INSERT INTO `ck_store` VALUES (11, '店铺7', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `ck_store` VALUES (12, '店铺8', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
-INSERT INTO `ck_store` VALUES (13, '店铺9', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
-INSERT INTO `ck_store` VALUES (15, '店铺10', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `ck_store` VALUES (16, '店铺11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `ck_store` VALUES (17, '店铺12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
-INSERT INTO `ck_store` VALUES (18, '店铺13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `ck_store` VALUES (19, '店铺14', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
-INSERT INTO `ck_store` VALUES (20, '店铺15', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+INSERT INTO `ck_store` VALUES (1, '美林湾华联', '阿看看短发凉快', '1', NULL, NULL, NULL, NULL, NULL, NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIH9Tibwka8Z2xH4tU8xhW0f6hXs7ib8aAswStBUoiaPibVVq5icnNBJzbaSMgzbNGcwQe1ib2uVW7d8Byw/132', 'eyeseejoy', '美林', '燕郊3店', 1);
+INSERT INTO `ck_store` VALUES (2, '鲜汇', '啊啊啊啊啊', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '鲜汇', '燕郊2店', 1);
+INSERT INTO `ck_store` VALUES (3, '天丰利', '阿凡达说法是否打算发', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '天', '北京1店', 1);
+INSERT INTO `ck_store` VALUES (4, '金鱼池熟食', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '金鱼池', '北京2店', 1);
+INSERT INTO `ck_store` VALUES (5, '店铺1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '1店', '北京1店', 1);
+INSERT INTO `ck_store` VALUES (6, '店铺2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '2店', '北京2店', 1);
+INSERT INTO `ck_store` VALUES (7, '店铺3', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '3店', '北京3店', 1);
+INSERT INTO `ck_store` VALUES (8, '店铺4', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '4店', '北京4店', 1);
+INSERT INTO `ck_store` VALUES (9, '店铺5', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '5店', '北京5店', 1);
+INSERT INTO `ck_store` VALUES (10, '店铺6', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '6店', '北京6店', 1);
+INSERT INTO `ck_store` VALUES (11, '店铺7', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '7店', '北京7店', 0);
+INSERT INTO `ck_store` VALUES (12, '店铺8', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '8店', '北京8店', 1);
+INSERT INTO `ck_store` VALUES (13, '店铺9', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '9店', '北京9店', 1);
+INSERT INTO `ck_store` VALUES (15, '店铺10', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '10店', '北京10店', 0);
+INSERT INTO `ck_store` VALUES (16, '店铺11', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '11店', '北京11店', 0);
+INSERT INTO `ck_store` VALUES (17, '店铺12', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '12店', '北京12店', 1);
+INSERT INTO `ck_store` VALUES (18, '店铺13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '13店', '北京13店', 0);
+INSERT INTO `ck_store` VALUES (19, '店铺14', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '14店', '北京14店', 0);
+INSERT INTO `ck_store` VALUES (20, '店铺15', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '15店', '北京15店', 0);
 COMMIT;
 
 -- ----------------------------
@@ -520,23 +471,6 @@ INSERT INTO `ck_user_role` VALUES (28, 18, 5);
 COMMIT;
 
 -- ----------------------------
--- Table structure for stock_record
--- ----------------------------
-DROP TABLE IF EXISTS `stock_record`;
-CREATE TABLE `stock_record` (
-  `stock_record_id` int(20) NOT NULL,
-  `out_dep_id` int(20) DEFAULT NULL,
-  `goods_id` int(20) DEFAULT NULL,
-  `quantity` float(10,2) DEFAULT NULL,
-  `type` tinyint(2) DEFAULT NULL,
-  `in_dep_id` int(20) DEFAULT NULL,
-  `apply_id` int(20) DEFAULT NULL,
-  `stock_user_id` int(20) DEFAULT NULL,
-  `datetime` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL,
-  PRIMARY KEY (`stock_record_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
-
--- ----------------------------
 -- Table structure for sys_config
 -- ----------------------------
 DROP TABLE IF EXISTS `sys_config`;
@@ -564,7 +498,7 @@ CREATE TABLE `sys_menu` (
   `icon` varchar(50) DEFAULT NULL COMMENT '菜单图标',
   `order_num` int(11) DEFAULT NULL COMMENT '排序',
   PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=76 DEFAULT CHARSET=utf8 COMMENT='菜单管理';
+) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8 COMMENT='菜单管理';
 
 -- ----------------------------
 -- Records of sys_menu
@@ -598,9 +532,9 @@ INSERT INTO `sys_menu` VALUES (25, 4, '修改', NULL, 'sys:menu:update,sys:menu:
 INSERT INTO `sys_menu` VALUES (26, 4, '删除', NULL, 'sys:menu:delete', 2, NULL, 0);
 INSERT INTO `sys_menu` VALUES (27, 1, '参数管理', 'sys/config.html', 'sys:config:list,sys:config:info,sys:config:save,sys:config:update,sys:config:delete', 1, 'fa fa-sun-o', 6);
 INSERT INTO `sys_menu` VALUES (28, 1, '代码生成器', 'sys/generator.html', 'sys:generator:list,sys:generator:code', 1, 'fa fa-rocket', 7);
-INSERT INTO `sys_menu` VALUES (29, 0, '今日出货', NULL, NULL, 0, 'fa fa-cog', 3);
+INSERT INTO `sys_menu` VALUES (29, -1, '今日出货', NULL, NULL, 0, 'fa fa-cog', 3);
 INSERT INTO `sys_menu` VALUES (30, 29, '订货申请', 'orderApplication', 'ckapplys:list, ckapplys:info, ckapplys:save, ckapplys:update, ckapplys:delete', 1, NULL, 1);
-INSERT INTO `sys_menu` VALUES (31, 29, '店铺出货单', 'deliveryOrder', 'ckapplys:list, ckapplys:info, ckapplys:save, ckapplys:update, ckapplys:delete', 1, NULL, 2);
+INSERT INTO `sys_menu` VALUES (31, 29, '出货单', 'deliveryOrder', 'ckapplys:list, ckapplys:info, ckapplys:save, ckapplys:update, ckapplys:delete', 1, NULL, 3);
 INSERT INTO `sys_menu` VALUES (32, 29, '送货', 'so_deliver', NULL, 1, NULL, 3);
 INSERT INTO `sys_menu` VALUES (38, 37, '店铺销售', '/point', NULL, 1, NULL, 2);
 INSERT INTO `sys_menu` VALUES (39, 37, '产品销售', '/sellProducts', NULL, 1, NULL, 30);
@@ -610,8 +544,8 @@ INSERT INTO `sys_menu` VALUES (42, 40, '硬件设备', '/printer', NULL, 1, NULL
 INSERT INTO `sys_menu` VALUES (51, 37, '集团销售', '/groupSales', NULL, 1, NULL, 0);
 INSERT INTO `sys_menu` VALUES (52, 0, '店铺', NULL, NULL, 0, 'fa fa-cog', 0);
 INSERT INTO `sys_menu` VALUES (53, 0, '供货商', NULL, NULL, 0, 'fa fa-cog', 6);
-INSERT INTO `sys_menu` VALUES (56, 52, '经营数据', 'businessData', NULL, 1, 'fa fa-user', 0);
-INSERT INTO `sys_menu` VALUES (57, 52, '成本控制', 'costControl', NULL, 1, 'fa fa-user', 1);
+INSERT INTO `sys_menu` VALUES (56, 52, '经营数据', 'businessData', NULL, 1, 'fa fa-user', 1);
+INSERT INTO `sys_menu` VALUES (57, 52, '成本控制', 'costControl', NULL, 1, 'fa fa-user', 2);
 INSERT INTO `sys_menu` VALUES (62, 53, '供货商列表', 'cksupplier/cksupplier.html', 'cksupplier:list, cksupplier:info, cksupplier:save, cksupplier:update, cksupplier:delete', 1, 'fa fa-cog', 1);
 INSERT INTO `sys_menu` VALUES (63, 40, '店铺', 'storeList', 'ckstore:list, ckstore:info, ckstore:save, ckstore:update, ckstore:delete', 1, 'fa fa-cog', 3);
 INSERT INTO `sys_menu` VALUES (64, 40, '送货路线', 'ckLine', 'ckline:list, ckline:info, ckline:save, ckline:update, ckline:delete', 1, 'fa fa-cog', 6);
@@ -624,6 +558,8 @@ INSERT INTO `sys_menu` VALUES (72, 69, '采购分析', '/purchase/anlysise', NUL
 INSERT INTO `sys_menu` VALUES (73, 52, '销售分析', 'store?store_id=', NULL, 1, 'fa fa-user', 2);
 INSERT INTO `sys_menu` VALUES (74, 69, '采购计划', 'plan', 'ckinbill:list, ckinbill:info, ckinbill:save, ckinbill:update, ckinbill:delete', 1, 'fa', 3);
 INSERT INTO `sys_menu` VALUES (75, 69, '原料', 'rawMaterial', 'ckinbill:list, ckinbill:info, ckinbill:save, ckinbill:update, ckinbill:delete', 1, 'fa', 2);
+INSERT INTO `sys_menu` VALUES (76, 29, '拣货单录入', 'enterOutStock', 'ckstockrecord:list, ckstockrecord:info, ckstockrecord:save, ckstockrecord:update, ckapplys:delete', 1, NULL, 2);
+INSERT INTO `sys_menu` VALUES (77, 52, '每日订货', 'order', NULL, 1, 'fa fa-user', 0);
 COMMIT;
 
 -- ----------------------------

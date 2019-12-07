@@ -102,6 +102,11 @@ public class CkGoodsServiceImpl implements CkGoodsService {
 		return ckGoodsDao.queryOutDepGoodsListByFatherId(map);
 	}
 
+    @Override
+    public List<CkGoodsEntity> queryRecordGoods(String substring) {
+
+		return ckGoodsDao.queryGoodsListByRecord(substring);
+    }
 
 
 }

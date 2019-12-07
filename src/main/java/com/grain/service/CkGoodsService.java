@@ -42,4 +42,5 @@ public interface CkGoodsService {
 
 	List<CkGoodsEntity> queryOutDepGoodsListByFatherId(Map<String, Object> map);
 
+    List<CkGoodsEntity> queryRecordGoods(String substring);
 }

@@ -8,6 +8,8 @@ package com.grain.dao;
  */
 
 import com.grain.entity.CkApplysEntity;
+import com.grain.entity.CkGoodsEntity;
+import com.grain.entity.CkStoreEntity;
 
 import java.util.List;
 import java.util.Map;
@@ -21,9 +23,21 @@ public interface CkApplysDao extends BaseDao<CkApplysEntity> {
 
     List<CkApplysEntity> queryOutDepStores(Map<String, Object> map);
 
-    List<Integer> queryPintTimes();
+    List<Integer> queryPintTimes(Integer outDepId);
 
     Integer queryPrintMax(String date);
 
     List<CkApplysEntity> queryOutDepApplysByQueryIds(Map<String, Object> map);
+
+    List<CkApplysEntity> querySorts(Map<String, Object> map);
+
+    List<CkApplysEntity> queryEnterApplysByPageNumber(Map<String, Object> map);
+
+    List<CkApplysEntity> queryPickStoreListByOutDepId(Map<String, Object> map);
+
+    List<CkApplysEntity> queryGoodsFatherByStoreIds(Map<String, Object> map);
+
+    List<CkApplysEntity> queryTodayApplysByDepId(Map<String, Object> map);
+
+//    List<CkApplysEntity> queryApplysOrderNumberByStoreId(Integer storeId);
 }

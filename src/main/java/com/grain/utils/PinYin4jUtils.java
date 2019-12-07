@@ -386,7 +386,7 @@ public class PinYin4jUtils {
 //        System.out.println(Arrays.toString(headArray));
 //
         String s2 = "猪头肉";
-//        System.out.println(Arrays.toString(stringToPinyin(s2, true, ",")));
+        System.out.println(Arrays.toString(stringToPinyin(s2, true, ",")));
 
         String s = hanziToPinyin(s2, "-");
         System.out.println(s);

@@ -46,6 +46,8 @@
     <freemarker-version>2.3.23</freemarker-version>
     <!-- lombok -->
     <lombok-version>1.16.6</lombok-version>
+    <!-- baidu -->
+    <com.baidu.aip>4.10.0</com.baidu.aip>
 
 
   </properties>
@@ -275,7 +277,18 @@
       <version>2.5.0</version>
     </dependency>
 
-
+    <!-- 百度语音-->
+    <dependency>
+      <groupId>com.baidu.aip</groupId>
+      <artifactId>java-sdk</artifactId>
+      <version>${com.baidu.aip}</version>
+    </dependency>
+<!-- 微信小程序 accseetoken-->
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcprov-jdk16</artifactId>
+      <version>1.46</version>
+    </dependency>
 
 
 

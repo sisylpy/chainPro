@@ -36,6 +36,7 @@
 	        <value>
 	        	/statics/**=anon
 	        	/login.html=anon
+				/apply.html=anon
 				/sys/login=anon
 				/sys/**=anon
 				/api/**=anon

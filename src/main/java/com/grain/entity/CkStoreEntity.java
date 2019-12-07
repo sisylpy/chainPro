@@ -76,6 +76,13 @@ public class CkStoreEntity implements Serializable, Comparable {
 	 */
 	private String outLabel;
 
+	/**
+	 * 是否被选中打印
+	 * @param o
+	 * @return
+	 */
+	private Boolean isSelected;
+
 
 
 

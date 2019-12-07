@@ -33,4 +33,5 @@ public interface CkGoodsDao extends BaseDao<CkGoodsEntity> {
 
     List<CkGoodsEntity> queryOutDepGoodsListByFatherId(Map<String, Object> map);
 
+    List<CkGoodsEntity> queryGoodsListByRecord(String substring);
 }

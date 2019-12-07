@@ -5,27 +5,36 @@ package com.grain.controller;
  * @date 2019-09-19 19:11:01
  */
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
-import com.grain.entity.SysUserEntity;
-import com.grain.utils.ParseObject;
-import com.grain.utils.PinYin4jUtils;
+import com.baidu.aip.speech.TtsResponse;
+import com.baidu.aip.util.Util;
+import com.grain.utils.*;
+import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import com.grain.entity.CkGoodsEntity;
 import com.grain.service.CkGoodsService;
-import com.grain.utils.PageUtils;
-import com.grain.utils.R;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
 
 import static com.grain.utils.PinYin4jUtils.*;
 
@@ -36,6 +45,84 @@ public class CkGoodsController {
     @Autowired
     private CkGoodsService ckGoodsService;
 
+
+
+
+
+
+
+    /**
+     * 读句子识别结果
+     *
+     * @param file
+     * @param session
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/readGoods", produces = "text/html;charset=UTF-8")
+    @ResponseBody
+    public Object readGoods(@RequestParam("file") MultipartFile file,
+                            HttpSession session) throws Exception {
+
+        //上传音频文件
+        String newFileName = "uploadRecord";
+        String realPath = UploadFile.upload(session, newFileName, file);
+
+        //2，mp3转pcm格式
+        String filename = file.getOriginalFilename();
+        String wavfile = realPath + "/" + filename;
+
+
+        String outfile = "";
+        if (filename.contains(".mp3")) {
+            String newoldName = filename.substring(0, filename.lastIndexOf(".")) + ".pcm";
+            outfile = realPath + "/" + newoldName;
+            FFMpegUtil.convetor(wavfile, outfile);
+        }
+
+        //3，百度识别
+        try {
+            File src = new File(outfile);
+            FileInputStream fileInputStream = new FileInputStream(src);
+            byte[] pcmBytes = IOUtils.toByteArray(fileInputStream);
+            JSONObject resultJson = SpeechUtil.speechBdApi(pcmBytes);
+            System.out.println(resultJson);
+            System.out.println("why??????");
+            if (null != resultJson && resultJson.getInt("err_no") == 0) {
+                JSONArray jsonArray = resultJson.getJSONArray("result");
+                String resStr = jsonArray.toString();
+                resStr = resStr.replaceAll("[\\pP\\pS\\pZ]", "");
+
+                String pinyin = hanziToPinyin(resStr);
+                System.out.println(pinyin+"pinyin===========++++++");
+
+               List<CkGoodsEntity> queryGoods = ckGoodsService.queryRecordGoods(pinyin);
+                System.out.println("++++++");
+                System.out.println(queryGoods);
+                Map<String, Object> map = new HashMap<>();
+                if(queryGoods.size() == 1){
+                    map.put("code",1);
+                    map.put("list", queryGoods);
+                    return map;
+                }else if(queryGoods.size() > 1){
+                    System.out.println("猪头肉。。。。。。");
+                    map.put("code",2);
+                    map.put("list", queryGoods);
+                    return map;
+                }
+                else {
+                    map.put("code", 0);
+                    map.put("result", resStr);
+                    return map;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return -1;
+    }
 
 
     @RequestMapping(value = "/outDepCateList/{depId}")
@@ -83,6 +170,17 @@ public class CkGoodsController {
 
 
 
+    @ResponseBody
+    @RequestMapping("/queryPinyin/{pinyin}")
+    public R queryPinyin(@PathVariable String  pinyin) {
+
+       List<CkGoodsEntity> list =   ckGoodsService.queryPinyin(pinyin);
+        return R.ok().put("data",list);
+    }
+
+
+
+
     @RequestMapping(value = "/goodsList", method = RequestMethod.POST)
     @ResponseBody
     public R getCateGoods(@RequestParam Integer page,@RequestParam Integer limit,@RequestParam Integer fatherId) {
@@ -100,15 +198,6 @@ public class CkGoodsController {
         System.out.println(cateGoodsList);
         System.out.println("sisy");
         return R.ok().put("page", pageUtil);
-    }
-
-
-    @ResponseBody
-    @RequestMapping("/queryPinyin/{pinyin}")
-    public R queryPinyin(@PathVariable String  pinyin) {
-
-       List<CkGoodsEntity> list =   ckGoodsService.queryPinyin(pinyin);
-        return R.ok().put("data",list);
     }
 
 

@@ -30,7 +30,7 @@ public class CkStockRecordEntity implements Serializable {
 	/**
 	 *  出库数量
 	 */
-	private Float quantity;
+	private String quantity;
 	/**
 	 *  出库时间
 	 */

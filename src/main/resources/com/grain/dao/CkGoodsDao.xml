@@ -40,12 +40,12 @@
 		<result property="stockApplyStandard" column="stock_apply_standard"/>
 		<result property="stockSellStandard" column="stock_sell_standard"/>
 		<result property="price" column="price"/>
-		<result property="priceStandard" column="price_standard"/>
 		<result property="alarmWeight" column="alarm_weight"/>
 		<result property="gSort" column="g_sort"/>
 		<result property="pinyin" column="pinyin"/>
-		<result property="gOutDepId" column="out_dep_id"/>
+		<result property="outDepId" column="out_dep_id"/>
 		<result property="headPinyin" column="head_pinyin"/>
+		<result property="fatherId" column="father_id"/>
 		<association property="depEntity" javaType="CkDepEntity">
 			<id property="depId" column="dep_id"/>
 			<result property="depName" column="dep_name"/>
@@ -85,8 +85,9 @@
 		</if>
 
 	</select>
-
-
+    <select id="queryGoodsListByRecord" resultType="com.grain.entity.CkGoodsEntity">
+		select  * from ck_goods where pinyin like concat(concat('%',#{substring}),'%')
+	</select>
 
 
     <insert id="save" parameterType="com.grain.entity.CkGoodsEntity">
@@ -126,7 +127,7 @@
 			#{type},
 			#{isWeight},
 			#{status},
-		 	#{gOutDepId},
+		 	#{outDepId},
 		    #{alarmWeight},
 		    #{qualityPeriod},
 		    #{price},
@@ -153,7 +154,6 @@
 			<if test="qualityPeriod != null">`quality_period` = #{qualityPeriod}, </if>
 			<if test="alarmWeight != null">`alarm_weight` = #{alarmWeight}, </if>
 			<if test="price != null">`price` = #{price}, </if>
-			<if test="priceStandard != null">`price_standard` = #{priceStandard}, </if>
 			<if test="status != null">`status` = #{status}</if>
 			<if test="gSort != null">`g_sort` = #{gSort}</if>
 			<if test="pinyin != null">`pinyin` = #{pinyin}</if>
