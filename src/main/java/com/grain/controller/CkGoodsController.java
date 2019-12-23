@@ -5,10 +5,8 @@ package com.grain.controller;
  * @date 2019-09-19 19:11:01
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +17,10 @@ import com.baidu.aip.speech.TtsResponse;
 import com.baidu.aip.util.Util;
 import com.grain.utils.*;
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -34,6 +36,7 @@ import com.grain.service.CkGoodsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import static com.grain.utils.PinYin4jUtils.*;
@@ -44,11 +47,6 @@ import static com.grain.utils.PinYin4jUtils.*;
 public class CkGoodsController {
     @Autowired
     private CkGoodsService ckGoodsService;
-
-
-
-
-
 
 
     /**
@@ -72,7 +70,6 @@ public class CkGoodsController {
         String filename = file.getOriginalFilename();
         String wavfile = realPath + "/" + filename;
 
-
         String outfile = "";
         if (filename.contains(".mp3")) {
             String newoldName = filename.substring(0, filename.lastIndexOf(".")) + ".pcm";
@@ -94,23 +91,20 @@ public class CkGoodsController {
                 resStr = resStr.replaceAll("[\\pP\\pS\\pZ]", "");
 
                 String pinyin = hanziToPinyin(resStr);
-                System.out.println(pinyin+"pinyin===========++++++");
 
-               List<CkGoodsEntity> queryGoods = ckGoodsService.queryRecordGoods(pinyin);
+                List<CkGoodsEntity> queryGoods = ckGoodsService.queryRecordGoods(pinyin);
                 System.out.println("++++++");
                 System.out.println(queryGoods);
                 Map<String, Object> map = new HashMap<>();
-                if(queryGoods.size() == 1){
-                    map.put("code",1);
+                if (queryGoods.size() == 1) {
+                    map.put("code", 1);
                     map.put("list", queryGoods);
                     return map;
-                }else if(queryGoods.size() > 1){
-                    System.out.println("猪头肉。。。。。。");
-                    map.put("code",2);
+                } else if (queryGoods.size() > 1) {
+                    map.put("code", 2);
                     map.put("list", queryGoods);
                     return map;
-                }
-                else {
+                } else {
                     map.put("code", 0);
                     map.put("result", resStr);
                     return map;
@@ -119,8 +113,6 @@ public class CkGoodsController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         return -1;
     }
 
@@ -134,12 +126,13 @@ public class CkGoodsController {
         return R.ok().put("data", cateGoodsList);
     }
 
+
     @RequestMapping(value = "/outDepGoodsList", method = RequestMethod.POST)
     @ResponseBody
-    public R outDepGoodsList(@RequestParam Integer page,@RequestParam Integer limit,
+    public R outDepGoodsList(@RequestParam Integer page, @RequestParam Integer limit,
                              @RequestParam Integer depId, @RequestParam Integer fatherId) {
 
-        if(fatherId.equals(-1)){
+        if (fatherId.equals(-1)) {
             Map<String, Object> map = new HashMap<>();
             map.put("offset", (page - 1) * limit);
             map.put("limit", limit);
@@ -150,7 +143,7 @@ public class CkGoodsController {
             PageUtils pageUtil = new PageUtils(allGoods, total, limit, page);
             return R.ok().put("page", pageUtil);
 
-        }else {
+        } else {
             Map<String, Object> map = new HashMap<>();
             map.put("offset", (page - 1) * limit);
             map.put("limit", limit);
@@ -163,27 +156,21 @@ public class CkGoodsController {
             return R.ok().put("page", pageUtil);
         }
 
-
-
-
     }
-
 
 
     @ResponseBody
     @RequestMapping("/queryPinyin/{pinyin}")
-    public R queryPinyin(@PathVariable String  pinyin) {
+    public R queryPinyin(@PathVariable String pinyin) {
 
-       List<CkGoodsEntity> list =   ckGoodsService.queryPinyin(pinyin);
-        return R.ok().put("data",list);
+        List<CkGoodsEntity> list = ckGoodsService.queryPinyin(pinyin);
+        return R.ok().put("data", list);
     }
-
-
 
 
     @RequestMapping(value = "/goodsList", method = RequestMethod.POST)
     @ResponseBody
-    public R getCateGoods(@RequestParam Integer page,@RequestParam Integer limit,@RequestParam Integer fatherId) {
+    public R getCateGoods(@RequestParam Integer page, @RequestParam Integer limit, @RequestParam Integer fatherId) {
         System.out.println(page);
         System.out.println(limit);
         System.out.println(fatherId);
@@ -195,8 +182,6 @@ public class CkGoodsController {
         int total = ckGoodsService.queryTotal(map);
 
         PageUtils pageUtil = new PageUtils(cateGoodsList, total, limit, page);
-        System.out.println(cateGoodsList);
-        System.out.println("sisy");
         return R.ok().put("page", pageUtil);
     }
 
@@ -205,13 +190,8 @@ public class CkGoodsController {
     @ResponseBody
     public R cateGoods() {
         List<CkGoodsEntity> list = ckGoodsService.queryCateGoods();
-
-        System.out.println("jinlaile??");
         return R.ok().put("data", list);
     }
-
-
-
 
 
     /**
@@ -234,8 +214,7 @@ public class CkGoodsController {
     @ResponseBody
     @RequestMapping("/save")
     @RequiresPermissions("ckgoods:save")
-    public R save(@RequestParam String param) {
-
+    public R save(@RequestBody String param) {
 
         String s = ParseObject.parseObj(param);
         CkGoodsEntity ckGoodsEntity = JSON.parseObject(s, CkGoodsEntity.class);
@@ -279,4 +258,181 @@ public class CkGoodsController {
     }
 
 
+
+    @RequestMapping("/downloadExcel")
+    @ResponseBody
+    public void downloadExcel(HttpServletResponse response) {
+
+        System.out.println("haihaiahai");
+
+        try {
+            List<CkGoodsEntity> ckGoodsEntities = ckGoodsService.downloadGoods();
+            HSSFWorkbook wb = new HSSFWorkbook();
+            HSSFSheet sheet = wb.createSheet("产品");
+
+            //设置表头
+            HSSFRow row = sheet.createRow(0);
+
+            row.createCell(0).setCellValue("商品id");
+            row.createCell(1).setCellValue("商品名称");
+            row.createCell(2).setCellValue("父级id");
+            row.createCell(3).setCellValue("采购规格");
+            row.createCell(4).setCellValue("申请规格");
+            row.createCell(5).setCellValue("销售规格");
+            row.createCell(6).setCellValue("是否称重");
+            row.createCell(7).setCellValue("商品状态");
+            row.createCell(8).setCellValue("出货部门id");
+            row.createCell(9).setCellValue("库存报警重量");
+            row.createCell(10).setCellValue("保质期天数");
+            row.createCell(11).setCellValue("零售价");
+            row.createCell(12).setCellValue("商品排序");
+
+            //设置表体
+            HSSFRow goodsRow = null;
+            for (int i = 0; i < ckGoodsEntities.size(); i++) {
+                CkGoodsEntity ckGoodsEntity = ckGoodsEntities.get(i);
+                goodsRow = sheet.createRow(i + 1);
+                goodsRow.createCell(0).setCellValue(ckGoodsEntity.getGoodsId());
+                goodsRow.createCell(1).setCellValue(ckGoodsEntity.getGoodsName());
+                goodsRow.createCell(2).setCellValue(ckGoodsEntity.getFatherId());
+                goodsRow.createCell(3).setCellValue(ckGoodsEntity.getPurStandardName());
+                goodsRow.createCell(4).setCellValue(ckGoodsEntity.getApplyStandardName());
+                goodsRow.createCell(5).setCellValue(ckGoodsEntity.getSellStandardName());
+                goodsRow.createCell(6).setCellValue(ckGoodsEntity.getIsWeight());
+                goodsRow.createCell(7).setCellValue(ckGoodsEntity.getStatus());
+                goodsRow.createCell(8).setCellValue(ckGoodsEntity.getOutDepId());
+                goodsRow.createCell(9).setCellValue(ckGoodsEntity.getAlarmWeight());
+                goodsRow.createCell(10).setCellValue(ckGoodsEntity.getQualityPeriod());
+                goodsRow.createCell(11).setCellValue(ckGoodsEntity.getPrice());
+                goodsRow.createCell(12).setCellValue(ckGoodsEntity.getGSort());
+
+            }
+
+
+            String fileName = new String("导出商品.xls".getBytes("utf-8"), "iso8859-1");
+            response.setHeader("content-Disposition", "attachment; filename =" + fileName);
+            wb.write(response.getOutputStream());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+     @RequestMapping(value = "/downloadExcelTMP", method = RequestMethod.GET)
+      @ResponseBody
+      public void downloadExcelTMP (HttpServletResponse response, HttpSession session ) {
+
+        FileInputStream is = null;
+
+        try{
+            String fileName = new String("商品模版.xls".getBytes("utf-8"), "iso8859-1");
+            response.setHeader("content-Disposition", "attachment; filename =" + fileName);
+
+            ServletContext servletContext = session.getServletContext();
+            String realPath = servletContext.getRealPath("statics/goodsTML.xls");
+
+            is = new FileInputStream(realPath);
+
+            IOUtils.copy(is, response.getOutputStream());
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+
+        }finally {
+            if(is != null) {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+
+      }
+
+
+    @RequestMapping(value = "/uploadExcel", produces = "text/html;charset=UTF-8")
+    @ResponseBody
+    public R uploadExcel(@RequestParam("file") MultipartFile file,
+                            HttpSession session) throws Exception {
+        System.out.println(file.getName());
+        HSSFWorkbook wb = new HSSFWorkbook(file.getInputStream());
+        HSSFSheet sheet = wb.getSheetAt(0);
+        int lastRowNum = sheet.getLastRowNum();
+
+        System.out.println(lastRowNum);
+
+        Row goodsRow = null;
+
+        for(int i = 1; i <= lastRowNum; i++){
+
+            goodsRow = sheet.getRow(i);
+
+            CkGoodsEntity goods = new CkGoodsEntity();
+            goods.setType(0);
+            goods.setStockApplyStandard("0.0");
+            goods.setStockPurStandard("0.0");
+            goods.setStockSellStandard("0.0");
+
+           String goodsName =  (String)getCellValue(goodsRow.getCell(0));
+
+            String pinyin = hanziToPinyin(goodsName);
+
+            String headPinyin = getHeadStringByString(goodsName, false, null);
+            goods.setPinyin(pinyin);
+            goods.setHeadPinyin(headPinyin);
+
+            goods.setGoodsName((String)getCellValue(goodsRow.getCell(0)));
+            goods.setFatherId((Integer)getCellValue(goodsRow.getCell(1)));
+            goods.setPurStandardName((String) getCellValue(goodsRow.getCell(2)));
+            goods.setApplyStandardName((String) getCellValue(goodsRow.getCell(3)));
+            goods.setSellStandardName((String) getCellValue(goodsRow.getCell(4)));
+            goods.setIsWeight((Integer)getCellValue(goodsRow.getCell(5)));
+            goods.setStatus((Integer)getCellValue(goodsRow.getCell(6)));
+            goods.setOutDepId((Integer) getCellValue(goodsRow.getCell(7)));
+            goods.setAlarmWeight((Integer)getCellValue(goodsRow.getCell(8)));
+            goods.setQualityPeriod((Integer)getCellValue(goodsRow.getCell(9)));
+            goods.setPrice((String)getCellValue(goodsRow.getCell(10)));
+            goods.setGSort((Integer)getCellValue(goodsRow.getCell(11)));
+            ckGoodsService.save(goods);
+        }
+
+        return R.ok();
+
+    }
+
+    private Object getCellValue(Cell cell) {
+
+        switch (cell.getCellType()){
+            case STRING:
+                return cell.getRichStringCellValue().getString();
+            case NUMERIC:
+                if(DateUtil.isCellDateFormatted(cell)){
+                    return cell.getDateCellValue();
+                }else {
+                    double numericCellValue = cell.getNumericCellValue();
+
+                    String s = String.valueOf(numericCellValue);
+                    int i1 = Integer.parseInt(s.replace(".0",""));
+                    System.out.println("hahahahhahhahahha");
+                    return i1;
+                }
+            case BOOLEAN:
+                return cell.getBooleanCellValue();
+            case FORMULA:
+                return cell.getCellFormula();
+        }
+
+        return cell;
+
+    }
+
+
+
+
 }
+
+

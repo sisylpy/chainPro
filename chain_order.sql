@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : mac
+ Source Server         : mysql
  Source Server Type    : MySQL
- Source Server Version : 80012
- Source Host           : localhost:3306
+ Source Server Version : 50725
+ Source Host           : 140.143.186.94:3306
  Source Schema         : chain_order
 
  Target Server Type    : MySQL
- Target Server Version : 80012
+ Target Server Version : 50725
  File Encoding         : 65001
 
- Date: 29/11/2019 17:13:48
+ Date: 12/12/2019 15:44:16
 */
 
 SET NAMES utf8mb4;
@@ -25,26 +25,31 @@ CREATE TABLE `ck_applys` (
   `apply_id` int(20) NOT NULL AUTO_INCREMENT COMMENT '申请id',
   `apply_goods_id` int(20) NOT NULL COMMENT '申请商品id',
   `apply_number` float(10,2) NOT NULL COMMENT '申请数量',
-  `apply_standardName` varchar(6) CHARACTER SET utf16 COLLATE utf16_czech_ci NOT NULL COMMENT '申请规格',
+  `apply_standardName` varchar(6) COLLATE utf16_czech_ci NOT NULL COMMENT '申请规格',
   `apply_store_id` int(20) NOT NULL COMMENT '申请分店id',
   `out_dep_id` int(20) NOT NULL COMMENT '出货部门id',
-  `apply_time` varchar(20) CHARACTER SET utf16 COLLATE utf16_czech_ci NOT NULL COMMENT '申请时间',
-  `delivery_date` varchar(30) CHARACTER SET utf16 COLLATE utf16_czech_ci NOT NULL COMMENT '送达日期',
-  `apply_remark` varchar(100) CHARACTER SET utf16 COLLATE utf16_czech_ci DEFAULT NULL COMMENT '备注',
+  `apply_time` varchar(20) COLLATE utf16_czech_ci NOT NULL COMMENT '申请时间',
+  `delivery_date` varchar(30) COLLATE utf16_czech_ci NOT NULL COMMENT '送达日期',
+  `apply_remark` varchar(100) COLLATE utf16_czech_ci DEFAULT NULL COMMENT '备注',
   `apply_status` tinyint(2) DEFAULT NULL COMMENT '订货申请状态"0，新申请；1，打印出库单；2，出货完成；3，打印送货单，4，收货"',
   `apply_line_id` int(20) DEFAULT NULL COMMENT '线路id',
   `page_number` int(4) DEFAULT NULL COMMENT '打印页码',
   `apply_goods_father_id` int(20) DEFAULT NULL COMMENT '商品类别id',
+  `order_number` int(4) DEFAULT NULL COMMENT '订货次数',
   PRIMARY KEY (`apply_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf16 COLLATE=utf16_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf16 COLLATE=utf16_czech_ci;
 
 -- ----------------------------
 -- Records of ck_applys
 -- ----------------------------
 BEGIN;
-INSERT INTO `ck_applys` VALUES (1, 2, 9.00, '袋', 1, 1, '十一月 23, 2019', '十一月 22, 2019', NULL, 2, NULL, 1, NULL);
-INSERT INTO `ck_applys` VALUES (2, 3, 2.00, '袋', 1, 1, '十一月 28, 2019', '十一月 28, 2019', NULL, 0, NULL, NULL, NULL);
-INSERT INTO `ck_applys` VALUES (3, 4, 3.00, '袋', 1, 1, '十一月 28, 2019', '十一月 28, 2019', NULL, 0, NULL, NULL, NULL);
+INSERT INTO `ck_applys` VALUES (1, 2, 1.00, '斤', 1, 1, '十二月 10, 2019', '十二月 10, 2019', NULL, 2, NULL, 1, 1, NULL);
+INSERT INTO `ck_applys` VALUES (2, 84, 1.00, '袋', 1, 1, '十二月 10, 2019', '十二月 10, 2019', NULL, 2, NULL, 1, 21, NULL);
+INSERT INTO `ck_applys` VALUES (3, 2, 2.00, '斤', 2, 1, '十二月 10, 2019', '十二月 10, 2019', NULL, 2, NULL, 1, 1, NULL);
+INSERT INTO `ck_applys` VALUES (4, 84, 2.00, '袋', 2, 1, '十二月 10, 2019', '十二月 10, 2019', NULL, 2, NULL, 1, 21, NULL);
+INSERT INTO `ck_applys` VALUES (5, 84, 5.00, '袋', 1, 1, '十二月 10, 2019', '十二月 10, 2019', NULL, 1, NULL, 2, 21, NULL);
+INSERT INTO `ck_applys` VALUES (6, 3, 10.00, '斤', 1, 1, '十二月 10, 2019', '十二月 10, 2019', NULL, 1, NULL, 2, 1, NULL);
+INSERT INTO `ck_applys` VALUES (7, 23, 3.00, '根', 1, 1, '十二月 10, 2019', '十二月 10, 2019', NULL, 1, NULL, 2, 21, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -56,7 +61,7 @@ CREATE TABLE `ck_dep` (
   `dep_type` tinyint(2) DEFAULT NULL,
   `dep_name` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL,
   PRIMARY KEY (`dep_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_dep
@@ -65,6 +70,7 @@ BEGIN;
 INSERT INTO `ck_dep` VALUES (1, 1, '库房');
 INSERT INTO `ck_dep` VALUES (2, 1, 'aaa');
 INSERT INTO `ck_dep` VALUES (3, 1, 'bbb');
+INSERT INTO `ck_dep` VALUES (4, 1, 'bbb');
 COMMIT;
 
 -- ----------------------------
@@ -74,11 +80,11 @@ DROP TABLE IF EXISTS `ck_goods`;
 CREATE TABLE `ck_goods` (
   `goods_id` int(20) NOT NULL AUTO_INCREMENT COMMENT '商品id',
   `type` tinyint(2) DEFAULT NULL COMMENT '"1"产品（店铺显示），“2”原料（店铺不显示）',
-  `goods_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '商品名称',
+  `goods_name` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '商品名称',
   `father_id` int(20) DEFAULT NULL COMMENT '父级id',
-  `pur_standard_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '采购规格',
-  `apply_standard_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '申请规格',
-  `sell_standard_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '销售规格',
+  `pur_standard_name` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '采购规格',
+  `apply_standard_name` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '申请规格',
+  `sell_standard_name` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '销售规格',
   `is_weight` tinyint(2) DEFAULT NULL COMMENT '是否称重',
   `status` tinyint(2) DEFAULT NULL COMMENT '商品状态',
   `out_dep_id` int(20) DEFAULT NULL COMMENT '出货部门id',
@@ -92,17 +98,17 @@ CREATE TABLE `ck_goods` (
   `stock_apply_standard` float(10,2) DEFAULT NULL COMMENT '库存申请规格数量',
   `stock_sell_standard` float(10,2) DEFAULT NULL COMMENT '库存销售规格数量',
   PRIMARY KEY (`goods_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=85 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=88 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_goods
 -- ----------------------------
 BEGIN;
-INSERT INTO `ck_goods` VALUES (1, 1, '猪肉', 0, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 1, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (2, NULL, '精品肘子', 1, '斤', '袋', NULL, NULL, 1, 1, 5, 1, '32.8', 1, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (3, NULL, '猪头肉', 1, '斤', '袋', NULL, NULL, 2, 1, 50, 10, '32.8', 2, 'zhutourou', 'ztr', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (4, NULL, '散猪头肉', 1, '斤', '袋', NULL, NULL, 1, 1, 30, 90, '32.8', 3, 'sanzhutourou', 'sztr', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (5, NULL, 'pork4', 1, '斤', '袋', NULL, NULL, 2, 1, 10, 30, '32.8', 4, NULL, NULL, 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (1, 1, '猪肉', 0, '斤', '', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 1, NULL, NULL, 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (2, NULL, '精品肘子', 1, '斤', '斤', NULL, 1, 3, 1, 5, 1, '45', 1, 'jingpinzhouzi', NULL, 49.30, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (3, NULL, '猪头肉', 1, '斤', '斤', NULL, 1, 2, 1, 50, 10, '32.8', 2, 'zhutourou', 'ztr', 90.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (4, NULL, '散猪头肉', 1, '斤', '斤', NULL, 1, 1, 1, 30, 90, '32.8', 3, 'sanzhutourou', 'sztr', -37.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (5, NULL, 'pork4', 1, '斤', '袋', NULL, 0, 2, 2, 10, 30, '32.8', 4, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (6, NULL, 'pork5', 1, '斤', '袋', NULL, NULL, 1, 1, 50, 10, '32.8', 5, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (7, NULL, 'pork6', 1, '斤', '袋', NULL, NULL, 0, 1, 5, 3, '32.8', 6, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (8, NULL, 'pork7', 1, '斤', '袋', NULL, NULL, 0, 1, 10, 7, '32.8', 6, NULL, NULL, 100.00, 80.00, NULL);
@@ -119,11 +125,11 @@ INSERT INTO `ck_goods` VALUES (18, NULL, 'pork18', 1, '斤', '袋', NULL, NULL, 
 INSERT INTO `ck_goods` VALUES (19, NULL, 'pork19', 1, '斤', '袋', NULL, NULL, 1, 1, NULL, NULL, '32.8', 18, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (20, NULL, 'pork20', 1, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 19, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (21, 1, '肠', 0, '斤', '袋', NULL, NULL, 1, 1, NULL, NULL, '32.8', 2, NULL, NULL, 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (22, NULL, '红肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 1, 'hongchang', 'hc', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (23, NULL, '蒜肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 2, 'suanchang', 'sc', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (24, NULL, '老北京蒜肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 3, 'laobeijingsuanchang', 'lbjsc', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (25, NULL, '盘肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 4, 'panchang', 'pc', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (26, NULL, '丹麦肠', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 5, 'danmaichang', 'dmc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (22, NULL, '红肠', 21, '斤', '斤', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 1, 'hongchang', 'hc', 89.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (23, NULL, '蒜肠', 21, '斤', '根', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 2, 'suanchang', 'sc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (24, NULL, '老北京蒜肠', 21, '斤', '根', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 3, 'laobeijingsuanchang', 'lbjsc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (25, NULL, '盘肠', 21, '斤', '盘', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 4, 'panchang', 'pc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (26, NULL, '丹麦肠', 21, '斤', '斤', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 5, 'danmaichang', 'dmc', 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (27, NULL, 'chang6', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 6, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (28, NULL, 'chang7', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 7, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (29, NULL, 'chang8', 21, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 8, NULL, NULL, 100.00, 80.00, NULL);
@@ -181,7 +187,7 @@ INSERT INTO `ck_goods` VALUES (80, NULL, 'liangcai18', 63, '斤', '袋', NULL, N
 INSERT INTO `ck_goods` VALUES (81, NULL, 'liangcai19', 63, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 19, NULL, NULL, 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (82, NULL, 'liangcai20', 63, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 20, 'jpppp3', 'jp3', 100.00, 80.00, NULL);
 INSERT INTO `ck_goods` VALUES (83, 2, '类别1', 0, '斤', '袋', NULL, NULL, NULL, 1, NULL, NULL, '32.8', 5, 'jjjjjp2', 'jp2', 100.00, 80.00, NULL);
-INSERT INTO `ck_goods` VALUES (84, NULL, '精品红场', 21, '斤', '袋', NULL, 1, NULL, 1, NULL, NULL, '40.00', NULL, 'jingpinhongchang', 'jphc', 100.00, 80.00, NULL);
+INSERT INTO `ck_goods` VALUES (84, NULL, '精品红场', 21, '斤', '袋', NULL, 1, NULL, 1, NULL, NULL, '40.00', NULL, 'jingpinhongchang', 'jphc', 81.50, 80.00, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -197,7 +203,7 @@ CREATE TABLE `ck_in_bill` (
   `is_pay` tinyint(2) DEFAULT NULL COMMENT '是否支付',
   `pay_mode` tinyint(2) DEFAULT NULL COMMENT '支付方式：“1:现金”，“2, 记账”“3，微信”',
   PRIMARY KEY (`in_bill_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_in_bill
@@ -214,6 +220,8 @@ INSERT INTO `ck_in_bill` VALUES (8, 1, NULL, 1, NULL, NULL, NULL);
 INSERT INTO `ck_in_bill` VALUES (9, -1, NULL, 1, NULL, NULL, NULL);
 INSERT INTO `ck_in_bill` VALUES (10, -1, NULL, 1, NULL, NULL, NULL);
 INSERT INTO `ck_in_bill` VALUES (11, -1, NULL, 1, NULL, NULL, NULL);
+INSERT INTO `ck_in_bill` VALUES (12, -1, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ck_in_bill` VALUES (13, -1, NULL, NULL, NULL, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -228,7 +236,7 @@ CREATE TABLE `ck_in_sub_bill` (
   `stock_quantity` float(10,2) DEFAULT NULL,
   `unit_price` float(10,2) DEFAULT NULL,
   PRIMARY KEY (`in_sub_bill_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_in_sub_bill
@@ -248,6 +256,9 @@ INSERT INTO `ck_in_sub_bill` VALUES (11, 8, 84, 4.00, NULL, NULL);
 INSERT INTO `ck_in_sub_bill` VALUES (12, 9, 84, 100.00, NULL, NULL);
 INSERT INTO `ck_in_sub_bill` VALUES (13, 10, 84, 9.00, NULL, NULL);
 INSERT INTO `ck_in_sub_bill` VALUES (14, 11, 84, 100.00, NULL, NULL);
+INSERT INTO `ck_in_sub_bill` VALUES (15, 12, 2, 900.00, NULL, NULL);
+INSERT INTO `ck_in_sub_bill` VALUES (16, 12, 24, 10.00, NULL, NULL);
+INSERT INTO `ck_in_sub_bill` VALUES (17, 13, 2, 9.00, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -256,11 +267,11 @@ COMMIT;
 DROP TABLE IF EXISTS `ck_line`;
 CREATE TABLE `ck_line` (
   `line_id` int(20) NOT NULL AUTO_INCREMENT COMMENT '线路id',
-  `line_name` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '线路名称',
+  `line_name` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '线路名称',
   `origin_point` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '始发地',
   PRIMARY KEY (`line_id`),
   KEY `line_id` (`line_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_line
@@ -268,6 +279,7 @@ CREATE TABLE `ck_line` (
 BEGIN;
 INSERT INTO `ck_line` VALUES (1, '测试线路1', NULL);
 INSERT INTO `ck_line` VALUES (2, '测试线路2', NULL);
+INSERT INTO `ck_line` VALUES (3, 'kkk', NULL);
 COMMIT;
 
 -- ----------------------------
@@ -282,7 +294,7 @@ CREATE TABLE `ck_line_store` (
   PRIMARY KEY (`line_store_id`,`re_line_id`,`re_store_id`) USING BTREE,
   KEY `line_rel` (`re_line_id`),
   KEY `store_rel` (`re_store_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_line_store
@@ -301,6 +313,43 @@ INSERT INTO `ck_line_store` VALUES (10, 2, 1, 1);
 INSERT INTO `ck_line_store` VALUES (11, 2, 7, 1);
 INSERT INTO `ck_line_store` VALUES (12, 2, 10, 1);
 INSERT INTO `ck_line_store` VALUES (13, 2, 17, 1);
+INSERT INTO `ck_line_store` VALUES (14, 3, 11, 1);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ck_out_dep
+-- ----------------------------
+DROP TABLE IF EXISTS `ck_out_dep`;
+CREATE TABLE `ck_out_dep` (
+  `out_dep_id` int(20) NOT NULL AUTO_INCREMENT,
+  `out_dep_name` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL,
+  PRIMARY KEY (`out_dep_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+-- ----------------------------
+-- Records of ck_out_dep
+-- ----------------------------
+BEGIN;
+INSERT INTO `ck_out_dep` VALUES (1, '库房');
+INSERT INTO `ck_out_dep` VALUES (2, '市场采购');
+INSERT INTO `ck_out_dep` VALUES (3, '蔬菜配送商管涛');
+COMMIT;
+
+-- ----------------------------
+-- Table structure for ck_pur_dep
+-- ----------------------------
+DROP TABLE IF EXISTS `ck_pur_dep`;
+CREATE TABLE `ck_pur_dep` (
+  `pur_dep_id` int(20) NOT NULL AUTO_INCREMENT,
+  `pur_dep_name` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL,
+  PRIMARY KEY (`pur_dep_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+
+-- ----------------------------
+-- Records of ck_pur_dep
+-- ----------------------------
+BEGIN;
+INSERT INTO `ck_pur_dep` VALUES (1, '市场采购');
 COMMIT;
 
 -- ----------------------------
@@ -311,25 +360,28 @@ CREATE TABLE `ck_stock_record` (
   `stock_record_id` int(20) NOT NULL AUTO_INCREMENT,
   `st_apply_id` int(20) DEFAULT NULL COMMENT '申请id',
   `quantity` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '出库数量',
-  `out_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '出库时间',
-  `pick_user_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '拣货人员',
-  `check_user_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '检查人员',
-  `enter_user_id` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '录入人员',
+  `out_time` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '出库时间',
+  `pick_user_id` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '拣货人员',
+  `check_user_id` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '检查人员',
+  `enter_user_id` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '录入人员',
   `in_out_type` tinyint(2) DEFAULT NULL COMMENT '出库类型“1，入库； 2:出库”',
   `out_dep_id` int(20) DEFAULT NULL COMMENT '出库部门id',
   `st_goods_id` int(20) DEFAULT NULL COMMENT '商品id',
   `in_store_id` int(20) DEFAULT NULL COMMENT '申请店铺id',
   `delivery_status` tinyint(2) DEFAULT NULL COMMENT '出库状态',
-  `discount_price` varchar(10) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '出货单价',
+  `discount_price` varchar(10) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '出货单价',
   `is_discount` tinyint(2) DEFAULT NULL COMMENT '是否打折',
   PRIMARY KEY (`stock_record_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_stock_record
 -- ----------------------------
 BEGIN;
-INSERT INTO `ck_stock_record` VALUES (1, 1, '88', NULL, NULL, NULL, NULL, 0, 1, 2, 1, 0, '32.8', NULL);
+INSERT INTO `ck_stock_record` VALUES (1, 3, '2.5', NULL, NULL, NULL, NULL, 0, 1, 2, 2, 0, '45', NULL);
+INSERT INTO `ck_stock_record` VALUES (2, 1, '3', NULL, NULL, NULL, NULL, 0, 1, 2, 1, 0, '45', NULL);
+INSERT INTO `ck_stock_record` VALUES (3, 4, '4', NULL, NULL, NULL, NULL, 0, 1, 84, 2, 0, '40.00', NULL);
+INSERT INTO `ck_stock_record` VALUES (4, 2, '4.5', NULL, NULL, NULL, NULL, 0, 1, 84, 1, 0, '40.00', NULL);
 COMMIT;
 
 -- ----------------------------
@@ -338,30 +390,30 @@ COMMIT;
 DROP TABLE IF EXISTS `ck_store`;
 CREATE TABLE `ck_store` (
   `store_id` int(20) NOT NULL AUTO_INCREMENT COMMENT '店铺Id',
-  `store_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '店铺名称',
+  `store_name` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '店铺名称',
   `address` varchar(200) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '详细地址',
-  `phone` varchar(15) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '手机号码',
-  `lat` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '横坐标',
-  `lun` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '纵坐标',
-  `district` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '区域',
-  `city` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '城市',
-  `wx_nick_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '微信号码',
-  `wx_openId` varchar(50) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '微信id',
-  `wx_avatar_url` varchar(200) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '微信头像',
-  `wx_number` varchar(50) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '微信号码',
+  `phone` varchar(15) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '手机号码',
+  `lat` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '横坐标',
+  `lun` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '纵坐标',
+  `district` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '区域',
+  `city` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '城市',
+  `wx_nick_name` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '微信号码',
+  `wx_openId` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '微信id',
+  `wx_avatar_url` varchar(200) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '微信头像',
+  `wx_number` varchar(50) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '微信号码',
   `print_label` varchar(10) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '打印名称',
   `out_label` varchar(30) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '对外名称',
   `join_line` tinyint(2) DEFAULT NULL,
   PRIMARY KEY (`store_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci COMMENT='零售终端';
+) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci COMMENT='零售终端';
 
 -- ----------------------------
 -- Records of ck_store
 -- ----------------------------
 BEGIN;
 INSERT INTO `ck_store` VALUES (1, '美林湾华联', '阿看看短发凉快', '1', NULL, NULL, NULL, NULL, NULL, NULL, 'https://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIH9Tibwka8Z2xH4tU8xhW0f6hXs7ib8aAswStBUoiaPibVVq5icnNBJzbaSMgzbNGcwQe1ib2uVW7d8Byw/132', 'eyeseejoy', '美林', '燕郊3店', 1);
-INSERT INTO `ck_store` VALUES (2, '鲜汇', '啊啊啊啊啊', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '鲜汇', '燕郊2店', 1);
-INSERT INTO `ck_store` VALUES (3, '天丰利', '阿凡达说法是否打算发', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '天', '北京1店', 1);
+INSERT INTO `ck_store` VALUES (2, '鲜汇', '啊啊啊啊啊', '2', NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '鲜汇', '燕郊2店', 1);
+INSERT INTO `ck_store` VALUES (3, '天丰利', '阿凡达说法是否打算发', '3', NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '天', '北京1店', 1);
 INSERT INTO `ck_store` VALUES (4, '金鱼池熟食', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '金鱼池', '北京2店', 1);
 INSERT INTO `ck_store` VALUES (5, '店铺1', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '1店', '北京1店', 1);
 INSERT INTO `ck_store` VALUES (6, '店铺2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '2店', '北京2店', 1);
@@ -378,6 +430,9 @@ INSERT INTO `ck_store` VALUES (17, '店铺12', NULL, NULL, NULL, NULL, NULL, NUL
 INSERT INTO `ck_store` VALUES (18, '店铺13', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '13店', '北京13店', 0);
 INSERT INTO `ck_store` VALUES (19, '店铺14', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '14店', '北京14店', 0);
 INSERT INTO `ck_store` VALUES (20, '店铺15', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '', NULL, '15店', '北京15店', 0);
+INSERT INTO `ck_store` VALUES (21, 'dddd', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'f', 'f', NULL);
+INSERT INTO `ck_store` VALUES (22, 'bbbb', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+INSERT INTO `ck_store` VALUES (23, 'qqq', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -386,13 +441,13 @@ COMMIT;
 DROP TABLE IF EXISTS `ck_supplier`;
 CREATE TABLE `ck_supplier` (
   `supplier_id` int(20) NOT NULL AUTO_INCREMENT COMMENT '供货商id',
-  `supplier_name` varchar(50) CHARACTER SET utf8 COLLATE utf8_czech_ci NOT NULL COMMENT '供货商名称',
-  `sales_person` varchar(10) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '业务员',
-  `sales_phone` varchar(18) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL COMMENT '业务电话',
+  `supplier_name` varchar(50) COLLATE utf8_czech_ci NOT NULL COMMENT '供货商名称',
+  `sales_person` varchar(10) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '业务员',
+  `sales_phone` varchar(18) COLLATE utf8_czech_ci DEFAULT NULL COMMENT '业务电话',
   `has_app` tinyint(2) DEFAULT NULL COMMENT '是否有app',
   `pay_methods` tinyint(2) unsigned zerofill DEFAULT '00' COMMENT '付款方式',
   PRIMARY KEY (`supplier_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_supplier
@@ -411,9 +466,9 @@ CREATE TABLE `ck_user` (
   `ck_password` varchar(10) COLLATE utf8_czech_ci DEFAULT NULL,
   `user_dep_id` int(11) DEFAULT NULL,
   `user_status` tinyint(2) DEFAULT NULL,
-  `u_create_time` varchar(20) CHARACTER SET utf8 COLLATE utf8_czech_ci DEFAULT NULL,
+  `u_create_time` varchar(20) COLLATE utf8_czech_ci DEFAULT NULL,
   PRIMARY KEY (`ck_user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8 COLLATE=utf8_czech_ci;
 
 -- ----------------------------
 -- Records of ck_user
@@ -427,6 +482,7 @@ INSERT INTO `ck_user` VALUES (15, 'd', NULL, 1, NULL, NULL);
 INSERT INTO `ck_user` VALUES (16, 'b', NULL, 1, NULL, NULL);
 INSERT INTO `ck_user` VALUES (17, 'eertt', NULL, 1, NULL, NULL);
 INSERT INTO `ck_user` VALUES (18, 'ad', NULL, 1, NULL, NULL);
+INSERT INTO `ck_user` VALUES (19, NULL, NULL, 2, NULL, NULL);
 COMMIT;
 
 -- ----------------------------
@@ -438,7 +494,7 @@ CREATE TABLE `ck_user_role` (
   `role_user_id` int(20) DEFAULT NULL COMMENT '用户ID',
   `sys_role_id` bigint(20) DEFAULT NULL COMMENT '角色ID',
   PRIMARY KEY (`user_role_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=29 DEFAULT CHARSET=utf8 COMMENT='用户与角色对应关系';
+) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8 COMMENT='用户与角色对应关系';
 
 -- ----------------------------
 -- Records of ck_user_role
@@ -458,7 +514,6 @@ INSERT INTO `ck_user_role` VALUES (15, 18, 1);
 INSERT INTO `ck_user_role` VALUES (16, 18, 2);
 INSERT INTO `ck_user_role` VALUES (17, 18, 1);
 INSERT INTO `ck_user_role` VALUES (18, 18, 2);
-INSERT INTO `ck_user_role` VALUES (19, 18, 3);
 INSERT INTO `ck_user_role` VALUES (20, 18, 1);
 INSERT INTO `ck_user_role` VALUES (21, 18, 2);
 INSERT INTO `ck_user_role` VALUES (22, 18, 3);
@@ -468,6 +523,9 @@ INSERT INTO `ck_user_role` VALUES (25, 18, 2);
 INSERT INTO `ck_user_role` VALUES (26, 18, 3);
 INSERT INTO `ck_user_role` VALUES (27, 18, 4);
 INSERT INTO `ck_user_role` VALUES (28, 18, 5);
+INSERT INTO `ck_user_role` VALUES (29, 19, 1);
+INSERT INTO `ck_user_role` VALUES (30, 19, 1);
+INSERT INTO `ck_user_role` VALUES (31, 19, 2);
 COMMIT;
 
 -- ----------------------------
@@ -498,7 +556,7 @@ CREATE TABLE `sys_menu` (
   `icon` varchar(50) DEFAULT NULL COMMENT '菜单图标',
   `order_num` int(11) DEFAULT NULL COMMENT '排序',
   PRIMARY KEY (`menu_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=78 DEFAULT CHARSET=utf8 COMMENT='菜单管理';
+) ENGINE=InnoDB AUTO_INCREMENT=79 DEFAULT CHARSET=utf8 COMMENT='菜单管理';
 
 -- ----------------------------
 -- Records of sys_menu
@@ -544,7 +602,7 @@ INSERT INTO `sys_menu` VALUES (42, 40, '硬件设备', '/printer', NULL, 1, NULL
 INSERT INTO `sys_menu` VALUES (51, 37, '集团销售', '/groupSales', NULL, 1, NULL, 0);
 INSERT INTO `sys_menu` VALUES (52, 0, '店铺', NULL, NULL, 0, 'fa fa-cog', 0);
 INSERT INTO `sys_menu` VALUES (53, 0, '供货商', NULL, NULL, 0, 'fa fa-cog', 6);
-INSERT INTO `sys_menu` VALUES (56, 52, '经营数据', 'businessData', NULL, 1, 'fa fa-user', 1);
+INSERT INTO `sys_menu` VALUES (56, 52, '经营数据（代订货）', 'businessData', NULL, 1, 'fa fa-user', 1);
 INSERT INTO `sys_menu` VALUES (57, 52, '成本控制', 'costControl', NULL, 1, 'fa fa-user', 2);
 INSERT INTO `sys_menu` VALUES (62, 53, '供货商列表', 'cksupplier/cksupplier.html', 'cksupplier:list, cksupplier:info, cksupplier:save, cksupplier:update, cksupplier:delete', 1, 'fa fa-cog', 1);
 INSERT INTO `sys_menu` VALUES (63, 40, '店铺', 'storeList', 'ckstore:list, ckstore:info, ckstore:save, ckstore:update, ckstore:delete', 1, 'fa fa-cog', 3);
@@ -555,11 +613,11 @@ INSERT INTO `sys_menu` VALUES (67, 65, 'btn1', NULL, 'ckgoods:save', 2, NULL, 0)
 INSERT INTO `sys_menu` VALUES (69, 0, '商品管理', NULL, '', 0, 'fa fa-cog', 1);
 INSERT INTO `sys_menu` VALUES (71, 69, '产品', 'products', 'ckinbill:list, ckinbill:info, ckinbill:save, ckinbill:update, ckinbill:delete', 1, 'fa', 2);
 INSERT INTO `sys_menu` VALUES (72, 69, '采购分析', '/purchase/anlysise', NULL, 1, 'fa', 4);
-INSERT INTO `sys_menu` VALUES (73, 52, '销售分析', 'store?store_id=', NULL, 1, 'fa fa-user', 2);
+INSERT INTO `sys_menu` VALUES (73, 52, '销售分析', 'ckStore', NULL, 1, 'fa fa-user', 2);
 INSERT INTO `sys_menu` VALUES (74, 69, '采购计划', 'plan', 'ckinbill:list, ckinbill:info, ckinbill:save, ckinbill:update, ckinbill:delete', 1, 'fa', 3);
 INSERT INTO `sys_menu` VALUES (75, 69, '原料', 'rawMaterial', 'ckinbill:list, ckinbill:info, ckinbill:save, ckinbill:update, ckinbill:delete', 1, 'fa', 2);
 INSERT INTO `sys_menu` VALUES (76, 29, '拣货单录入', 'enterOutStock', 'ckstockrecord:list, ckstockrecord:info, ckstockrecord:save, ckstockrecord:update, ckapplys:delete', 1, NULL, 2);
-INSERT INTO `sys_menu` VALUES (77, 52, '每日订货', 'order', NULL, 1, 'fa fa-user', 0);
+INSERT INTO `sys_menu` VALUES (77, 52, '今日订货', 'order', NULL, 1, 'fa fa-user', 0);
 COMMIT;
 
 -- ----------------------------

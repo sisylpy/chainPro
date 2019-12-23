@@ -39,5 +39,13 @@ public interface CkApplysDao extends BaseDao<CkApplysEntity> {
 
     List<CkApplysEntity> queryTodayApplysByDepId(Map<String, Object> map);
 
+    List<CkApplysEntity> queryOutDepApplysWithStatusAndPageNumber(Map<String, Object> map);
+
+    List<CkApplysEntity> queryApplysByLimit(Map<String, Object> map);
+
+    int getApplysByLimit(Map<String, Object> map);
+
+    List<CkApplysEntity> queryApplysAndSorts(String format);
+
 //    List<CkApplysEntity> queryApplysOrderNumberByStoreId(Integer storeId);
 }

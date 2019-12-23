@@ -49,6 +49,8 @@
     <!-- baidu -->
     <com.baidu.aip>4.10.0</com.baidu.aip>
 
+    <!-- excel poi-->
+    <org.apache.poi>4.0.1</org.apache.poi>
 
   </properties>
 
@@ -290,6 +292,12 @@
       <version>1.46</version>
     </dependency>
 
+    <!-- excel-->
+    <dependency>
+      <groupId>org.apache.poi</groupId>
+      <artifactId>poi</artifactId>
+      <version>${org.apache.poi}</version>
+    </dependency>
 
 
   </dependencies>

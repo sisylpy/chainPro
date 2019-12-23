@@ -108,5 +108,10 @@ public class CkGoodsServiceImpl implements CkGoodsService {
 		return ckGoodsDao.queryGoodsListByRecord(substring);
     }
 
+    @Override
+    public List<CkGoodsEntity> downloadGoods() {
+        return ckGoodsDao.getAll();
+    }
+
 
 }

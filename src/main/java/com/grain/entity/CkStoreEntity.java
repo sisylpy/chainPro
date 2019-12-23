@@ -83,11 +83,6 @@ public class CkStoreEntity implements Serializable, Comparable {
 	 */
 	private Boolean isSelected;
 
-
-
-
-
-
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
@@ -106,12 +101,13 @@ public class CkStoreEntity implements Serializable, Comparable {
 				Objects.equals(wxAvatarUrl, that.wxAvatarUrl) &&
 				Objects.equals(wxNumber, that.wxNumber) &&
 				Objects.equals(printLabel, that.printLabel) &&
-				Objects.equals(outLabel, that.outLabel);
+				Objects.equals(outLabel, that.outLabel) &&
+				Objects.equals(isSelected, that.isSelected);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(storeId, storeName, address, phone, lat, lun, district, city, wxNickName, wxOpenid, wxAvatarUrl, wxNumber, printLabel, outLabel);
+		return Objects.hash(storeId, storeName, address, phone, lat, lun, district, city, wxNickName, wxOpenid, wxAvatarUrl, wxNumber, printLabel, outLabel, isSelected);
 	}
 
 	@Override

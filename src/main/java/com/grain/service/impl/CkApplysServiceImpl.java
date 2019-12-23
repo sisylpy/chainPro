@@ -122,5 +122,26 @@ public class CkApplysServiceImpl implements CkApplysService {
 		return ckApplysDao.queryTodayApplysByDepId(map);
     }
 
+	@Override
+	public List<CkApplysEntity> queryOutDepApplysWithStatusAndPageNumber(Map<String, Object> map) {
+		return ckApplysDao.queryOutDepApplysWithStatusAndPageNumber(map);
+	}
+
+	@Override
+	public List<CkApplysEntity> queryApplysByLimit(Map<String, Object> map) {
+		return ckApplysDao.queryApplysByLimit(map);
+	}
+
+	@Override
+	public int queryTotalByLimit(Map<String, Object> map) {
+		return ckApplysDao.getApplysByLimit(map);
+	}
+
+    @Override
+    public List<CkApplysEntity> queryApplysAndSorts(String format) {
+
+		return ckApplysDao.queryApplysAndSorts(format);
+    }
+
 
 }

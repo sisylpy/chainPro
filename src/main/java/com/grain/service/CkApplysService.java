@@ -55,4 +55,11 @@ public interface CkApplysService {
 
 	List<CkApplysEntity> queryApplysGoodsStatusByDepId(Map<String, Object> map);
 
+	List<CkApplysEntity> queryOutDepApplysWithStatusAndPageNumber(Map<String, Object> map);
+
+	List<CkApplysEntity> queryApplysByLimit(Map<String, Object> map);
+
+	int queryTotalByLimit(Map<String, Object> map);
+
+	List<CkApplysEntity> queryApplysAndSorts(String format);
 }

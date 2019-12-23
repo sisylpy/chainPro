@@ -13,7 +13,9 @@ import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.grain.entity.*;
+import com.grain.service.CkDepService;
 import com.grain.service.CkGoodsService;
 import com.grain.service.CkStockRecordService;
 import com.grain.service.impl.CkLineStoreServiceImpl;
@@ -43,6 +45,65 @@ public class CkApplysController {
     private CkGoodsService ckGoodsService;
     @Autowired
     private CkStockRecordService ckStockRecordService;
+    @Autowired
+    private CkDepService ckDepService;
+
+
+
+
+    @RequestMapping(value = "/storeGetApplysByLimit", method = RequestMethod.POST)
+    @ResponseBody
+    public R storeGetApplysByLimit(@RequestParam Integer page, @RequestParam Integer limit, @RequestParam Integer storeId) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("offset", (page - 1) * limit);
+        map.put("limit", limit);
+        map.put("storeId", storeId);
+
+        Date date=new Date();
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_MONTH,1);
+        date=calendar.getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd");
+        String format = dateFormat.format(date);
+        map.put("delivery", format);
+
+        List<CkApplysEntity> applysEntities =  ckApplysService.queryApplysByLimit(map);
+
+
+        int total = ckApplysService.queryTotalByLimit(map);
+
+        PageUtils pageUtil = new PageUtils(applysEntities, total, limit, page);
+
+        return R.ok().put("data", pageUtil);
+    }
+
+
+     @RequestMapping(value = "/replaceOrder", method = RequestMethod.POST)
+      @ResponseBody
+      public R replaceOrder (@RequestBody List<CkApplysEntity> orders) {
+         Date date=new Date();
+         Calendar calendar = new GregorianCalendar();
+         calendar.setTime(date);
+         calendar.add(Calendar.DAY_OF_MONTH,1);
+         date=calendar.getTime();
+         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.CHINA);
+         SimpleDateFormat dateFormat2 = new SimpleDateFormat("MMM dd, yyyy HH:mm", Locale.CHINA);
+         String format = dateFormat.format(date);
+         String format1 = dateFormat2.format(new Date());
+         for (CkApplysEntity apply : orders) {
+             apply.setApplyTime(format1);
+             apply.setDeliveryDate(format);
+             apply.setApplyStatus(0);
+
+             ckApplysService.save(apply);
+
+         }
+
+
+         return R.ok();
+      }
 
 
     @RequestMapping(value = "/saveApplys", method = RequestMethod.POST)
@@ -395,6 +456,45 @@ public class CkApplysController {
     }
 
 
+
+
+     @RequestMapping(value = "/queryApplysAndSorts")
+      @ResponseBody
+      public R queryApplysSorts () {
+
+         Date date=new Date();
+         Calendar calendar = new GregorianCalendar();
+         calendar.setTime(date);
+         calendar.add(Calendar.DAY_OF_MONTH,1);
+         date=calendar.getTime();
+         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.CHINA);
+         String format = dateFormat.format(date);
+
+         List<CkApplysEntity> applysEntities =  ckApplysService.queryApplysAndSorts(format);
+         Set<CkDepEntity> depEntities = new HashSet<>();
+         Set<CkStoreEntity> storeEntities = new HashSet<>();
+
+         for (CkApplysEntity apply : applysEntities) {
+             Integer outDepId = apply.getOutDepId();
+             depEntities.add(ckDepService.queryObject(outDepId));
+             storeEntities.add(apply.getStoreEntity());
+         }
+
+         List<Map<String, Object>> differentGoods = getDifferentGoods(applysEntities);
+         Map<String, Object> map = new HashMap<>();
+         System.out.println("//////sotre==="+storeEntities + ">>>>");
+         map.put("sss",storeEntities);
+         System.out.println("00000000000000" + map);
+         map.put("ddd", depEntities);
+         System.out.println("11111111111111" + map.get("storeList"));
+         map.put("applys", differentGoods);
+         System.out.println("22222222222222" + map.get("outDepList"));
+
+         return R.ok().put("data", map);
+      }
+     
+
+    
     /**
      * 按照商品货分店获取申请
      *
@@ -405,6 +505,7 @@ public class CkApplysController {
     @RequestMapping(value = "/outDepQuerySorts", method = RequestMethod.POST)
     @ResponseBody
     public R outDepQuerySorts(@RequestParam Integer status, @RequestParam Integer depId) {
+        System.out.println("outDepQuerySortsoutDepQuerySorts" + depId);
         Map<String, Object> map = new HashMap<>();
         map.put("status", status);
         map.put("depId", depId);
@@ -501,7 +602,7 @@ public class CkApplysController {
         map.put("pageNumber", pageNumber);
 
         //根据map查询申请
-        List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepApplysWithStatus(map);
+        List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepApplysWithStatusAndPageNumber(map);
 
         //组装申请
         List<Map<String, Object>> differentGoods = getDifferentGoods(applysEntities);
@@ -517,16 +618,21 @@ public class CkApplysController {
      */
     @RequestMapping(value = "/outDepQueryApplys", method = RequestMethod.POST)
     @ResponseBody
-    public R outDepQueryApplys(@RequestParam Integer depId) {
+    public R outDepQueryApplys(@RequestParam Integer depId,@RequestParam Integer status) {
         Map<String, Object> map = new HashMap<>();
-        map.put("status", 1);
+        map.put("status", status);
         map.put("depId", depId);
 
         //根据map查询申请
         List<CkApplysEntity> applysEntities = ckApplysService.queryOutDepApplysWithStatus(map);
+        System.out.println("kkkkk" + map);
 
         //组装申请
         List<Map<String, Object>> differentGoods = getDifferentGoods(applysEntities);
+
+        System.out.println("shenjing" + differentGoods.size());
+
+        System.out.println(differentGoods );
 
         return R.ok().put("data", differentGoods);
 
@@ -709,7 +815,10 @@ public class CkApplysController {
         System.out.println(ckApply);
         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.CHINA);
         String format = dateFormat.format(new Date());
-        ckApply.setApplyTime(format);
+        Date date = new Date();
+
+        long time = date.getTime();
+//        ckApply.setApplyTime(date.getTime());
         ckApply.setDeliveryDate(format);
         ckApply.setApplyStatus(0);
 //        ckApplys.setApplyLineId(ckApplys.getCkLineStoreEntity().getReLineId());
@@ -740,7 +849,18 @@ public class CkApplysController {
     @RequiresPermissions("ckapplys:delete")
     public R delete(@RequestBody Integer[] applyIds) {
         ckApplysService.deleteBatch(applyIds);
-
+        return R.ok();
+    }
+    /**
+     * 删除yige
+     */
+    @ResponseBody
+    @RequestMapping("/deleteOne/{applyId}")
+    @RequiresPermissions("ckapplys:delete")
+    public R deleteOne(@PathVariable Integer applyId) {
+        System.out.println("shi delete ma ?");
+        System.out.println(applyId);
+        ckApplysService.delete(applyId);
         return R.ok();
     }
 
@@ -748,49 +868,11 @@ public class CkApplysController {
     @ResponseBody
     @RequestMapping("/getApplys/{storeId}")
     public R storeGetApplys(@PathVariable Integer storeId) {
-        System.out.println("kfjdakj");
         List<CkApplysEntity> applysEntities = ckApplysService.getStoreApplys(storeId);
-        List<Map<String, Object>> results = new ArrayList<>();
-
-//        for (CkApplysEntity apply : applysEntities) {
-//
-//            Map<String, Object> map = new HashMap<>();
-//            if (results.size() > 0) {
-//
-//                for (Map<String, Object> result : results) {
-//
-//                    if (result.containsValue(apply.getOrderNumber())) {
-//                        List<CkApplysEntity> applysEntities1 = (List<CkApplysEntity>) result.get("applys");
-//
-//                        applysEntities1.add(apply);
-//                        result.put("applys", applysEntities1);
-//                        break;
-//
-//                    }else {
-//                        Integer orderNumber = apply.getOrderNumber();
-//                        List<CkApplysEntity> applyList = new ArrayList<>();
-//                        applyList.add(apply);
-//                        map.put("orderNumber", orderNumber);
-//                        map.put("applys", applyList);
-//
-//                        results.add(map);
-//
-//                    }
-//                }
-//            } else {
-//                Integer orderNumber = apply.getOrderNumber();
-//                List<CkApplysEntity> applyList = new ArrayList<>();
-//                applyList.add(apply);
-//                map.put("orderNumber", orderNumber);
-//                map.put("applys", applyList);
-//
-//                results.add(map);
-//            }
-//
-//        }
-
         return R.ok().put("data", applysEntities);
     }
+
+
 
 
 }

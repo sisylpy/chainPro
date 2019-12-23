@@ -33,9 +33,19 @@
                         <value>WriteMapNullValue</value>
                         <value>QuoteFieldNames</value>
                         <value>WriteDateUseDateFormat</value>
+						<!-- 全局关闭循环引用检查，最好是不要关闭，不然有可能会StackOverflowException -->
+						<value>DisableCircularReferenceDetect</value>
                     </list>
                 </property>
             </bean>
+
+
+
+
+
+
+
+
         </mvc:message-converters>
 	</mvc:annotation-driven>
 

@@ -4,7 +4,7 @@
 <mapper namespace="com.grain.dao.CkDepDao">
 
 	<select id="queryObject" resultType="com.grain.entity.CkDepEntity">
-		select * from ck_store_dep where dep_id = #{value}
+		select * from ck_dep where dep_id = #{value}
 	</select>
 
 	<select id="queryList" resultType="com.grain.entity.CkDepEntity">
@@ -15,7 +15,7 @@
 	</select>
 	
  	<select id="queryTotal" resultType="int">
-		select count(*) from ck_store_dep 
+		select count(*) from ck_dep
 	</select>
     <select id="queryTypeList" resultType="com.grain.entity.CkDepEntity">
 		select * from ck_dep where dep_type = #{type}
@@ -50,7 +50,7 @@
 	</delete>
 	
 	<delete id="deleteBatch">
-		delete from ck_store_dep where dep_id in 
+		delete from ck_dep where dep_id in
 		<foreach item="depId" collection="array" open="(" separator="," close=")">
 			#{depId}
 		</foreach>

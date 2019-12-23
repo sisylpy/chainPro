@@ -40,6 +40,7 @@
 			<result property="stockApplyStandard" column="stock_apply_standard"/>
 			<result property="purStandardName" column="pur_standard_name"/>
 			<result property="price" column="price"/>
+			<result property="fatherId" column="father_id"/>
 		</association>
 		<association property="stockRecordEntity" javaType="CkStockRecordEntity">
 			<id property="stockRecordId" column="stock_record_id"/>
@@ -52,7 +53,7 @@
 
 
 
-	<select id="storeGetApplys" resultMap="applys">
+	<select id="storeGetApplys" resultMap="outDepApplys">
 		select * from ck_applys AS a
 		LEFT JOIN ck_goods as g ON  a.apply_goods_id = g.goods_id
 		left join ck_stock_record as r on r.st_apply_id = a.apply_id
@@ -105,7 +106,7 @@
 		SELECT * from ck_applys AS a
 			LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 			LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.apply_status = #{status} and a.out_dep_id = #{depId} and a.page_number = #{pageNumber}
+		where a.apply_status = #{status} and a.out_dep_id = #{depId}
 		order by g.goods_id
 	</select>
 
@@ -179,7 +180,33 @@
           and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
     </select>
 
+	<select id="queryOutDepApplysWithStatusAndPageNumber" resultMap="outDepApplys">
+		SELECT * from ck_applys AS a
+						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where a.apply_status = #{status} and a.out_dep_id = #{depId} and a.page_number = #{pageNumber}
+		order by g.goods_id
+	</select>
+	<select id="queryApplysByLimit" resultMap="applys">
+		select * from ck_applys AS a
+		LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+		left join ck_stock_record as r on r.st_apply_id = a.apply_id
+		where delivery_date = #{delivery} and apply_store_id = #{storeId}
+		order by a.apply_time
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
 
+	<select id="getApplysByLimit" resultType="java.lang.Integer">
+		select count(*) from ck_applys 	where delivery_date = #{delivery} and apply_store_id = #{storeId}
+	</select>
+	<select id="queryApplysAndSorts" resultMap="outDepApplys">
+		select * from ck_applys AS a
+						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where delivery_date = #{format} and apply_status = 0
+	</select>
 
 
 	<insert id="save" parameterType="com.grain.entity.CkApplysEntity">

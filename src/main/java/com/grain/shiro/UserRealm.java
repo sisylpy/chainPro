@@ -82,9 +82,6 @@ import java.util.*;
             String username = (String) token.getPrincipal();
             String password = new String((char[]) token.getCredentials());
 
-            System.out.println("doGetAuthenticationInfo...........////////???????");
-
-
             //查询用户信息
             SysUserEntity user = sysUserService.queryByUserName(username);
 

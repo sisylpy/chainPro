@@ -107,6 +107,8 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	 */
 	private CkDepEntity depEntity;
 
+
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

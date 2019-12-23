@@ -70,9 +70,11 @@
 	<select id="queryHeadPinyin" resultType="com.grain.entity.CkGoodsEntity">
 		select * from ck_goods where head_pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
 	</select>
+
 	<select id="queryOutDepCateList" resultType="com.grain.entity.CkGoodsEntity">
 		select  * from  ck_goods where out_dep_id = #{depId} and father_id = 0
 	</select>
+
 	<select id="queryOutDepGoodsListAll" resultType="com.grain.entity.CkGoodsEntity">
 		select * from  ck_goods where out_dep_id = #{depId} and father_id != 0
 	</select>
@@ -87,6 +89,24 @@
 	</select>
     <select id="queryGoodsListByRecord" resultType="com.grain.entity.CkGoodsEntity">
 		select  * from ck_goods where pinyin like concat(concat('%',#{substring}),'%')
+	</select>
+    <select id="getAll" resultType="com.grain.entity.CkGoodsEntity">
+		select
+			`goods_id`,
+			`goods_name`,
+			`father_id`,
+			`apply_standard_name`,
+			`pur_standard_name`,
+		    `sell_standard_name`,
+			`is_weight`,
+			`status`,
+			`out_dep_id`,
+			`alarm_weight`,
+			`quality_period`,
+			`price`,
+			`g_sort`
+
+		       from  ck_goods where father_id != 0
 	</select>
 
 
@@ -154,9 +174,9 @@
 			<if test="qualityPeriod != null">`quality_period` = #{qualityPeriod}, </if>
 			<if test="alarmWeight != null">`alarm_weight` = #{alarmWeight}, </if>
 			<if test="price != null">`price` = #{price}, </if>
-			<if test="status != null">`status` = #{status}</if>
-			<if test="gSort != null">`g_sort` = #{gSort}</if>
-			<if test="pinyin != null">`pinyin` = #{pinyin}</if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="gSort != null">`g_sort` = #{gSort}, </if>
+			<if test="pinyin != null">`pinyin` = #{pinyin}, </if>
 			<if test="headPinyin != null">`head_pinyin` = #{headPinyin}</if>
 		</set>
 		where goods_id = #{goodsId}

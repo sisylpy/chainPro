@@ -10,8 +10,10 @@ package com.grain.controller;
 import java.util.*;
 
 import com.grain.entity.CkApplysEntity;
+import com.grain.entity.CkGoodsEntity;
 import com.grain.entity.CkStoreEntity;
 import com.grain.service.CkApplysService;
+import com.grain.service.CkGoodsService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,8 @@ public class CkStockRecordController {
 	private CkStockRecordService ckStockRecordService;
 	@Autowired
 	private CkApplysService applysService;
+	@Autowired
+	private CkGoodsService ckGoodsService;
 
 
 	/**
@@ -108,14 +112,36 @@ public class CkStockRecordController {
 		System.out.println(ckStockRecords);
 
 		for (CkStockRecordEntity record : ckStockRecords) {
+
+			//1. 新增添出货记录
 			record.setDeliveryStatus(0);
 			record.setInOutType(0);
 			ckStockRecordService.save(record);
+
+			//2. 更新申请状态
 			Integer stApplyId = record.getStApplyId();
 			CkApplysEntity apply = new CkApplysEntity();
 			apply.setApplyId(stApplyId);
 			apply.setApplyStatus(2);
 			applysService.update(apply);
+
+			//3. 更新商品库存
+			Integer goodsId = record.getStGoodsId();
+			CkGoodsEntity ckGoodsEntity = ckGoodsService.queryObject(goodsId);
+			Float f1 = 0.1f;
+
+			String stockPurStandard = ckGoodsEntity.getStockPurStandard();
+			String quantity = record.getQuantity();
+			float v = Float.parseFloat(stockPurStandard) + f1;
+			float v1 = Float.parseFloat(quantity) + f1;
+			float v2 = v - v1;
+			String s = Float.toString(v2);
+
+			ckGoodsEntity.setStockPurStandard(s);
+
+			System.out.println("kkkgoods" + ckGoodsEntity);
+			ckGoodsService.update(ckGoodsEntity);
+
 		}
 
 

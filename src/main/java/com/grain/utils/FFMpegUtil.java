@@ -28,9 +28,9 @@ public class FFMpegUtil {
      * 百度提供：ffmpeg -y  -i /Users/lpy/Documents/javaWeb/Study/hanyu/target/hanyu/upload/blob  -acodec pcm_s16le -f s16le -ac 1 -ar 16000 /Users/lpy/Documents/javaWeb/Study/hanyu/target/hanyu/upload/blob.pcm
      */
 
-//    private static String ffmgegEXE = "/usr/bin/ffmpeg";
+    private static String ffmgegEXE = "/usr/bin/ffmpeg";
 
-    private static String ffmgegEXE = "/Users/lpy/Documents/maven/ffmpeg";
+//    private static String ffmgegEXE = "/Users/lpy/Documents/maven/ffmpeg";
 
 
     public static void convetor(String audioInputPath, String audioOutPath) throws IOException {
