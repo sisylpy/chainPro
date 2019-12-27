@@ -5,34 +5,21 @@ package com.grain.controller;
  * @date 2019-10-24 18:30:32
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.grain.entity.*;
 import com.grain.service.CkDepService;
 import com.grain.service.CkGoodsService;
 import com.grain.service.CkStockRecordService;
-import com.grain.service.impl.CkLineStoreServiceImpl;
 import com.grain.utils.*;
-import org.apache.commons.io.IOUtils;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import com.grain.service.CkApplysService;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 
 @Controller
@@ -50,6 +37,36 @@ public class CkApplysController {
 
 
 
+     @RequestMapping("/getTodayApplysStores")
+      @ResponseBody
+      public R getTodayApplysStores( ) {
+         System.out.println("isherre???");
+         Map<String, Object> map = new HashMap<>();
+
+         Date date=new Date();
+         Calendar calendar = new GregorianCalendar();
+         calendar.setTime(date);
+         calendar.add(Calendar.DAY_OF_MONTH,1);
+         date=calendar.getTime();
+         SimpleDateFormat dateFormat2 = new SimpleDateFormat("MMM dd, yyyy", Locale.CHINA);
+         String format = dateFormat2.format(date);
+         map.put("delivery", format);
+        List<CkApplysEntity> applysEntities =  ckApplysService.getTodayApplysStores(map);
+
+        Set<CkStoreEntity> storeEntities = new HashSet<>();
+
+         for (CkApplysEntity applys:applysEntities) {
+             CkStoreEntity storeEntity = applys.getStoreEntity();
+             storeEntities.add(storeEntity);
+         }
+
+
+
+
+        return R.ok().put("data", storeEntities);
+      }
+
+
 
     @RequestMapping(value = "/storeGetApplysByLimit", method = RequestMethod.POST)
     @ResponseBody
@@ -65,7 +82,9 @@ public class CkApplysController {
         calendar.setTime(date);
         calendar.add(Calendar.DAY_OF_MONTH,1);
         date=calendar.getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd");
+//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.CHINA);
+
         String format = dateFormat.format(date);
         map.put("delivery", format);
 
@@ -454,14 +473,14 @@ public class CkApplysController {
         System.out.println("distince" + listTemp);
         return R.ok().put("data", listTemp);
     }
+    
 
-
-
-
-     @RequestMapping(value = "/queryApplysAndSorts")
+     @RequestMapping(value = "/queryOutGoodsByFatherId/{fatherId}")
       @ResponseBody
-      public R queryApplysSorts () {
-
+      public R queryOutGoodsByFatherId (@PathVariable Integer fatherId) {
+         System.out.println("really???");
+         Map<String, Object> map = new HashMap<>();
+         map.put("status", 1);
          Date date=new Date();
          Calendar calendar = new GregorianCalendar();
          calendar.setTime(date);
@@ -470,27 +489,166 @@ public class CkApplysController {
          SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.CHINA);
          String format = dateFormat.format(date);
 
-         List<CkApplysEntity> applysEntities =  ckApplysService.queryApplysAndSorts(format);
-         Set<CkDepEntity> depEntities = new HashSet<>();
-         Set<CkStoreEntity> storeEntities = new HashSet<>();
+         map.put("deliveryDate", format);
+         map.put("applyFatherId", fatherId);
 
-         for (CkApplysEntity apply : applysEntities) {
-             Integer outDepId = apply.getOutDepId();
-             depEntities.add(ckDepService.queryObject(outDepId));
-             storeEntities.add(apply.getStoreEntity());
-         }
+
+         List<CkApplysEntity> applysEntities =  ckApplysService.queryApplysByFatherId(map);
 
          List<Map<String, Object>> differentGoods = getDifferentGoods(applysEntities);
-         Map<String, Object> map = new HashMap<>();
-         System.out.println("//////sotre==="+storeEntities + ">>>>");
-         map.put("sss",storeEntities);
-         System.out.println("00000000000000" + map);
-         map.put("ddd", depEntities);
-         System.out.println("11111111111111" + map.get("storeList"));
-         map.put("applys", differentGoods);
-         System.out.println("22222222222222" + map.get("outDepList"));
 
-         return R.ok().put("data", map);
+
+         return R.ok().put("data", differentGoods);
+      }
+
+     
+
+
+    /**
+     * 后台"今日订货-今日申请" 默认显示数据
+     * @return select2 空件和list
+     */
+    @RequestMapping(value = "/queryApplysAndSorts/{status}")
+      @ResponseBody
+      public R queryApplysSorts (@PathVariable Integer status) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", status);
+         Date date=new Date();
+         Calendar calendar = new GregorianCalendar();
+         calendar.setTime(date);
+         calendar.add(Calendar.DAY_OF_MONTH,1);
+         date=calendar.getTime();
+         SimpleDateFormat dateFormat = new SimpleDateFormat("MMM dd, yyyy", Locale.CHINA);
+         String format = dateFormat.format(date);
+
+        map.put("deliveryDate", format);
+
+
+        List<CkApplysEntity> applysEntities =  ckApplysService.queryApplysAndSorts(map);
+        System.out.println(applysEntities.size() + "size????");
+
+
+        if(status.equals(0)){
+            Map<String, Object> map1 = mapForStatusZero(applysEntities);
+            return R.ok().put("data", map1);
+        }else if(status.equals(1)){
+            Map<String, Object> map2 = mapForStatusOneSorts(applysEntities);
+            return R.ok().put("data", map2);
+        }
+        return R.ok();
+
+      }
+
+    private  Map<String, Object> mapForStatusOneSorts (List<CkApplysEntity> applysEntities) {
+
+        Set<CkDepEntity> depEntities = new HashSet<>();
+        Set<CkGoodsEntity> goodsEntities = new HashSet<>();
+        List<Map<String, Object>> list = new ArrayList<>();
+
+        for (CkApplysEntity apply : applysEntities) {
+            Integer outDepId = apply.getOutDepId();
+            CkDepEntity ckDepEntity = ckDepService.queryObject(outDepId);
+            depEntities.add(ckDepEntity);
+            Integer applyGoodsFatherId = apply.getApplyGoodsFatherId();
+            CkGoodsEntity ckGoodsEntity = ckGoodsService.queryObject(applyGoodsFatherId);
+            goodsEntities.add(ckGoodsEntity);
+        }
+
+
+        for (CkDepEntity dep : depEntities) {
+            Map<String, Object> map3 = new HashMap<>();
+            List<CkGoodsEntity> fatherGoodsList = new ArrayList<>();
+            Integer depId = dep.getDepId();
+            String depName = dep.getDepName();
+            map3.put("dep", depName);
+
+            System.out.println(goodsEntities.size() + "sssss????");
+
+            for(CkGoodsEntity goods:goodsEntities ){
+
+                System.out.println("----------->>>>>>>>>");
+                System.out.println(goods);
+                Integer outDepId = goods.getOutDepId();
+                System.out.println(outDepId);
+                System.out.println(depId);
+                if(!outDepId.equals(null)){
+                    if(outDepId.equals(depId)){
+                        System.out.println("000000000000000");
+                        fatherGoodsList.add(goods);
+                    }
+                }
+
+
+            }
+            map3.put("fatherList", fatherGoodsList);
+
+            list.add(map3);
+
+        }
+
+
+        Map<String,Object> map4 = new HashMap<>();
+        Map<String, Object> map = list.get(0);
+        List<CkGoodsEntity> fatherList = (List<CkGoodsEntity>)map.get("fatherList");
+        CkGoodsEntity ckGoodsEntity = fatherList.get(0);
+        Integer goodsId = ckGoodsEntity.getGoodsId();
+        List<CkApplysEntity> applys = new ArrayList<>();
+        for(CkApplysEntity apply: applysEntities){
+            Integer applyGoodsFatherId = apply.getApplyGoodsFatherId();
+            if(applyGoodsFatherId.equals(goodsId)){
+                applys.add(apply);
+
+            }
+        }
+        List<Map<String, Object>> differentGoods = getDifferentGoods(applys);
+        map4.put("applys", differentGoods);
+        map4.put("list", list);
+
+        return map4;
+
+
+    }
+
+
+        private Map<String, Object> mapForStatusOne (List<CkApplysEntity> applysEntities) {
+
+          Set<CkGoodsEntity> goodsEntities = new HashSet<>();
+
+          for (CkApplysEntity apply : applysEntities) {
+              System.out.println("apply===" + apply);
+              Integer applyGoodsFatherId = apply.getApplyGoodsFatherId();
+              CkGoodsEntity ckGoodsEntity = ckGoodsService.queryObject(applyGoodsFatherId);
+              goodsEntities.add(ckGoodsEntity);
+              System.out.println("goodsEntity====" + goodsEntities);
+          }
+//          getDifferentGoodsHasFather
+          List<Map<String, Object>> differentGoods = getDifferentGoodsHasFather(applysEntities);
+          Map<String, Object> map2 = new HashMap<>();
+          map2.put("fatherList",goodsEntities);
+          map2.put("fatherApplys", differentGoods);
+        return map2;
+
+      }
+
+      private Map<String, Object> mapForStatusZero(List<CkApplysEntity> applysEntities ) {
+
+          Set<CkDepEntity> depEntities = new HashSet<>();
+          Set<CkStoreEntity> storeEntities = new HashSet<>();
+
+          for (CkApplysEntity apply : applysEntities) {
+              Integer outDepId = apply.getOutDepId();
+              depEntities.add(ckDepService.queryObject(outDepId));
+              storeEntities.add(apply.getStoreEntity());
+          }
+
+          List<Map<String, Object>> differentGoods = getDifferentGoods(applysEntities);
+          Map<String, Object> map2 = new HashMap<>();
+          map2.put("storeList",storeEntities);
+          map2.put("outDepList", depEntities);
+          map2.put("applys", differentGoods);
+
+          return map2;
       }
      
 
@@ -543,20 +701,33 @@ public class CkApplysController {
      * 根据商品类别和分店获取申请
      *
      * @param status         0
-     * @param depId          出货部门id
+     * @param queryOutDepIds          出货部门id
      * @param queryFatherIds 搜索商品类别ids
      * @param queryStoreIds  搜索分店ids
      * @return 符合2个条件的apply
      */
     @RequestMapping(value = "/outDepQueryApplysBySorts", method = RequestMethod.GET)
     @ResponseBody
-    public R outDepQueryApplysBySorts(@RequestParam String status, @RequestParam Integer depId,
+    public R outDepQueryApplysBySorts(@RequestParam String status, @RequestParam String queryOutDepIds,
                                       @RequestParam String queryFatherIds, @RequestParam String queryStoreIds) {
 
+        System.out.println(queryOutDepIds);
         Map<String, Object> map = new HashMap<>();
         map.put("status", status);
-        map.put("depId", depId);
 
+
+        String[] reArrOutDep = queryOutDepIds.split(",");
+        //String数组转List
+        List<String> outDepIds = new ArrayList<>();
+
+        for (String st2 : reArrOutDep) {
+            outDepIds.add(st2);
+        }
+        if (queryOutDepIds.equals("-1")) {
+            map.put("queryOutDepIds", null);
+        } else {
+            map.put("queryOutDepIds", outDepIds);
+        }
 
         String[] reArrFather = queryFatherIds.split(",");
         //String数组转List

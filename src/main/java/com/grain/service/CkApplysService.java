@@ -8,6 +8,7 @@ package com.grain.service;
  */
 
 import com.grain.entity.CkApplysEntity;
+import com.grain.entity.CkDepEntity;
 import com.grain.entity.CkGoodsEntity;
 import com.grain.entity.CkStoreEntity;
 
@@ -61,5 +62,9 @@ public interface CkApplysService {
 
 	int queryTotalByLimit(Map<String, Object> map);
 
-	List<CkApplysEntity> queryApplysAndSorts(String format);
+	List<CkApplysEntity> queryApplysAndSorts(Map<String, Object>  map);
+
+	List<CkApplysEntity> getTodayApplysStores(Map<String, Object>  map);
+
+	List<CkApplysEntity> queryApplysByFatherId(Map<String, Object> map);
 }

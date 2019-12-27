@@ -83,6 +83,8 @@ public class CkStoreEntity implements Serializable, Comparable {
 	 */
 	private Boolean isSelected;
 
+	private CkLineEntity lineEntity;
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) return true;

@@ -64,4 +64,10 @@ public class CkStoreServiceImpl implements CkStoreService {
 	    return 	ckStoreDao.queryLineStore();
     }
 
+    @Override
+    public List<CkStoreEntity> queryListAll() {
+
+		return ckStoreDao.queryAll();
+    }
+
 }

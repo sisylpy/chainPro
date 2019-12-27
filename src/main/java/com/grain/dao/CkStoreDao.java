@@ -18,4 +18,5 @@ public interface CkStoreDao extends BaseDao<CkStoreEntity> {
 
     List<CkStoreEntity> queryLineStore();
 
+    List<CkStoreEntity> queryAll();
 }

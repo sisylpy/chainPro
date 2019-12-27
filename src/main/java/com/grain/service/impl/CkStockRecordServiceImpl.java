@@ -59,5 +59,12 @@ public class CkStockRecordServiceImpl implements CkStockRecordService {
 		return ckStockRecordDao.getDeliverStores();
     }
 
+	@Override
+	public List<CkStockRecordEntity> queryListByStoreId(Map<String, Object> map) {
+		return ckStockRecordDao.queryListByStoreId(map);
+	}
+
+
+
 
 }

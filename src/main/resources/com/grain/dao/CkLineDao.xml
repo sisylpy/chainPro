@@ -39,9 +39,6 @@
 
 
 
-
-
-
     <resultMap id="lineStore" type="CkLineStoreEntity">
         <id property="lineStoreId" column="line_store_id"/>
         <result property="sort" column="sort"/>

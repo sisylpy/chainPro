@@ -16,4 +16,5 @@ public interface CkLineDao extends BaseDao<CkLineEntity> {
 
     List<CkLineEntity> querLineList();
 
+
 }

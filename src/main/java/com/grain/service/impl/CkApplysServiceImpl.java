@@ -1,5 +1,6 @@
 package com.grain.service.impl;
 
+import com.grain.entity.CkDepEntity;
 import com.grain.entity.CkGoodsEntity;
 import com.grain.entity.CkStoreEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -138,9 +139,20 @@ public class CkApplysServiceImpl implements CkApplysService {
 	}
 
     @Override
-    public List<CkApplysEntity> queryApplysAndSorts(String format) {
+    public List<CkApplysEntity> queryApplysAndSorts(Map<String, Object>  map) {
 
-		return ckApplysDao.queryApplysAndSorts(format);
+		return ckApplysDao.queryApplysAndSorts(map);
+    }
+
+	@Override
+	public List<CkApplysEntity> getTodayApplysStores(Map<String, Object>  map) {
+		return ckApplysDao.getTodayApplysStores(map);
+	}
+
+    @Override
+    public List<CkApplysEntity> queryApplysByFatherId(Map<String, Object> map) {
+
+		return ckApplysDao.queryApplysByFatherId(map);
     }
 
 

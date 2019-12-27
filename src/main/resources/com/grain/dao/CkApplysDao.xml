@@ -131,7 +131,11 @@
 		SELECT * from ck_applys AS a
 						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.apply_status = #{status} and a.out_dep_id = #{depId}
+		where a.apply_status = #{status}
+		<if test="queryOutDepIds != null">
+			and a.out_dep_id in <foreach collection="queryOutDepIds" item="item" index="index"
+											 open="(" separator="," close=")">#{item}</foreach>
+		</if>
 		<if test="applyStoreIds != null">
 			and a.apply_store_id in <foreach collection="applyStoreIds" item="item" index="index"
 											 open="(" separator="," close=")">#{item}</foreach>
@@ -205,7 +209,18 @@
 		select * from ck_applys AS a
 						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where delivery_date = #{format} and apply_status = 0
+		where delivery_date = #{deliveryDate} and apply_status = #{status}
+	</select>
+	<select id="getTodayApplysStores" resultMap="outDepApplys">
+		select * from ck_applys  AS a
+			LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where delivery_date = #{delivery}
+	</select>
+	<select id="queryApplysByFatherId" resultMap="outDepApplys">
+		select * from ck_applys  AS a
+						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where a.delivery_date = #{deliveryDate} and a.apply_status = #{status} and a.apply_goods_father_id = #{applyFatherId}
 	</select>
 
 

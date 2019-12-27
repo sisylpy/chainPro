@@ -8,6 +8,7 @@ package com.grain.dao;
  */
 
 import com.grain.entity.CkApplysEntity;
+import com.grain.entity.CkDepEntity;
 import com.grain.entity.CkGoodsEntity;
 import com.grain.entity.CkStoreEntity;
 
@@ -45,7 +46,10 @@ public interface CkApplysDao extends BaseDao<CkApplysEntity> {
 
     int getApplysByLimit(Map<String, Object> map);
 
-    List<CkApplysEntity> queryApplysAndSorts(String format);
+    List<CkApplysEntity> queryApplysAndSorts(Map<String, Object>  map);
 
-//    List<CkApplysEntity> queryApplysOrderNumberByStoreId(Integer storeId);
+
+    List<CkApplysEntity> getTodayApplysStores(Map<String, Object>  map);
+
+    List<CkApplysEntity> queryApplysByFatherId(Map<String, Object> map);
 }

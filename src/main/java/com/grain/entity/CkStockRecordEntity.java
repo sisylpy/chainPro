@@ -89,9 +89,7 @@ public class CkStockRecordEntity implements Serializable {
 	 * goods
 	 */
 	private CkGoodsEntity goodsEntity;
-	/**
-	 * store_dep
-	 */
-	private CkDepEntity storeDepEntity;
+
+
 
 }

@@ -24,8 +24,11 @@
 	<select id="queryLineStore" resultType="com.grain.entity.CkStoreEntity">
 		select * from ck_store where join_line = 0;
 	</select>
+    <select id="queryAll" resultType="com.grain.entity.CkStoreEntity">
+		select * from ck_store
+	</select>
 
-	<insert id="save" parameterType="com.grain.entity.CkStoreEntity">
+    <insert id="save" parameterType="com.grain.entity.CkStoreEntity">
 		insert into ck_store
 		(
 			`store_id`, 

@@ -35,4 +35,6 @@ public class CkLineStoreEntity implements Serializable {
 	 */
 	private Integer sort;
 
+	private CkStoreEntity storeEntity;
+
 }

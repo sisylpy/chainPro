@@ -16,11 +16,6 @@
 		<result property="outTime" column="out_time"/>
 		<result property="isDiscount" column="is_discount"/>
 		<result property="discountPrice" column="discount_price"/>
-		<association property="storeEntity" javaType="CkStoreEntity">
-			<id property="storeId" column="store_id"/>
-			<result property="storeName" column="store_name"/>
-			<result property="printLabel" column="print_label"/>
-		</association>
 		<association property="goodsEntity" javaType="CkGoodsEntity">
 			<id property="goodsId" column="goods_id"/>
 			<result property="goodsName" column="goods_name"/>
@@ -34,19 +29,31 @@
 			<result property="applyNumber" column="apply_number"/>
 			<result property="applyTime" column="apply_time"/>
 		</association>
-		<association property="storeDepEntity" javaType="CkDepEntity">
-			<id property="depId" column="dep_id"/>
-			<result property="depName" column="dep_name"/>
+		<association property="storeEntity" javaType="CkStoreEntity">
+			<id property="storeId" column="store_id"/>
+			<result property="storeName" column="store_name"/>
 		</association>
 	</resultMap>
 
+
+
+	<select id="queryListByStoreId" resultMap="records">
+		select * from ck_stock_record as r
+		left join ck_goods as g on g.goods_id = r.st_goods_id
+		left join ck_applys as a on a.apply_id = r.st_apply_id
+		left join ck_dep as d on d.dep_id = r.out_dep_id
+		where delivery_status = #{status} and in_out_type = 0 and in_store_id = #{storeId}
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
 	<select id="queryList" resultMap="records">
 		select * from ck_stock_record as r
 		left join ck_goods as g on g.goods_id = r.st_goods_id
 		left join ck_applys as a on a.apply_id = r.st_apply_id
 		left join ck_dep as d on d.dep_id = r.out_dep_id
-		where in_store_id = #{storeId} and delivery_status = #{status}
-		and in_out_type = 0
+		left join ck_store as s on s.store_id = a.apply_store_id
+		where delivery_status = #{status} and in_out_type = 0 and in_store_id = #{storeId} order by r.st_goods_id
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
 		</if>
@@ -65,13 +72,15 @@
 			<result property="storeName" column="store_name"/>
 			<result property="printLabel" column="print_label"/>
 		</association>
-
 	</resultMap>
+
 	<select id="getDeliverStores" resultMap="deliveryStores">
 		select * from ck_stock_record as r
 		left join ck_store as t on t.store_id = r.in_store_id
 		where delivery_status = 0 and in_out_type = 0
 	</select>
+
+
 
 	<insert id="save" parameterType="com.grain.entity.CkStockRecordEntity">
 		insert into ck_stock_record

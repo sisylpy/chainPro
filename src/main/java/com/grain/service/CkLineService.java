@@ -29,4 +29,5 @@ public interface CkLineService {
 	void deleteBatch(Integer[] lineIds);
 
     List<CkLineEntity> queryLineList(Map<String, Object> map);
+
 }

@@ -31,4 +31,7 @@ public interface CkStoreService {
     CkStoreEntity storeLogin(String phone);
 
 	List<CkStoreEntity> queryLineStore();
+
+    List<CkStoreEntity> queryListAll();
+
 }

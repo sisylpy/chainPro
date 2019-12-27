@@ -60,7 +60,6 @@ public class CkStockRecordController {
 		return R.ok().put("data",stores);
 	}
 
-
 	
 	/**
 	 * 列表
@@ -77,9 +76,12 @@ public class CkStockRecordController {
 		map.put("storeId", storeId);
 		map.put("status",status);
 
+		System.out.println(map);
+
 		
 		//查询列表数据
 		List<CkStockRecordEntity> ckStockRecordList = ckStockRecordService.queryList(map);
+		System.out.println(ckStockRecordList.size() + "whymememmem");
 		int total = ckStockRecordService.queryTotal(map);
 		
 		PageUtils pageUtil = new PageUtils(ckStockRecordList, total, limit, page);

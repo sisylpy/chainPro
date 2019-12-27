@@ -31,4 +31,6 @@ public interface CkStockRecordService {
 
 	List<CkStockRecordEntity> getDeliverOrderStores();
 
+	List<CkStockRecordEntity> queryListByStoreId(Map<String, Object> map);
+
 }

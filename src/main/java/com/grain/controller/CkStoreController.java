@@ -7,12 +7,14 @@ package com.grain.controller;
  * @date 2019-10-15 23:48:27
  */
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.grain.entity.CkLineEntity;
+import com.grain.service.CkLineService;
 import com.grain.utils.ParseObject;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,8 @@ import com.grain.utils.R;
 public class CkStoreController {
 	@Autowired
 	private CkStoreService ckStoreService;
+	@Autowired
+	private CkLineService ckLineService;
 
 
 	/**
@@ -39,13 +43,49 @@ public class CkStoreController {
 	@RequestMapping("/queryLineStore")
 	@RequiresPermissions("ckstore:list")
 	public R queryLineStore(){
-		//查询列表数据
-		List<CkStoreEntity> ckStoreList = ckStoreService.queryLineStore();
 
-		System.out.println(ckStoreList);
+
+       Map<String, Object> map = new HashMap<>();
+		List<CkLineEntity> lineEntities = ckLineService.queryLineList(map);
+		System.out.println(lineEntities.size() + "sizzzz");
+		List<Map<String, Object>> list = new ArrayList<>();
+
+		for (CkLineEntity line : lineEntities) {
+			Map<String, Object> map2 = new HashMap<>();
+			System.out.println(line);
+			List<CkStoreEntity> storeEntityList = line.getStoreEntityList();
+			if(storeEntityList.size() > 0){
+				String lineName = line.getLineName();
+				map2.put("lineName", lineName);
+				map2.put("storelist", storeEntityList);
+				list.add(map2);
+
+			}
+
+		}
+
+
+		return R.ok().put("data", list);
+	}
+
+	/**
+	 * 列表
+	 */
+	@ResponseBody
+	@RequestMapping(value = "/listAll")
+	@RequiresPermissions("ckstore:list")
+	public R listAllWithLine(){
+
+
+
+		//查询列表数据
+		List<CkStoreEntity> ckStoreList = ckStoreService.queryListAll();
+
+
+
 		return R.ok().put("data", ckStoreList);
 	}
-	
+
 	/**
 	 * 列表
 	 */

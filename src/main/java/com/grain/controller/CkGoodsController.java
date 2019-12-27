@@ -360,45 +360,58 @@ public class CkGoodsController {
                             HttpSession session) throws Exception {
         System.out.println(file.getName());
         HSSFWorkbook wb = new HSSFWorkbook(file.getInputStream());
-        HSSFSheet sheet = wb.getSheetAt(0);
-        int lastRowNum = sheet.getLastRowNum();
 
-        System.out.println(lastRowNum);
+        HSSFSheet sheet = null;
+        for( int j = 0; j < wb.getNumberOfSheets(); j++) {
+            sheet = wb.getSheetAt(j);
 
-        Row goodsRow = null;
+            int lastRowNum = sheet.getLastRowNum();
 
-        for(int i = 1; i <= lastRowNum; i++){
+            System.out.println(lastRowNum);
 
-            goodsRow = sheet.getRow(i);
+            Row goodsRow = null;
 
-            CkGoodsEntity goods = new CkGoodsEntity();
-            goods.setType(0);
-            goods.setStockApplyStandard("0.0");
-            goods.setStockPurStandard("0.0");
-            goods.setStockSellStandard("0.0");
+            for(int i = 1; i <= lastRowNum; i++){
 
-           String goodsName =  (String)getCellValue(goodsRow.getCell(0));
+                goodsRow = sheet.getRow(i);
 
-            String pinyin = hanziToPinyin(goodsName);
+                CkGoodsEntity goods = new CkGoodsEntity();
+                goods.setType(0);
+                goods.setStockApplyStandard("0.0");
+                goods.setStockPurStandard("0.0");
+                goods.setStockSellStandard("0.0");
 
-            String headPinyin = getHeadStringByString(goodsName, false, null);
-            goods.setPinyin(pinyin);
-            goods.setHeadPinyin(headPinyin);
+                String goodsName =  (String)getCellValue(goodsRow.getCell(0));
 
-            goods.setGoodsName((String)getCellValue(goodsRow.getCell(0)));
-            goods.setFatherId((Integer)getCellValue(goodsRow.getCell(1)));
-            goods.setPurStandardName((String) getCellValue(goodsRow.getCell(2)));
-            goods.setApplyStandardName((String) getCellValue(goodsRow.getCell(3)));
-            goods.setSellStandardName((String) getCellValue(goodsRow.getCell(4)));
-            goods.setIsWeight((Integer)getCellValue(goodsRow.getCell(5)));
-            goods.setStatus((Integer)getCellValue(goodsRow.getCell(6)));
-            goods.setOutDepId((Integer) getCellValue(goodsRow.getCell(7)));
-            goods.setAlarmWeight((Integer)getCellValue(goodsRow.getCell(8)));
-            goods.setQualityPeriod((Integer)getCellValue(goodsRow.getCell(9)));
-            goods.setPrice((String)getCellValue(goodsRow.getCell(10)));
-            goods.setGSort((Integer)getCellValue(goodsRow.getCell(11)));
-            ckGoodsService.save(goods);
+                String pinyin = hanziToPinyin(goodsName);
+
+                String headPinyin = getHeadStringByString(goodsName, false, null);
+                goods.setPinyin(pinyin);
+                goods.setHeadPinyin(headPinyin);
+
+                goods.setGoodsName((String)getCellValue(goodsRow.getCell(0)));
+                goods.setFatherId((Integer)getCellValue(goodsRow.getCell(1)));
+                goods.setPurStandardName((String) getCellValue(goodsRow.getCell(2)));
+                goods.setApplyStandardName((String) getCellValue(goodsRow.getCell(3)));
+                goods.setSellStandardName((String) getCellValue(goodsRow.getCell(4)));
+                goods.setIsWeight((Integer)getCellValue(goodsRow.getCell(5)));
+                goods.setStatus((Integer)getCellValue(goodsRow.getCell(6)));
+                goods.setOutDepId((Integer) getCellValue(goodsRow.getCell(7)));
+                goods.setAlarmWeight((Integer)getCellValue(goodsRow.getCell(8)));
+                goods.setQualityPeriod((Integer)getCellValue(goodsRow.getCell(9)));
+                goods.setPrice((String)getCellValue(goodsRow.getCell(10)));
+                goods.setGSort((Integer)getCellValue(goodsRow.getCell(11)));
+                ckGoodsService.save(goods);
+            }
+
         }
+
+
+
+
+
+//        HSSFSheet sheet = wb.getSheetAt(0);
+
 
         return R.ok();
 
