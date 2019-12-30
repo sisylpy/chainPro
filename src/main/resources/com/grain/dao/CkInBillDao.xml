@@ -17,7 +17,8 @@
  	<select id="queryTotal" resultType="int">
 		select count(*) from ck_in_bill 
 	</select>
-	 
+
+
 	<insert id="save" parameterType="com.grain.entity.CkInBillEntity"
 			useGeneratedKeys="true" keyColumn="in_bill_id" keyProperty="inBillId">
 		insert into ck_in_bill

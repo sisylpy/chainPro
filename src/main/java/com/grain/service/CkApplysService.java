@@ -33,30 +33,11 @@ public interface CkApplysService {
 	
 	void deleteBatch(Integer[] applyIds);
 
-	List<CkApplysEntity> getStoreApplys(Integer storeId);
-
-	List<CkApplysEntity> queryOutDepApplysWithStatus(Map<String, Object> map);
-
-	List<CkApplysEntity> queryOutDepStores(Map<String, Object> map);
-
-
-	List<Integer> queryPintTimes(Integer outDepId);
-
 	Integer queryPintMax(String date);
 
-	List<CkApplysEntity> queryOutDepApplysByQueryIds(Map<String, Object> map);
+	List<CkApplysEntity> queryApplysByQueryIds(Map<String, Object> map);
 
-	List<CkApplysEntity> querySorts(Map<String, Object> map);
-
-	List<CkApplysEntity> queryEnterApplysByPageNumber(Map<String, Object> map);
-
-    List<CkApplysEntity> getPickStoreListByOutDepId(Map<String, Object> map);
-
-	List<CkApplysEntity> queryGoodsFatherByStoreIds(Map<String, Object> map);
-
-	List<CkApplysEntity> queryApplysGoodsStatusByDepId(Map<String, Object> map);
-
-	List<CkApplysEntity> queryOutDepApplysWithStatusAndPageNumber(Map<String, Object> map);
+	List<CkApplysEntity> queryApplysByQueryId(Map<String, Object> map);
 
 	List<CkApplysEntity> queryApplysByLimit(Map<String, Object> map);
 
@@ -66,5 +47,9 @@ public interface CkApplysService {
 
 	List<CkApplysEntity> getTodayApplysStores(Map<String, Object>  map);
 
-	List<CkApplysEntity> queryApplysByFatherId(Map<String, Object> map);
+
+	List<CkApplysEntity> queryApplysForWeigh(Map<String, Object> map);
+
+	List<CkApplysEntity> queryApplysByGoodsIdForWeigh(Map<String, Object> map);
+
 }

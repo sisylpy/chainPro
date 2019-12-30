@@ -51,5 +51,11 @@ public class CkSupplierServiceImpl implements CkSupplierService {
 	public void deleteBatch(Integer[] supplierIds){
 		ckSupplierDao.deleteBatch(supplierIds);
 	}
-	
+
+	@Override
+	public List<CkSupplierEntity> queryByPayMethods(Integer methods) {
+		return ckSupplierDao.queryByPayMethods(methods);
+	}
+
+
 }

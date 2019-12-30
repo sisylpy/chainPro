@@ -11,5 +11,5 @@ import com.grain.entity.CkInBillEntity;
 
 
 public interface CkInBillDao extends BaseDao<CkInBillEntity> {
-	
+
 }

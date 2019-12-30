@@ -27,4 +27,5 @@ public interface CkInBillService {
 	void delete(Integer inBillId);
 	
 	void deleteBatch(Integer[] inBillIds);
+
 }

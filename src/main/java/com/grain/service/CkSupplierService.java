@@ -27,4 +27,6 @@ public interface CkSupplierService {
 	void delete(Integer supplierId);
 	
 	void deleteBatch(Integer[] supplierIds);
+
+	List<CkSupplierEntity> queryByPayMethods(Integer methods);
 }

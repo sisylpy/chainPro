@@ -5,7 +5,10 @@ import com.grain.service.CkInSubBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import com.grain.dao.CkInBillDao;
@@ -39,13 +42,13 @@ public class CkInBillServiceImpl implements CkInBillService {
 	@Override
 	public void save(CkInBillEntity ckInBill){
 
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd");
+		String todayDate = dateFormat.format(new Date());
+		ckInBill.setInDatetime(todayDate);
+
 		ckInBillDao.save(ckInBill);
 
 		Integer inBillId = ckInBill.getInBillId();
-		System.out.println("-------->>>>");
-		System.out.println(ckInBill);
-		System.out.println(inBillId);
-		System.out.println("========>>>>");
 
 		List<CkInSubBillEntity> subBillEntities = ckInBill.getSubBillEntities();
 		for (CkInSubBillEntity s : subBillEntities) {
@@ -53,8 +56,6 @@ public class CkInBillServiceImpl implements CkInBillService {
 			s.setMainBillId(inBillId);
 			subBillService.update(s);
 		}
-		System.out.println("dayinZidingdan!");
-
 
 	}
 	
@@ -72,5 +73,7 @@ public class CkInBillServiceImpl implements CkInBillService {
 	public void deleteBatch(Integer[] inBillIds){
 		ckInBillDao.deleteBatch(inBillIds);
 	}
-	
+
+
+
 }

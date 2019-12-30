@@ -13,10 +13,7 @@ import java.util.Map;
 
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import com.grain.entity.CkSupplierEntity;
@@ -26,22 +23,25 @@ import com.grain.utils.R;
 
 
 @Controller
-@RequestMapping("cksupplier")
+@RequestMapping("/sys/cksupplier")
 public class CkSupplierController {
 	@Autowired
 	private CkSupplierService ckSupplierService;
+
 	
-	@RequestMapping("/cksupplier.html")
-	public String list(){
-		System.out.println("ckkkk");
-		return "cksupplier/cksupplier.html";
-	}
-	
-	@RequestMapping("/cksupplier_add.html")
-	public String add(){
-		return "cksupplier/cksupplier_add.html";
-	}
-	
+
+
+	 @RequestMapping(value = "/listAll")
+	  @ResponseBody
+	  public R listAll () {
+		 System.out.println("allllll");
+		Integer methods = 0;
+	    List<CkSupplierEntity> supplierEntities =  ckSupplierService.queryByPayMethods(methods);
+	    return R.ok().put("data", supplierEntities);
+	  }
+
+
+
 	/**
 	 * 列表
 	 */

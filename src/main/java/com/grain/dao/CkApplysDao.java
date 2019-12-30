@@ -18,29 +18,12 @@ import java.util.Map;
 
 public interface CkApplysDao extends BaseDao<CkApplysEntity> {
 
-    List<CkApplysEntity> storeGetApplys(Integer storeId);
-
-    List<CkApplysEntity> queryOutDepApplysWithStatus(Map<String, Object> map);
-
-    List<CkApplysEntity> queryOutDepStores(Map<String, Object> map);
-
-    List<Integer> queryPintTimes(Integer outDepId);
 
     Integer queryPrintMax(String date);
 
-    List<CkApplysEntity> queryOutDepApplysByQueryIds(Map<String, Object> map);
+    List<CkApplysEntity> queryApplysByQueryIds(Map<String, Object> map);
 
-    List<CkApplysEntity> querySorts(Map<String, Object> map);
-
-    List<CkApplysEntity> queryEnterApplysByPageNumber(Map<String, Object> map);
-
-    List<CkApplysEntity> queryPickStoreListByOutDepId(Map<String, Object> map);
-
-    List<CkApplysEntity> queryGoodsFatherByStoreIds(Map<String, Object> map);
-
-    List<CkApplysEntity> queryTodayApplysByDepId(Map<String, Object> map);
-
-    List<CkApplysEntity> queryOutDepApplysWithStatusAndPageNumber(Map<String, Object> map);
+    List<CkApplysEntity> queryApplysByQueryId(Map<String, Object> map);
 
     List<CkApplysEntity> queryApplysByLimit(Map<String, Object> map);
 
@@ -48,8 +31,11 @@ public interface CkApplysDao extends BaseDao<CkApplysEntity> {
 
     List<CkApplysEntity> queryApplysAndSorts(Map<String, Object>  map);
 
-
     List<CkApplysEntity> getTodayApplysStores(Map<String, Object>  map);
 
-    List<CkApplysEntity> queryApplysByFatherId(Map<String, Object> map);
+
+    List<CkApplysEntity> queryApplysForWeigh(Map<String, Object> map);
+
+    List<CkApplysEntity> queryapplysByGoodsIdForWeigh(Map<String, Object> map);
+
 }

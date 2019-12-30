@@ -75,6 +75,14 @@ public class CkStockRecordEntity implements Serializable {
 	 * shifoudazhe
 	 */
 	private Integer isDiscount;
+	/**
+	 * 出库单id
+	 */
+	private Integer stockBillId;
+	/**
+	 * 小计
+	 */
+	private String subTotal;
 
 	/**
 	 * fendian

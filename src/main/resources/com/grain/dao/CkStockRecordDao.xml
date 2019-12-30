@@ -54,9 +54,7 @@
 		left join ck_dep as d on d.dep_id = r.out_dep_id
 		left join ck_store as s on s.store_id = a.apply_store_id
 		where delivery_status = #{status} and in_out_type = 0 and in_store_id = #{storeId} order by r.st_goods_id
-		<if test="offset != null and limit != null">
-			limit #{offset}, #{limit}
-		</if>
+
 	</select>
 	
  	<select id="queryTotal" resultType="int">
@@ -98,7 +96,8 @@
 		 	`st_goods_id`,
 		 	`delivery_status`,
 		 	`discount_price`,
-		 	`is_discount`
+		 	`is_discount`,
+		 	`stock_bill_id`
 		)
 		values
 		(
@@ -115,7 +114,8 @@
 		 	#{stGoodsId},
 		 	#{deliveryStatus},
 		 	#{discountPrice},
-		 	#{isDiscount}
+		 	#{isDiscount},
+		 	#{stockBillId}
 		)
 	</insert>
 	 
@@ -134,6 +134,7 @@
 			<if test="deliveryStatus != null">`delivery_status` = #{deliveryStatus}, </if>
 			<if test="discountPrice != null">`discount_price` = #{discountPrice}, </if>
 			<if test="isDiscount != null">`is_discount` = #{isDiscount}, </if>
+			<if test="isDiscount != null">`stock_bill_id` = #{stockBillId}, </if>
 			<if test="enterUserId != null">`enter_user_id` = #{enterUserId}</if>
 		</set>
 		where stock_record_id = #{stockRecordId}

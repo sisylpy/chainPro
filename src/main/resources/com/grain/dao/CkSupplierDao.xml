@@ -17,7 +17,11 @@
  	<select id="queryTotal" resultType="int">
 		select count(*) from ck_supplier 
 	</select>
-	 
+	<select id="queryByPayMethods" resultType="com.grain.entity.CkSupplierEntity">
+		select * from ck_supplier where pay_methods =  #{methods}
+	</select>
+
+
 	<insert id="save" parameterType="com.grain.entity.CkSupplierEntity">
 		insert into ck_supplier
 		(

@@ -20,7 +20,6 @@
 
 
 
-
 	<resultMap id="applys" type="CkApplysEntity">
 		<id property="applyId" column="apply_id"/>
 		<result property="applyNumber" column="apply_number"/>
@@ -41,6 +40,7 @@
 			<result property="purStandardName" column="pur_standard_name"/>
 			<result property="price" column="price"/>
 			<result property="fatherId" column="father_id"/>
+			<result property="gSort" column="g_sort"/>
 		</association>
 		<association property="stockRecordEntity" javaType="CkStockRecordEntity">
 			<id property="stockRecordId" column="stock_record_id"/>
@@ -53,13 +53,6 @@
 
 
 
-	<select id="storeGetApplys" resultMap="outDepApplys">
-		select * from ck_applys AS a
-		LEFT JOIN ck_goods as g ON  a.apply_goods_id = g.goods_id
-		left join ck_stock_record as r on r.st_apply_id = a.apply_id
-		where apply_store_id = #{storeId}
-
-	</select>
 
 	<resultMap id="outDepApplys" type="CkApplysEntity">
 		<id property="applyId" column="apply_id"/>
@@ -84,50 +77,51 @@
 			<result property="price" column="price"/>
 			<result property="fatherId" column="father_id"/>
 			<result property="outDepId" column="out_dep_id"/>
+			<result property="gSort" column="g_sort"/>
 		</association>
 		<association property="storeEntity" javaType="CkStoreEntity">
 			<id property="storeId" column="store_id"/>
 			<result property="storeName" column="store_name"/>
 			<result property="printLabel" column="print_label"/>
 			<result property="outLabel" column="out_label"/>
+			<result property="wxNickName" column="wx_nick_name"/>
 			<result property="wxAvatarUrl" column="wx_avatar_url"/>
 		</association>
 	</resultMap>
 
-	<select id="querySorts" resultMap="outDepApplys">
-		select  *  from ck_applys AS a
-							LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
-							LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.out_dep_id = #{depId} and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
-		order by a.page_number
-	</select>
-
-	<select id="queryOutDepApplysWithStatus" resultMap="outDepApplys">
-		SELECT * from ck_applys AS a
-			LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
-			LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.apply_status = #{status} and a.out_dep_id = #{depId}
-		order by g.goods_id
-	</select>
 
 
-
-	<select id="queryOutDepStores" resultMap="outDepApplys">
-		select * from ck_applys AS a
-		LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
-		where a.out_dep_id = #{depId} and a.apply_status = #{status}
-	</select>
-
-
-	<select id="queryPintTimes" resultType="java.lang.Integer">
-		select page_number from ck_applys where apply_status = 1 and out_dep_id = #{outDepId} order by page_number
-	</select>
 	<select id="queryPrintMax" resultType="java.lang.Integer">
 		SELECT MAX(page_number) FROM ck_applys WHERE apply_time = #{date}
 	</select>
 
-	<select id="queryOutDepApplysByQueryIds" resultMap="outDepApplys">
+
+	<select id="queryApplysByQueryId" resultMap="outDepApplys">
+		SELECT * from ck_applys AS a
+		LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+		LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		<where>
+		<if test="status != null">
+			and a.apply_status = #{status}
+		</if>
+		<if test="queryOutDepId != null">
+			and a.out_dep_id = #{queryOutDepId}
+		</if>
+		<if test="applyStoreId != null">
+			and a.apply_store_id #{applyStoreId}
+		</if>
+		<if test="fatherGoodsId != null">
+			and a.apply_goods_father_id = #{fatherGoodsId}
+		</if>
+		<if test="delivery != null">
+			and a.delivery_date = #{delivery}
+		</if>
+		</where>
+		order by g.goods_id
+
+	</select>
+
+	<select id="queryApplysByQueryIds" resultMap="outDepApplys">
 		SELECT * from ck_applys AS a
 						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
@@ -148,49 +142,8 @@
 
 	</select>
 
-	<!-- wx按照打印次数获取录入申请 -->
-	<select id="queryEnterApplysByPageNumber" resultMap="outDepApplys">
-		select  *  from ck_applys AS a
-							LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
-							LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.out_dep_id = #{depId} and a.page_number = #{pageNumber} and apply_status = #{status}
-		        and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
-		</select>
 
 
-	<select id="queryPickStoreListByOutDepId" resultMap="outDepApplys">
-		select * from ck_applys AS a
-		   LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.out_dep_id = #{depId} and apply_status = #{status}
-		  and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
-	</select>
-
-
-    <select id="queryGoodsFatherByStoreIds" resultMap="outDepApplys">
-        SELECT * from ck_applys AS a
-        LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
-        where a.apply_status = #{status} and a.out_dep_id = #{depId}
-        <if test="applyStoreIds != null">
-            and a.apply_store_id in <foreach collection="storeIds" item="item" index="index"
-                                             open="(" separator="," close=")">#{item}</foreach>
-        </if>
-
-        order by g.goods_id    </select>
-    <select id="queryTodayApplysByDepId" resultMap="outDepApplys">
-        select  * from  ck_applys AS a
-                             LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
-                             LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-        where a.out_dep_id = #{depId} and a.apply_status &lt; 10
-          and (a.delivery_date = #{deliveryDate} or a.apply_time = #{applyTime})
-    </select>
-
-	<select id="queryOutDepApplysWithStatusAndPageNumber" resultMap="outDepApplys">
-		SELECT * from ck_applys AS a
-						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
-						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.apply_status = #{status} and a.out_dep_id = #{depId} and a.page_number = #{pageNumber}
-		order by g.goods_id
-	</select>
 	<select id="queryApplysByLimit" resultMap="applys">
 		select * from ck_applys AS a
 		LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
@@ -216,12 +169,22 @@
 			LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
 		where delivery_date = #{delivery}
 	</select>
-	<select id="queryApplysByFatherId" resultMap="outDepApplys">
-		select * from ck_applys  AS a
+	<select id="queryApplysForWeigh" resultMap="outDepApplys">
+		select * from ck_applys AS a
 						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where a.delivery_date = #{deliveryDate} and a.apply_status = #{status} and a.apply_goods_father_id = #{applyFatherId}
+		where delivery_date = #{delivery} and apply_status &lt; 2
+		order by a.apply_goods_id
 	</select>
+
+	<select id="queryapplysByGoodsIdForWeigh" resultMap="outDepApplys">
+		select * from ck_applys AS a
+						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
+						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
+		where delivery_date = #{delivery} and apply_status &lt; 2 and a.apply_goods_father_id = #{goodsId}
+		order by a.apply_goods_id
+	</select>
+
 
 
 	<insert id="save" parameterType="com.grain.entity.CkApplysEntity">

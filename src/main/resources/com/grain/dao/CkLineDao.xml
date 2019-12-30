@@ -28,6 +28,7 @@
         <collection property="storeEntityList"  ofType="CkStoreEntity" javaType="ArrayList">
             <id column="store_id" property="storeId"/>
             <result property="storeName" column="store_name"/>
+            <result property="wxNickName" column="wx_nick_name"/>
         </collection>
     </resultMap>
     <select id="querLineList" resultMap="lineList" >

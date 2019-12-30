@@ -36,7 +36,8 @@ public class CkStoreController {
 	private CkLineService ckLineService;
 
 
-	/**
+	/** ok
+	 * 订货 - 代下单
 	 * 列表
 	 */
 	@ResponseBody
@@ -76,13 +77,8 @@ public class CkStoreController {
 	@RequiresPermissions("ckstore:list")
 	public R listAllWithLine(){
 
-
-
 		//查询列表数据
 		List<CkStoreEntity> ckStoreList = ckStoreService.queryListAll();
-
-
-
 		return R.ok().put("data", ckStoreList);
 	}
 

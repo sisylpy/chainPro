@@ -7,22 +7,25 @@ package com.grain.controller;
  * @date 2019-11-07 19:44:55
  */
 
+import java.awt.geom.FlatteningPathIterator;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.zip.DeflaterOutputStream;
 
-import com.grain.entity.CkApplysEntity;
-import com.grain.entity.CkGoodsEntity;
-import com.grain.entity.CkStoreEntity;
+import com.grain.entity.*;
 import com.grain.service.CkApplysService;
 import com.grain.service.CkGoodsService;
+import com.grain.service.CkStockBillService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
-import com.grain.entity.CkStockRecordEntity;
 import com.grain.service.CkStockRecordService;
-import com.grain.utils.PageUtils;
 import com.grain.utils.R;
+import static com.grain.utils.DateUtils.formatWhatDay;
 
 
 @Controller
@@ -34,71 +37,103 @@ public class CkStockRecordController {
 	private CkApplysService applysService;
 	@Autowired
 	private CkGoodsService ckGoodsService;
+	@Autowired
+	private CkStockBillService ckStockBillService;
 
 
+
+
+	/**
+	 * 出货单打印完成
+	 * @param recordEntities 出货数据
+	 * @return r
+	 */
+	@RequestMapping(value = "/deliveryPrintSuccess", method = RequestMethod.POST)
+	@ResponseBody
+	public R applysPrintSuccess(@RequestBody List<CkStockRecordEntity> recordEntities) {
+		System.out.println("lailerecordEntities!!!" + recordEntities);
+
+       Integer inStoreId = -1;
+       Double total = 0.0;
+		for (CkStockRecordEntity record : recordEntities) {
+
+			total= total + Double.valueOf(record.getSubTotal());
+			inStoreId = record.getInStoreId();
+			record.setDeliveryStatus(1);
+			ckStockRecordService.update(record);
+
+		}
+
+		NumberFormat nf = NumberFormat.getNumberInstance();
+		nf.setMaximumFractionDigits(2);
+		String format = nf.format(total);
+		CkStockBillEntity stockBillEntity = new CkStockBillEntity();
+		stockBillEntity.setTotal(format);
+		stockBillEntity.setDate(formatWhatDay(0));
+		stockBillEntity.setInStoreId(inStoreId);
+		ckStockBillService.save(stockBillEntity);
+
+		return R.ok();
+	}
+
+
+	/**
+	 * 列表
+	 */
+	@ResponseBody
+	@RequestMapping("/listByStoreId/{storeId}")
+	@RequiresPermissions("ckstockrecord:list")
+	public R list(@PathVariable Integer storeId){
+		System.out.println("thisisstoreId"+ storeId);
+		Map<String, Object> map = new HashMap<>();
+
+		map.put("storeId", storeId);
+		map.put("status",0);
+
+		
+		//查询列表数据
+		List<CkStockRecordEntity> ckStockRecordList = ckStockRecordService.queryList(map);
+		Double total = 0.0;
+		for(CkStockRecordEntity record: ckStockRecordList) {
+			String quantity = record.getQuantity();
+			String discountPrice = record.getDiscountPrice();
+			total = total + Double.valueOf(quantity) * Double.valueOf(discountPrice);
+		}
+
+		String format = new DecimalFormat("0.0").format(total);
+
+		Map<String, Object> map2  = new HashMap<>();
+		map2.put("stockList", ckStockRecordList);
+		map2.put("total", format);
+
+
+		return R.ok().put("data", map2);
+	}
 	/**
 	 * 获取送货单店铺
 	 */
 	@ResponseBody
 	@RequestMapping("/getDeliveryOrderStores")
 	public R getDeliveryOrderStores(){
-		System.out.println("get??");
 
-     List<CkStockRecordEntity> stockRecordEntities = ckStockRecordService.getDeliverOrderStores();
-		System.out.println("whyaaa"+ stockRecordEntities.size());
-
-     TreeSet<CkStoreEntity> stores = new TreeSet<>();
-
-      for (CkStockRecordEntity en : stockRecordEntities){
-		  CkStoreEntity storeEntity = en.getStoreEntity();
-		  stores.add(storeEntity);
-	  }
-
-		System.out.println(stores);
-
-		System.out.println("shenmostore");
+		List<CkStockRecordEntity> stockRecordEntities = ckStockRecordService.getDeliverOrderStores();
+		TreeSet<CkStoreEntity> stores = new TreeSet<>();
+		for (CkStockRecordEntity en : stockRecordEntities){
+			CkStoreEntity storeEntity = en.getStoreEntity();
+			stores.add(storeEntity);
+		}
 		return R.ok().put("data",stores);
 	}
 
-	
-	/**
-	 * 列表
-	 */
-	@ResponseBody
-	@RequestMapping("/listByDepId")
-//	@RequiresPermissions("ckstockrecord:list")
-	public R list(@RequestParam Integer status, @RequestParam Integer storeId,
-				  @RequestParam Integer page, @RequestParam  Integer limit){
-		System.out.println("thisisstoreId"+ storeId);
-		Map<String, Object> map = new HashMap<>();
-		map.put("offset", (page - 1) * limit);
-		map.put("limit", limit);
-		map.put("storeId", storeId);
-		map.put("status",status);
 
-		System.out.println(map);
-
-		
-		//查询列表数据
-		List<CkStockRecordEntity> ckStockRecordList = ckStockRecordService.queryList(map);
-		System.out.println(ckStockRecordList.size() + "whymememmem");
-		int total = ckStockRecordService.queryTotal(map);
-		
-		PageUtils pageUtil = new PageUtils(ckStockRecordList, total, limit, page);
-		
-		return R.ok().put("page", pageUtil);
-	}
-	
-	
 	/**
 	 * 信息
 	 */
 	@ResponseBody
 	@RequestMapping("/info/{stockRecordId}")
-//	@RequiresPermissions("ckstockrecord:info")
+	@RequiresPermissions("ckstockrecord:info")
 	public R info(@PathVariable("stockRecordId") Integer stockRecordId){
 		CkStockRecordEntity ckStockRecord = ckStockRecordService.queryObject(stockRecordId);
-		
 		return R.ok().put("ckStockRecord", ckStockRecord);
 	}
 	
@@ -107,11 +142,8 @@ public class CkStockRecordController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-//	@RequiresPermissions("ckstockrecord:save")
+	@RequiresPermissions("ckstockrecord:save")
 	public R save(@RequestBody List<CkStockRecordEntity> ckStockRecords){
-		System.out.println("saverecordl");
-
-		System.out.println(ckStockRecords);
 
 		for (CkStockRecordEntity record : ckStockRecords) {
 
@@ -138,15 +170,9 @@ public class CkStockRecordController {
 			float v1 = Float.parseFloat(quantity) + f1;
 			float v2 = v - v1;
 			String s = Float.toString(v2);
-
 			ckGoodsEntity.setStockPurStandard(s);
-
-			System.out.println("kkkgoods" + ckGoodsEntity);
 			ckGoodsService.update(ckGoodsEntity);
-
 		}
-
-
 		return R.ok();
 	}
 	
@@ -155,12 +181,9 @@ public class CkStockRecordController {
 	 */
 	@ResponseBody
 	@RequestMapping("/update")
-//	@RequiresPermissions("ckstockrecord:update")
+	@RequiresPermissions("ckstockrecord:update")
 	public R update(@RequestBody CkStockRecordEntity ckStockRecord){
-		System.out.println("ccccckkkkk");
-		System.out.println(ckStockRecord);
 		ckStockRecordService.update(ckStockRecord);
-		
 		return R.ok();
 	}
 	
@@ -172,7 +195,6 @@ public class CkStockRecordController {
 	@RequiresPermissions("ckstockrecord:delete")
 	public R delete(@RequestBody Integer[] stockRecordIds){
 		ckStockRecordService.deleteBatch(stockRecordIds);
-		
 		return R.ok();
 	}
 	
