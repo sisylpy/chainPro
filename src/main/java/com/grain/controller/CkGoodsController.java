@@ -7,14 +7,15 @@ package com.grain.controller;
 
 import java.io.*;
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.baidu.aip.speech.TtsResponse;
 import com.baidu.aip.util.Util;
+import com.grain.entity.CkApplysEntity;
+import com.grain.entity.CkDepEntity;
+import com.grain.service.CkApplysService;
+import com.grain.service.CkDepService;
 import com.grain.utils.*;
 import org.apache.commons.io.IOUtils;
 import org.apache.poi.hssf.usermodel.*;
@@ -40,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import static com.grain.utils.PinYin4jUtils.*;
+import static com.grain.utils.SplitStringUtil.splitString;
 
 
 @Controller
@@ -47,9 +49,174 @@ import static com.grain.utils.PinYin4jUtils.*;
 public class CkGoodsController {
     @Autowired
     private CkGoodsService ckGoodsService;
+    @Autowired
+    private CkDepService ckDepService;
+
+
+    @RequestMapping(value = "/getPurchaseByFatherId")
+    @ResponseBody
+    public R getPurchaseByFatherId(@RequestParam Integer purDepId, @RequestParam Integer fatherId) {
+        System.out.println("hehhehehheeh");
+        System.out.println(fatherId);
+        Map<String, Object> map = new HashMap<>();
+        map.put("purDepId",purDepId );
+        map.put("fatherId", fatherId);
+        List<CkGoodsEntity> goodsEntities =  ckGoodsService.queryPurchaseGoodsByFatherId(map);
+
+
+        return R.ok().put("data", goodsEntities);
+    }
+
+
+
+    @RequestMapping(value = "/getPurchase/{purDepId}")
+    @ResponseBody
+    public R getPurchase(@PathVariable Integer purDepId) {
+        System.out.println(purDepId);
+
+        System.out.println("easy");
+        //查询计划商品
+        List<CkGoodsEntity> goodsEntities = ckGoodsService.queryPurchaseGoods(purDepId);
+        System.out.println(goodsEntities.size() + "ssssiziiii!!!");
+        List<Map<String, Object>> mapList = treeGoods(goodsEntities);
+
+        return R.ok().put("data", mapList);
+    }
+
+    private List<Map<String, Object>> treeGoods(List<CkGoodsEntity> goodsEntities) {
+        List<Map<String, Object>> list = new ArrayList<>();
+        //1, 获取商品类别set
+        Set<CkGoodsEntity> fatherSet = new TreeSet<>();
+        for (CkGoodsEntity goodsEntity : goodsEntities) {
+            System.out.println(goodsEntity.getPlanPurchase() + "aaaaa");
+            fatherSet.add(ckGoodsService.queryObject(goodsEntity.getFatherId()));
+        }
+
+        for (CkGoodsEntity goods : fatherSet) {
+            Integer goodsId = goods.getGoodsId();
+
+            Map<String, Object> fatherMap = new HashMap<>();
+            fatherMap.put("fatherId", goodsId);
+            fatherMap.put("fatherName", goods.getGoodsName());
+            List<CkGoodsEntity> goodslist = new ArrayList<>();
+            for (CkGoodsEntity goodsEntity : goodsEntities) {
+                if (goodsId.equals(goodsEntity.getFatherId())) {
+                    goodslist.add(goodsEntity);
+                }
+            }
+            fatherMap.put("goodsList", goodslist);
+            list.add(fatherMap);
+        }
+
+        return list;
+    }
+
+
+
+    @RequestMapping(value = "/getGoodsByParams", method = RequestMethod.POST)
+    @ResponseBody
+    public R outDepGoodsList(@RequestParam Integer page, @RequestParam Integer limit,
+                             @RequestParam Integer depId, @RequestParam Integer fatherId,
+                             @RequestParam Integer type) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("offset", (page - 1) * limit);
+        map.put("limit", limit);
+        map.put("depId", depId);
+        map.put("type", type);
+        map.put("fatherId", fatherId);
+
+        System.out.println("newmap!!!" + map);
+        List<CkGoodsEntity> goodsEntities = ckGoodsService.queryGoodsByParams(map);
+
+
+        int total = ckGoodsService.queryTotalByParams(map);
+
+        PageUtils pageUtil = new PageUtils(goodsEntities, total, limit, page);
+        return R.ok().put("page", pageUtil);
+    }
+
+    @RequestMapping(value = "/getGoodsStorsByType/{type}")
+    @ResponseBody
+    public R getGoodsStorsByType(@PathVariable Integer type) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("offset", null);
+        map.put("limit", null);
+        map.put("depId", -1);
+        map.put("type", type);
+        map.put("fatherId", -1);
+        System.out.println(map);
+        System.out.println("??>...");
+        List<CkGoodsEntity> goodsEntities = ckGoodsService.queryGoodsByParams(map);
+        Map<String, Object> map1 = sortsGoodList(goodsEntities);
+
+        return R.ok().put("data", map1);
+    }
+
+    private Map<String, Object> sortsGoodList(List<CkGoodsEntity> goodsEntities) {
+        Map<String, Object> map = new HashMap<>();
+        Set<CkDepEntity> depSet = new TreeSet<>();
+        Set<CkGoodsEntity> goodsSet = new TreeSet<>();
+
+        for (CkGoodsEntity goods : goodsEntities) {
+            depSet.add(ckDepService.queryObject(goods.getOutDepId()));
+            goodsSet.add(ckGoodsService.queryObject(goods.getFatherId()));
+        }
+        map.put("outDepList", depSet);
+        map.put("fatherList", goodsSet);
+
+        return map;
+
+    }
 
 
     /**
+     * ok
+     * 快速查询商品
+     *
+     * @param pinyin
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/queryPinyin/{pinyin}")
+    public R queryPinyin(@PathVariable String pinyin) {
+
+        List<CkGoodsEntity> list = ckGoodsService.queryPinyin(pinyin);
+        return R.ok().put("data", list);
+    }
+
+
+    /**
+     * ok
+     * 根据商品类别id获取所有type的商品
+     *
+     * @param page
+     * @param limit
+     * @param fatherId
+     * @return
+     */
+    @RequestMapping(value = "/goodsList", method = RequestMethod.POST)
+    @ResponseBody
+
+    /**ok
+     * 获取所有商品类别
+     */
+    public R getCateGoods(@RequestParam Integer page, @RequestParam Integer limit, @RequestParam Integer fatherId) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("offset", (page - 1) * limit);
+        map.put("limit", limit);
+        map.put("fatherId", fatherId);
+        List<CkGoodsEntity> cateGoodsList = ckGoodsService.queryGoodsList(map);
+        int total = ckGoodsService.queryTotal(map);
+
+        PageUtils pageUtil = new PageUtils(cateGoodsList, total, limit, page);
+        return R.ok().put("page", pageUtil);
+    }
+
+
+    /**
+     * ok
      * 读句子识别结果
      *
      * @param file
@@ -116,84 +283,6 @@ public class CkGoodsController {
         return -1;
     }
 
-
-    @RequestMapping(value = "/outDepCateList/{depId}")
-    @ResponseBody
-    public R outDepCateList(@PathVariable Integer depId) {
-
-        List<CkGoodsEntity> cateGoodsList = ckGoodsService.queryOutDepCateList(depId);
-
-        return R.ok().put("data", cateGoodsList);
-    }
-
-
-    @RequestMapping(value = "/outDepGoodsList", method = RequestMethod.POST)
-    @ResponseBody
-    public R outDepGoodsList(@RequestParam Integer page, @RequestParam Integer limit,
-                             @RequestParam Integer depId, @RequestParam Integer fatherId) {
-
-        if (fatherId.equals(-1)) {
-            Map<String, Object> map = new HashMap<>();
-            map.put("offset", (page - 1) * limit);
-            map.put("limit", limit);
-            map.put("depId", depId);
-            List<CkGoodsEntity> allGoods = ckGoodsService.queryOutDepGoodsListAll(map);
-            int total = ckGoodsService.queryTotal(map);
-
-            PageUtils pageUtil = new PageUtils(allGoods, total, limit, page);
-            return R.ok().put("page", pageUtil);
-
-        } else {
-            Map<String, Object> map = new HashMap<>();
-            map.put("offset", (page - 1) * limit);
-            map.put("limit", limit);
-            map.put("depId", depId);
-            map.put("fatherId", fatherId);
-            List<CkGoodsEntity> byFatherGoods = ckGoodsService.queryOutDepGoodsListByFatherId(map);
-            int total = ckGoodsService.queryTotal(map);
-
-            PageUtils pageUtil = new PageUtils(byFatherGoods, total, limit, page);
-            return R.ok().put("page", pageUtil);
-        }
-
-    }
-
-
-    @ResponseBody
-    @RequestMapping("/queryPinyin/{pinyin}")
-    public R queryPinyin(@PathVariable String pinyin) {
-
-        List<CkGoodsEntity> list = ckGoodsService.queryPinyin(pinyin);
-        return R.ok().put("data", list);
-    }
-
-
-    @RequestMapping(value = "/goodsList", method = RequestMethod.POST)
-    @ResponseBody
-    public R getCateGoods(@RequestParam Integer page, @RequestParam Integer limit, @RequestParam Integer fatherId) {
-        System.out.println(page);
-        System.out.println(limit);
-        System.out.println(fatherId);
-        Map<String, Object> map = new HashMap<>();
-        map.put("offset", (page - 1) * limit);
-        map.put("limit", limit);
-        map.put("fatherId", fatherId);
-        List<CkGoodsEntity> cateGoodsList = ckGoodsService.queryGoodsList(map);
-        int total = ckGoodsService.queryTotal(map);
-
-        PageUtils pageUtil = new PageUtils(cateGoodsList, total, limit, page);
-        return R.ok().put("page", pageUtil);
-    }
-
-
-    @RequestMapping("/cateList")
-    @ResponseBody
-    public R cateGoods() {
-        List<CkGoodsEntity> list = ckGoodsService.queryCateGoods();
-        return R.ok().put("data", list);
-    }
-
-
     /**
      * 信息
      */
@@ -218,14 +307,18 @@ public class CkGoodsController {
 
         String s = ParseObject.parseObj(param);
         CkGoodsEntity ckGoodsEntity = JSON.parseObject(s, CkGoodsEntity.class);
-        String goodsName = ckGoodsEntity.getGoodsName();
-        String pinyin = hanziToPinyin(goodsName);
 
-        String headPinyin = getHeadStringByString(goodsName, false, null);
-        ckGoodsEntity.setPinyin(pinyin);
-        ckGoodsEntity.setHeadPinyin(headPinyin);
-        ckGoodsService.save(ckGoodsEntity);
-        return R.ok();
+        if (ckGoodsEntity != null) {
+            String goodsName = ckGoodsEntity.getGoodsName();
+            String pinyin = hanziToPinyin(goodsName);
+            String headPinyin = getHeadStringByString(goodsName, false, null);
+            ckGoodsEntity.setPinyin(pinyin);
+            ckGoodsEntity.setHeadPinyin(headPinyin);
+            ckGoodsService.save(ckGoodsEntity);
+            return R.ok();
+        }
+
+        return R.error("商品保存失败");
     }
 
 
@@ -245,7 +338,9 @@ public class CkGoodsController {
         return R.ok();
     }
 
+
     /**
+     * ok
      * 删除
      */
     @ResponseBody
@@ -258,7 +353,11 @@ public class CkGoodsController {
     }
 
 
-
+    /**
+     * 导出excel
+     *
+     * @param response
+     */
     @RequestMapping("/downloadExcel")
     @ResponseBody
     public void downloadExcel(HttpServletResponse response) {
@@ -319,13 +418,20 @@ public class CkGoodsController {
 
     }
 
-     @RequestMapping(value = "/downloadExcelTMP", method = RequestMethod.GET)
-      @ResponseBody
-      public void downloadExcelTMP (HttpServletResponse response, HttpSession session ) {
+
+    /**
+     * 下载导入商品的Excel模版
+     *
+     * @param response no
+     * @param session  获取保存文件路径
+     */
+    @RequestMapping(value = "/downloadExcelTMP", method = RequestMethod.GET)
+    @ResponseBody
+    public void downloadExcelTMP(HttpServletResponse response, HttpSession session) {
 
         FileInputStream is = null;
 
-        try{
+        try {
             String fileName = new String("商品模版.xls".getBytes("utf-8"), "iso8859-1");
             response.setHeader("content-Disposition", "attachment; filename =" + fileName);
 
@@ -336,12 +442,11 @@ public class CkGoodsController {
 
             IOUtils.copy(is, response.getOutputStream());
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
 
-        }finally {
-            if(is != null) {
+        } finally {
+            if (is != null) {
                 try {
                     is.close();
                 } catch (IOException e) {
@@ -350,19 +455,27 @@ public class CkGoodsController {
             }
         }
 
+    }
 
-      }
 
-
+    /**
+     * ok
+     * 导入商品
+     *
+     * @param file    xls文件
+     * @param session http
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/uploadExcel", produces = "text/html;charset=UTF-8")
     @ResponseBody
     public R uploadExcel(@RequestParam("file") MultipartFile file,
-                            HttpSession session) throws Exception {
+                         HttpSession session) throws Exception {
         System.out.println(file.getName());
         HSSFWorkbook wb = new HSSFWorkbook(file.getInputStream());
 
         HSSFSheet sheet = null;
-        for( int j = 0; j < wb.getNumberOfSheets(); j++) {
+        for (int j = 0; j < wb.getNumberOfSheets(); j++) {
             sheet = wb.getSheetAt(j);
 
             int lastRowNum = sheet.getLastRowNum();
@@ -371,17 +484,17 @@ public class CkGoodsController {
 
             Row goodsRow = null;
 
-            for(int i = 1; i <= lastRowNum; i++){
+            for (int i = 1; i <= lastRowNum; i++) {
 
                 goodsRow = sheet.getRow(i);
 
                 CkGoodsEntity goods = new CkGoodsEntity();
                 goods.setType(0);
-                goods.setStockApplyStandard("0.0");
-                goods.setStockPurStandard("0.0");
-                goods.setStockSellStandard("0.0");
+                goods.setStockApplyStandard(0.0f);
+                goods.setStockPurStandard(0.0f);
+                goods.setStockSellStandard(0.0f);
 
-                String goodsName =  (String)getCellValue(goodsRow.getCell(0));
+                String goodsName = (String) getCellValue(goodsRow.getCell(0));
 
                 String pinyin = hanziToPinyin(goodsName);
 
@@ -389,28 +502,22 @@ public class CkGoodsController {
                 goods.setPinyin(pinyin);
                 goods.setHeadPinyin(headPinyin);
 
-                goods.setGoodsName((String)getCellValue(goodsRow.getCell(0)));
-                goods.setFatherId((Integer)getCellValue(goodsRow.getCell(1)));
+                goods.setGoodsName((String) getCellValue(goodsRow.getCell(0)));
+                goods.setFatherId((Integer) getCellValue(goodsRow.getCell(1)));
                 goods.setPurStandardName((String) getCellValue(goodsRow.getCell(2)));
                 goods.setApplyStandardName((String) getCellValue(goodsRow.getCell(3)));
                 goods.setSellStandardName((String) getCellValue(goodsRow.getCell(4)));
-                goods.setIsWeight((Integer)getCellValue(goodsRow.getCell(5)));
-                goods.setStatus((Integer)getCellValue(goodsRow.getCell(6)));
+                goods.setIsWeight((Integer) getCellValue(goodsRow.getCell(5)));
+                goods.setStatus((Integer) getCellValue(goodsRow.getCell(6)));
                 goods.setOutDepId((Integer) getCellValue(goodsRow.getCell(7)));
-                goods.setAlarmWeight((Integer)getCellValue(goodsRow.getCell(8)));
-                goods.setQualityPeriod((Integer)getCellValue(goodsRow.getCell(9)));
-                goods.setPrice((String)getCellValue(goodsRow.getCell(10)));
-                goods.setGSort((Integer)getCellValue(goodsRow.getCell(11)));
+                goods.setAlarmWeight((Float) getCellValue(goodsRow.getCell(8)));
+                goods.setQualityPeriod((Integer) getCellValue(goodsRow.getCell(9)));
+                goods.setPrice((Float) getCellValue(goodsRow.getCell(10)));
+                goods.setGSort((Integer) getCellValue(goodsRow.getCell(11)));
                 ckGoodsService.save(goods);
             }
 
         }
-
-
-
-
-
-//        HSSFSheet sheet = wb.getSheetAt(0);
 
 
         return R.ok();
@@ -419,17 +526,17 @@ public class CkGoodsController {
 
     private Object getCellValue(Cell cell) {
 
-        switch (cell.getCellType()){
+        switch (cell.getCellType()) {
             case STRING:
                 return cell.getRichStringCellValue().getString();
             case NUMERIC:
-                if(DateUtil.isCellDateFormatted(cell)){
+                if (DateUtil.isCellDateFormatted(cell)) {
                     return cell.getDateCellValue();
-                }else {
+                } else {
                     double numericCellValue = cell.getNumericCellValue();
 
                     String s = String.valueOf(numericCellValue);
-                    int i1 = Integer.parseInt(s.replace(".0",""));
+                    int i1 = Integer.parseInt(s.replace(".0", ""));
                     System.out.println("hahahahhahhahahha");
                     return i1;
                 }
@@ -444,6 +551,18 @@ public class CkGoodsController {
     }
 
 
+    /**
+     * ok
+     * 查询商品类别
+     *
+     * @return 商品类别列表
+     */
+    @RequestMapping("/cateList")
+    @ResponseBody
+    public R cateGoods() {
+        List<CkGoodsEntity> list = ckGoodsService.queryCateGoods();
+        return R.ok().put("data", list);
+    }
 
 
 }

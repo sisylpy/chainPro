@@ -19,22 +19,22 @@
 	</select>
 
 
-	<resultMap id="record" type="CkStockRecordEntity">
-		<id property="stockRecordId" column="stock_record_id"/>
-		<association property="goodsEntity" javaType="CkGoodsEntity">
-			<id property="goodsId" column="goods_id"/>
-			<result property="goodsName" column="goods_name"/>
-			<result property="purStandardName" column="pur_standard_name"/>
-		</association>
+	<resultMap id="record" type="CkGoodsEntity">
+		<id property="goodsId" column="goods_id"/>
+		<result property="goodsName" column="goods_name"/>
+		<result property="purStandardName" column="pur_standard_name"/>
+
 	</resultMap>
 
 	<resultMap id="stockBill" type="CkStockBillEntity">
 		<id property="stockBillId" column="stock_bill_id"/>
-		<result property="date" column="date"/>
+		<result property="billDate" column="bill_date"/>
+		<result property="total" column="total"/>
 		<collection property="ckStockRecordEntities" ofType="CkStockRecordEntity" >
 			<id property="stockRecordId" column="stock_record_id"/>
 			<result property="quantity" column="quantity"/>
 			<result property="discountPrice" column="discount_price"/>
+			<result property="subTotal" column="sub_total"/>
 			<association property="goodsEntity" resultMap="record"/>
 		</collection>
 	</resultMap>
@@ -42,16 +42,18 @@
 
 	<select id="queryByInStoreId" resultMap="stockBill">
 		select * from ck_stock_bill as s
-		left join ck_stock_record  as r on s.stock_bill_id = r.stock_bill_id
-		where s.in_store_id = #{storeId} order by s.stock_bill_id
+		left join ck_stock_record  as r on s.stock_bill_id = r.ck_stock_bill_id
+		left join ck_goods as g on r.st_goods_id = g.goods_id
+		where s.in_store_id = #{storeId} order by s.stock_bill_id desc
 	</select>
 
-	<insert id="save" parameterType="com.grain.entity.CkStockBillEntity">
+	<insert id="save" parameterType="com.grain.entity.CkStockBillEntity"
+			useGeneratedKeys="true" keyColumn="stock_bill_id" keyProperty="stockBillId">
 		insert into ck_stock_bill
 		(
 			`stock_bill_id`, 
 			`total`, 
-			`date`, 
+			`bill_date`,
 			`user_id`, 
 			`in_store_id`
 		)
@@ -59,7 +61,7 @@
 		(
 			#{stockBillId}, 
 			#{total}, 
-			#{date}, 
+			#{billDate},
 			#{userId}, 
 			#{inStoreId}
 		)
@@ -69,7 +71,7 @@
 		update ck_stock_bill 
 		<set>
 			<if test="total != null">`total` = #{total}, </if>
-			<if test="date != null">`date` = #{date}, </if>
+			<if test="bill_date != null">`billDate` = #{bill_date}, </if>
 			<if test="userId != null">`user_id` = #{userId}, </if>
 			<if test="inStoreId != null">`in_store_id` = #{inStoreId}</if>
 		</set>

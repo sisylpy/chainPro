@@ -30,20 +30,19 @@ public interface CkGoodsService {
 
 	List<CkGoodsEntity> queryCateGoods();
 
-
 	List<CkGoodsEntity> queryGoodsList(Map<String, Object> map);
 
-
 	List<CkGoodsEntity> queryPinyin(String pinyin);
-
-	List<CkGoodsEntity> queryOutDepCateList(Integer depId);
-
-	List<CkGoodsEntity> queryOutDepGoodsListAll(Map<String, Object> map);
-
-	List<CkGoodsEntity> queryOutDepGoodsListByFatherId(Map<String, Object> map);
 
     List<CkGoodsEntity> queryRecordGoods(String substring);
 
     List<CkGoodsEntity> downloadGoods();
 
+	List<CkGoodsEntity> queryPurchaseGoods(Integer purDepId);
+
+	List<CkGoodsEntity> queryGoodsByParams(Map<String, Object> map);
+
+	int queryTotalByParams(Map<String, Object> map);
+
+	List<CkGoodsEntity> queryPurchaseGoodsByFatherId(Map<String, Object> map);
 }

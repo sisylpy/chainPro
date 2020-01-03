@@ -22,19 +22,19 @@ public interface CkGoodsDao extends BaseDao<CkGoodsEntity> {
 
     List<CkGoodsEntity> queryGoodsList(Map<String, Object> map);
 
-
     List<CkGoodsEntity> queryPinyin(String pinyin);
 
     List<CkGoodsEntity> queryHeadPinyin(String pinyin);
-
-    List<CkGoodsEntity> queryOutDepCateList(Integer depId);
-
-    List<CkGoodsEntity> queryOutDepGoodsListAll(Map<String, Object> map);
-
-    List<CkGoodsEntity> queryOutDepGoodsListByFatherId(Map<String, Object> map);
 
     List<CkGoodsEntity> queryGoodsListByRecord(String substring);
 
     List<CkGoodsEntity> getAll();
 
+    List<CkGoodsEntity> queryPurchaseGoods(@Param("purDepId") Integer purDepId);
+
+    List<CkGoodsEntity> queryGoodsByParams(Map<String, Object> map);
+
+    int queryTotalByParams(Map<String, Object> map);
+
+    List<CkGoodsEntity> querypurchaseGoodsByFatherId(Map<String, Object> map);
 }

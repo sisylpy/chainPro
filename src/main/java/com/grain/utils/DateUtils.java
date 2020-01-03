@@ -13,7 +13,7 @@ public class DateUtils {
 	/** 时间格式(yyyy-MM-dd) */
 	public final static String DATE_PATTERN = "yyyy-MM-dd";
 	/** 时间格式(yyyy-MM-dd HH:mm:ss) */
-	public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
+	public final static String DATE_TIME_PATTERN = "yyyy-MM-dd HH:mm";
 	
 	public static String format(Date date) {
         return format(date, DATE_PATTERN);
@@ -29,7 +29,7 @@ public class DateUtils {
 
     public static  String formatWhatDay(int what) {
 
-        Date whatDay = calendarDay(1).getTime();
+        Date whatDay = calendarDay(what).getTime();
 
         SimpleDateFormat dateFormat2 = new SimpleDateFormat(DATE_PATTERN);
         String format1 = dateFormat2.format(whatDay);
@@ -38,7 +38,7 @@ public class DateUtils {
 
 
     public static  String formatWhatDayTime(int what) {
-        Date whatDay = calendarDay(1).getTime();
+        Date whatDay = calendarDay(what).getTime();
         SimpleDateFormat dateFormat2 = new SimpleDateFormat(DATE_TIME_PATTERN);
         String format1 = dateFormat2.format(whatDay);
         return format1;

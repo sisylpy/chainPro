@@ -53,5 +53,10 @@ public class CkInBillEntity implements Serializable {
 	 */
 	private List<CkInSubBillEntity> subBillEntities;
 
+	/**
+	 * 供货商
+	 */
+	private CkSupplierEntity ckSupplierEntity;
+
 
 }

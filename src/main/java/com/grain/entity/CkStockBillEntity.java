@@ -27,11 +27,11 @@ public class CkStockBillEntity implements Serializable {
 	/**
 	 *  总金额
 	 */
-	private String total;
+	private Float total;
 	/**
 	 *  出库日期
 	 */
-	private String date;
+	private String billDate;
 	/**
 	 *  操作元id
 	 */

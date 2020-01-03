@@ -41,6 +41,11 @@
 			<result property="price" column="price"/>
 			<result property="fatherId" column="father_id"/>
 			<result property="gSort" column="g_sort"/>
+			<result property="stockPurStandard" column="stock_pur_standard"/>
+			<result property="planPurchase" column="plan_purchase"/>
+			<result property="todayQuantity" column="today_quantity"/>
+			<result property="alarmWeight" column="alarm_weight"/>
+			<result property="todayQuantity" column="today_quantity"/>
 		</association>
 		<association property="stockRecordEntity" javaType="CkStockRecordEntity">
 			<id property="stockRecordId" column="stock_record_id"/>
@@ -78,6 +83,12 @@
 			<result property="fatherId" column="father_id"/>
 			<result property="outDepId" column="out_dep_id"/>
 			<result property="gSort" column="g_sort"/>
+			<result property="planPurchase" column="plan_purchase"/>
+			<result property="stockPurStandard" column="stock_pur_standard"/>
+			<result property="planPurchase" column="plan_purchase"/>
+			<result property="todayQuantity" column="today_quantity"/>
+			<result property="alarmWeight" column="alarm_weight"/>
+
 		</association>
 		<association property="storeEntity" javaType="CkStoreEntity">
 			<id property="storeId" column="store_id"/>
@@ -138,6 +149,10 @@
 			and a.apply_goods_father_id in <foreach collection="fatherGoodsIds" item="item" index="index"
 													open="(" separator="," close=")">#{item}</foreach>
 		</if>
+		<if test="applyGoodsIds != null">
+			and a.apply_goods_id in <foreach collection="applyGoodsIds" item="item" index="index"
+													open="(" separator="," close=")">#{item}</foreach>
+		</if>
 		order by g.goods_id
 
 	</select>
@@ -148,7 +163,7 @@
 		select * from ck_applys AS a
 		LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 		left join ck_stock_record as r on r.st_apply_id = a.apply_id
-		where delivery_date = #{delivery} and apply_store_id = #{storeId}
+		where delivery_date = #{delivery} and apply_store_id = #{storeId} and apply_status &lt; 2
 		order by a.apply_time
 		<if test="offset != null and limit != null">
 			limit #{offset}, #{limit}
@@ -162,18 +177,18 @@
 		select * from ck_applys AS a
 						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where delivery_date = #{deliveryDate} and apply_status = #{status}
+		where a.delivery_date = #{deliveryDate} and a.apply_status = #{status}
 	</select>
 	<select id="getTodayApplysStores" resultMap="outDepApplys">
 		select * from ck_applys  AS a
 			LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where delivery_date = #{delivery}
+		where a.delivery_date = #{delivery} and a.apply_status &lt; 2
 	</select>
 	<select id="queryApplysForWeigh" resultMap="outDepApplys">
 		select * from ck_applys AS a
 						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where delivery_date = #{delivery} and apply_status &lt; 2
+		where a.delivery_date = #{delivery} and a.apply_status &lt; 2
 		order by a.apply_goods_id
 	</select>
 
@@ -181,7 +196,7 @@
 		select * from ck_applys AS a
 						  LEFT JOIN ck_goods AS g ON g.goods_id = a.apply_goods_id
 						  LEFT JOIN ck_store as t ON t.store_id = a.apply_store_id
-		where delivery_date = #{delivery} and apply_status &lt; 2 and a.apply_goods_father_id = #{goodsId}
+		where a.delivery_date = #{delivery} and a.apply_status &lt; 2 and a.apply_goods_father_id = #{goodsId}
 		order by a.apply_goods_id
 	</select>
 

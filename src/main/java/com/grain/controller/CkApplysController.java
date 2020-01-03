@@ -10,14 +10,12 @@ import com.grain.entity.*;
 import com.grain.service.CkDepService;
 import com.grain.service.CkGoodsService;
 import com.grain.utils.*;
-import org.apache.poi.ss.formula.functions.T;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import com.grain.service.CkApplysService;
-import sun.jvm.hotspot.oops.ObjectHeap;
 
 import static com.grain.utils.DateUtils.*;
 import static com.grain.utils.SplitStringUtil.splitString;
@@ -52,6 +50,7 @@ public class CkApplysController {
        map.put("goodsId", fatherId);
        List<CkApplysEntity> applysEntities1 =  ckApplysService.queryApplysByGoodsIdForWeigh(map);
        List<Map<String, Object>> mapList = gatherApplysAmount(applysEntities1);
+       System.out.println(mapList + "maplistttt");
        return R.ok().put("data", mapList);
    }
 
@@ -67,9 +66,15 @@ public class CkApplysController {
 
         List<CkApplysEntity> applysEntities =  ckApplysService.queryApplysForWeigh(map);
         System.out.println(applysEntities.size()+ "sisssss");
-        List<Map<String, Object>> mapList = gatherApplysByFatherGoodsInOutDep(applysEntities);
+        Map<String, Object> mapList = gatherApplysByFatherGoodsInOutDep(applysEntities);
+        System.out.println(mapList + "kankannullll????");
+        if(mapList == null){
+            System.out.println("shi null");
+            return R.ok().put("data", null);
+        }else{
+            return R.ok().put("data",mapList);
+        }
 
-        return R.ok().put("data",mapList);
     }
 
 
@@ -137,6 +142,7 @@ public class CkApplysController {
         List<CkApplysEntity> applysEntities1 =
                 queryApplysByParams("0", "-1", "-1", "-1", formatWhatDay(1));
 
+        System.out.println("shhsshshhshs");
         return R.ok().put("data", gatherApplysAndOutDepsAndStores(applysEntities1));
     }
 
@@ -146,6 +152,11 @@ public class CkApplysController {
         Set<CkStoreEntity> storeEntities = new HashSet<>();
 
         for (CkApplysEntity apply : applysEntities) {
+
+            Float orderNumber = apply.getCkGoodsEntity().getTodayQuantity();
+            System.out.println("why?????1" + apply);
+            System.out.println("why?????2" + apply.getCkGoodsEntity());
+            System.out.println("why?????3" + apply.getCkGoodsEntity().getTodayQuantity());
             Integer outDepId = apply.getOutDepId();
             depEntities.add(ckDepService.queryObject(outDepId));
             storeEntities.add(apply.getStoreEntity());
@@ -160,40 +171,64 @@ public class CkApplysController {
         return map2;
     }
 
-    private  List<Map<String, Object>> gatherApplysByFatherGoodsInOutDep(List<CkApplysEntity> applysEntities) {
-        Set<CkDepEntity> depEntities = new HashSet<>();
+    private  Map<String, Object> gatherApplysByFatherGoodsInOutDep(List<CkApplysEntity> applysEntities) {
+        Set<CkDepEntity> depEntities = new TreeSet<>();
         Set<CkGoodsEntity> goodsEntities = new TreeSet<>();
         List<Map<String, Object>> resList = new ArrayList<>();
-        Map<String, Object> depMap = new HashMap<>();
         for (CkApplysEntity apply : applysEntities) {
+            System.out.println(apply.getOutDepId()+ "aaapapapapaapapap");
             depEntities.add(ckDepService.queryObject(apply.getOutDepId()));
             goodsEntities.add(ckGoodsService.queryObject(apply.getApplyGoodsFatherId()));
         }
 
+        System.out.println("lookkkkk");
+
+        System.out.println(depEntities.size());
+        System.out.println(goodsEntities.size());
+
         for (CkDepEntity depEntity : depEntities) {
+            Map<String, Object> depMap = new HashMap<>();
             List<CkGoodsEntity> goodsEntities1 = new ArrayList<>();
             depMap.put("dep", depEntity.getDepName());
             for (CkGoodsEntity goods : goodsEntities) {
+                System.out.println(depEntity.getDepId() +"=====>><<<===" +goods.getGoodsName()+":"+ goods.getOutDepId());
                 if (depEntity.getDepId().equals(goods.getOutDepId())) {
                     goodsEntities1.add(goods);
                 }
                 depMap.put("fathers",goodsEntities1);
             }
+            System.out.println(depMap + "depmapdepmap");
+            resList.add(depMap);
+        }
+        System.out.println("?????????");
+
+        if(goodsEntities.size()>0){
+            CkGoodsEntity goodsEntity = (CkGoodsEntity)goodsEntities.toArray()[0];
+            Integer goodsId = goodsEntity.getGoodsId();
+            Map<String, Object> map = new HashMap<>();
+            map.put("goodsId", goodsId);
+            map.put("delivery", formatWhatDay(1));
+            List<CkApplysEntity> applysEntities1 =  ckApplysService.queryApplysByGoodsIdForWeigh(map);
+            List<Map<String, Object>> mapList = gatherApplysAmount(applysEntities1);
+
+            Map<String, Object> reMap = new HashMap<>();
+            reMap.put("fatherList", resList);
+            reMap.put("applys", mapList);
+
+            System.out.println(reMap+"remapp");
+
+            return reMap;
         }
 
-        CkGoodsEntity goodsEntity = (CkGoodsEntity)goodsEntities.toArray()[0];
-        Integer goodsId = goodsEntity.getGoodsId();
-        Map<String, Object> map = new HashMap<>();
-        map.put("goodsId", goodsId);
-        map.put("delivery", formatWhatDay(1));
-        List<CkApplysEntity> applysEntities1 =  ckApplysService.queryApplysByGoodsIdForWeigh(map);
-        List<Map<String, Object>> mapList = gatherApplysAmount(applysEntities1);
 
-        depMap.put("applys", mapList);
-        resList.add(depMap);
+//        if(depEntities.size() > 0) {
+//
+//        }
 
 
-        return resList;
+        return null;
+
+
     }
 
 
@@ -207,15 +242,24 @@ public class CkApplysController {
     @ResponseBody
     public R getTodayApplysStores() {
 
-        List<CkApplysEntity> applysEntities =
-                queryApplysByParams("-1", "-1", "-1", "-1", formatWhatDay(1));
+//        List<CkApplysEntity> applysEntities =
+//                queryApplysByParams("-1", "-1", "-1", "-1", formatWhatDay(1));
 
-        Set<CkStoreEntity> storeEntities = new HashSet<>();
-        for (CkApplysEntity applys : applysEntities) {
-            CkStoreEntity storeEntity = applys.getStoreEntity();
-            storeEntities.add(storeEntity);
+        Map<String, Object> map = new HashMap<>();
+        map.put("delivery", formatWhatDay(1));
+        List<CkApplysEntity> applysEntities = ckApplysService.getTodayApplysStores(map);
+        if(applysEntities.size() > 0) {
+            Set<CkStoreEntity> storeEntities = new HashSet<>();
+            for (CkApplysEntity applys : applysEntities) {
+                CkStoreEntity storeEntity = applys.getStoreEntity();
+                storeEntities.add(storeEntity);
+            }
+            return R.ok().put("data", storeEntities);
+        }else{
+            return R.ok().put("data", null);
         }
-        return R.ok().put("data", storeEntities);
+
+
     }
 
     /** ok
@@ -271,12 +315,23 @@ public class CkApplysController {
         String todayTime = formatWhatDayTime(0);
 
         for (CkApplysEntity apply : orders) {
-            String format = format(new Date());
-
+            //1.添加apply
             apply.setApplyTime(todayTime);
             apply.setDeliveryDate(toworrow);
             apply.setApplyStatus(0);
             ckApplysService.save(apply);
+            //2，更新goods的orderNumber
+            CkGoodsEntity ckGoodsEntity = ckGoodsService.queryObject(apply.getApplyGoodsId());
+            Float orderNumber = ckGoodsEntity.getTodayQuantity();
+            orderNumber = orderNumber + apply.getApplyNumber();
+            System.out.println("0000000000000---------");
+            System.out.println(orderNumber + "[[[[[]]]]");
+            ckGoodsEntity.setTodayQuantity(orderNumber);
+            System.out.println(ckGoodsEntity);
+            System.out.println("11111111==========");
+            ckGoodsService.update(ckGoodsEntity);
+
+
         }
 
         return R.ok();
@@ -309,6 +364,10 @@ public class CkApplysController {
     @RequiresPermissions("ckapplys:delete")
     public R delete(@RequestBody Integer[] applyIds) {
         ckApplysService.deleteBatch(applyIds);
+
+
+
+
         return R.ok();
     }
 
@@ -444,12 +503,16 @@ public class CkApplysController {
         Map<String, Object> goodsApplyMap = new HashMap<>();
         goodsApplyMap.put("goodsId", goods.getGoodsId());
         goodsApplyMap.put("applyStandardName", goods.getApplyStandardName());
-        goodsApplyMap.put("stockApplyStandard", goods.getStockApplyStandard());
+        goodsApplyMap.put("stockPurStandard", goods.getStockPurStandard());
         goodsApplyMap.put("status", goods.getStatus());
         goodsApplyMap.put("goodsName", goods.getGoodsName());
         goodsApplyMap.put("purStandardName", goods.getPurStandardName());
         goodsApplyMap.put("price", goods.getPrice());
         goodsApplyMap.put("finished", false);
+        goodsApplyMap.put("planPurchase", goods.getPlanPurchase());
+        goodsApplyMap.put("alarmWeight", goods.getAlarmWeight());
+        goodsApplyMap.put("todayQuantity", goods.getTodayQuantity());
+        System.out.println("=====+++++++====todayQuantity??" + goods.getTodayQuantity());
         Float applyNumber = 0f;
         for (CkApplysEntity apply : applysEntitiesBySort) {
             if (apply.getApplyGoodsId().equals(goods.getGoodsId())) {
@@ -467,10 +530,11 @@ public class CkApplysController {
     private CkStockRecordEntity applyGetStockRecord(CkApplysEntity apply){
         CkStockRecordEntity recordEntity = new CkStockRecordEntity();
         recordEntity.setStApplyId(apply.getApplyId());
-        recordEntity.setQuantity("");
+        recordEntity.setQuantity(0.0f);
         recordEntity.setStGoodsId(apply.getApplyGoodsId());
         recordEntity.setInStoreId(apply.getApplyStoreId());
         recordEntity.setOutDepId(apply.getOutDepId());
+        apply.getCkGoodsEntity().getPrice();
         recordEntity.setDiscountPrice(apply.getCkGoodsEntity().getPrice());
         recordEntity.setIsDiscount(0);
         return recordEntity;

@@ -35,10 +35,7 @@ public class CkGoodsServiceImpl implements CkGoodsService {
 	}
 	
 	@Override
-	public void save(CkGoodsEntity ckGoods){
-
-		ckGoodsDao.save(ckGoods);
-	}
+	public void save(CkGoodsEntity ckGoods){ ckGoodsDao.save(ckGoods); }
 	
 	@Override
 	public void update(CkGoodsEntity ckGoods){
@@ -55,63 +52,38 @@ public class CkGoodsServiceImpl implements CkGoodsService {
 		ckGoodsDao.deleteBatch(goodsIds);
 	}
 
-//	@Override
-//	public List<CkGoodsEntity> queryTypeGoods(Map<String, Object> map) {
-//		return  	ckGoodsDao.queryTypeGoods(map);
-//	}
+    @Override
+    public List<CkGoodsEntity> queryCateGoods() { return ckGoodsDao.queryCateGoods(); }
 
     @Override
-    public List<CkGoodsEntity> queryCateGoods() {
-
-		return ckGoodsDao.queryCateGoods();
-    }
+    public List<CkGoodsEntity> queryGoodsList(Map<String, Object> map) { return ckGoodsDao.queryGoodsList(map); }
 
     @Override
-    public List<CkGoodsEntity> queryGoodsList(Map<String, Object> map) {
-
-		return ckGoodsDao.queryGoodsList(map);
-    }
+    public List<CkGoodsEntity> queryPinyin(String pinyin) { return ckGoodsDao.queryPinyin(pinyin); }
 
     @Override
-    public List<CkGoodsEntity> queryPinyin(String pinyin) {
+    public List<CkGoodsEntity> queryRecordGoods(String substring) { return ckGoodsDao.queryGoodsListByRecord(substring); }
 
-		List<CkGoodsEntity> allList = new ArrayList<>();
-		List<CkGoodsEntity> goodsEntities =  ckGoodsDao.queryPinyin(pinyin);
-//		List<CkGoodsEntity> goodsEntities1 =  ckGoodsDao.queryHeadPinyin(pinyin);
-		allList.addAll(goodsEntities);
-//		allList.addAll(goodsEntities1);
-		return allList;
+    @Override
+    public List<CkGoodsEntity> downloadGoods() { return ckGoodsDao.getAll(); }
 
-
-    }
+    @Override
+    public List<CkGoodsEntity> queryPurchaseGoods(Integer purDepId) { return ckGoodsDao.queryPurchaseGoods(purDepId); }
 
 	@Override
-	public List<CkGoodsEntity> queryOutDepCateList(Integer depId) {
-
-		return ckGoodsDao.queryOutDepCateList(depId);
-	}
-
-	@Override
-	public List<CkGoodsEntity> queryOutDepGoodsListAll(Map<String, Object> map) {
-
-		return ckGoodsDao.queryOutDepGoodsListAll(map);
-	}
-
-	@Override
-	public List<CkGoodsEntity> queryOutDepGoodsListByFatherId(Map<String, Object> map) {
-		return ckGoodsDao.queryOutDepGoodsListByFatherId(map);
+	public List<CkGoodsEntity> queryGoodsByParams(Map<String, Object> map) {
+		return ckGoodsDao.queryGoodsByParams(map);
 	}
 
     @Override
-    public List<CkGoodsEntity> queryRecordGoods(String substring) {
-
-		return ckGoodsDao.queryGoodsListByRecord(substring);
+    public int queryTotalByParams(Map<String, Object> map) {
+        return ckGoodsDao.queryTotalByParams(map);
     }
 
-    @Override
-    public List<CkGoodsEntity> downloadGoods() {
-        return ckGoodsDao.getAll();
-    }
+	@Override
+	public List<CkGoodsEntity> queryPurchaseGoodsByFatherId(Map<String, Object> map) {
+		return ckGoodsDao.querypurchaseGoodsByFatherId(map);
+	}
 
 
 }

@@ -16,6 +16,7 @@
 		<result property="outTime" column="out_time"/>
 		<result property="isDiscount" column="is_discount"/>
 		<result property="discountPrice" column="discount_price"/>
+		<result property="subTotal" column="sub_total"/>
 		<association property="goodsEntity" javaType="CkGoodsEntity">
 			<id property="goodsId" column="goods_id"/>
 			<result property="goodsName" column="goods_name"/>
@@ -97,7 +98,8 @@
 		 	`delivery_status`,
 		 	`discount_price`,
 		 	`is_discount`,
-		 	`stock_bill_id`
+		 	`ck_stock_bill_id`,
+		 	`sub_total`
 		)
 		values
 		(
@@ -115,7 +117,8 @@
 		 	#{deliveryStatus},
 		 	#{discountPrice},
 		 	#{isDiscount},
-		 	#{stockBillId}
+		 	#{ckStockBillId},
+		 	#{subTotal}
 		)
 	</insert>
 	 
@@ -134,7 +137,8 @@
 			<if test="deliveryStatus != null">`delivery_status` = #{deliveryStatus}, </if>
 			<if test="discountPrice != null">`discount_price` = #{discountPrice}, </if>
 			<if test="isDiscount != null">`is_discount` = #{isDiscount}, </if>
-			<if test="isDiscount != null">`stock_bill_id` = #{stockBillId}, </if>
+			<if test="ckStockBillId != null">`ck_stock_bill_id` = #{ckStockBillId}, </if>
+			<if test="subTotal != null">`sub_total` = #{subTotal}, </if>
 			<if test="enterUserId != null">`enter_user_id` = #{enterUserId}</if>
 		</set>
 		where stock_record_id = #{stockRecordId}

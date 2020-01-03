@@ -12,6 +12,7 @@ import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -47,16 +48,16 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	/**
 	 *  进货规格库存数量
 	 */
-	private String stockPurStandard;
+	private Float stockPurStandard;
 
 	/**
 	 *  申请规格库存数量
 	 */
-	private String stockApplyStandard;
+	private Float stockApplyStandard;
 	/**
 	 *  销售规格库存数量
 	 */
-	private String stockSellStandard;
+	private Float stockSellStandard;
 	/**
 	 *  "1"产品，“2”原料
 	 */
@@ -76,7 +77,7 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	/**
 	 *  库存报警重量
 	 */
-	private Integer alarmWeight;
+	private Float alarmWeight;
 	/**
 	 *  保质期天数
 	 */
@@ -84,7 +85,7 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	/**
 	 *  零售价
 	 */
-	private String price;
+	private Float price;
 	/**
 	 *  零售价单位
 	 */
@@ -106,6 +107,27 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	 * 出货部门
 	 */
 	private CkDepEntity depEntity;
+
+	/**
+	 * 计划采购数量
+	 * @param o
+	 * @return
+	 */
+	private String planPurchase;
+
+	/**
+	 * 采购部门id
+	 */
+	private Integer purDepId;
+    /**
+     * dinghuoshuliang
+     */
+    private Float todayQuantity;
+
+	/**
+	 * 申请列表
+	 */
+	private List<CkApplysEntity> ckApplysEntities;
 
 
 
@@ -133,12 +155,16 @@ public class CkGoodsEntity implements Serializable, Comparable{
 				Objects.equals(gSort, that.gSort) &&
 				Objects.equals(pinyin, that.pinyin) &&
 				Objects.equals(headPinyin, that.headPinyin) &&
+				Objects.equals(planPurchase, that.planPurchase) &&
+				Objects.equals(purDepId, that.purDepId) &&
+				Objects.equals(todayQuantity, that.todayQuantity) &&
 				Objects.equals(depEntity, that.depEntity);
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(goodsId, goodsName, fatherId, purStandardName, applyStandardName, sellStandardName, stockPurStandard, stockApplyStandard, stockSellStandard, type, isWeight, status, outDepId, alarmWeight, qualityPeriod, price, gSort, pinyin, headPinyin, depEntity);
+		return Objects.hash(goodsId, goodsName, fatherId, purStandardName, applyStandardName, sellStandardName, stockPurStandard, stockApplyStandard, stockSellStandard, type, isWeight,
+				status, outDepId, alarmWeight, qualityPeriod, price, gSort, pinyin, headPinyin, depEntity,planPurchase,purDepId, todayQuantity);
 	}
 
 	@Override

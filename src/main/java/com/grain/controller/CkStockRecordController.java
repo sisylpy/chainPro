@@ -7,12 +7,9 @@ package com.grain.controller;
  * @date 2019-11-07 19:44:55
  */
 
-import java.awt.geom.FlatteningPathIterator;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.zip.DeflaterOutputStream;
 
 import com.grain.entity.*;
 import com.grain.service.CkApplysService;
@@ -25,7 +22,6 @@ import org.springframework.stereotype.Controller;
 
 import com.grain.service.CkStockRecordService;
 import com.grain.utils.R;
-import static com.grain.utils.DateUtils.formatWhatDay;
 
 
 @Controller
@@ -37,44 +33,9 @@ public class CkStockRecordController {
 	private CkApplysService applysService;
 	@Autowired
 	private CkGoodsService ckGoodsService;
-	@Autowired
-	private CkStockBillService ckStockBillService;
 
 
 
-
-	/**
-	 * 出货单打印完成
-	 * @param recordEntities 出货数据
-	 * @return r
-	 */
-	@RequestMapping(value = "/deliveryPrintSuccess", method = RequestMethod.POST)
-	@ResponseBody
-	public R applysPrintSuccess(@RequestBody List<CkStockRecordEntity> recordEntities) {
-		System.out.println("lailerecordEntities!!!" + recordEntities);
-
-       Integer inStoreId = -1;
-       Double total = 0.0;
-		for (CkStockRecordEntity record : recordEntities) {
-
-			total= total + Double.valueOf(record.getSubTotal());
-			inStoreId = record.getInStoreId();
-			record.setDeliveryStatus(1);
-			ckStockRecordService.update(record);
-
-		}
-
-		NumberFormat nf = NumberFormat.getNumberInstance();
-		nf.setMaximumFractionDigits(2);
-		String format = nf.format(total);
-		CkStockBillEntity stockBillEntity = new CkStockBillEntity();
-		stockBillEntity.setTotal(format);
-		stockBillEntity.setDate(formatWhatDay(0));
-		stockBillEntity.setInStoreId(inStoreId);
-		ckStockBillService.save(stockBillEntity);
-
-		return R.ok();
-	}
 
 
 	/**
@@ -93,15 +54,13 @@ public class CkStockRecordController {
 		
 		//查询列表数据
 		List<CkStockRecordEntity> ckStockRecordList = ckStockRecordService.queryList(map);
-		Double total = 0.0;
+		Float total = 0.0f;
 		for(CkStockRecordEntity record: ckStockRecordList) {
-			String quantity = record.getQuantity();
-			String discountPrice = record.getDiscountPrice();
-			total = total + Double.valueOf(quantity) * Double.valueOf(discountPrice);
+			Float subTotal = record.getSubTotal();
+			total = total + subTotal;
 		}
 
 		String format = new DecimalFormat("0.0").format(total);
-
 		Map<String, Object> map2  = new HashMap<>();
 		map2.put("stockList", ckStockRecordList);
 		map2.put("total", format);
@@ -117,12 +76,17 @@ public class CkStockRecordController {
 	public R getDeliveryOrderStores(){
 
 		List<CkStockRecordEntity> stockRecordEntities = ckStockRecordService.getDeliverOrderStores();
-		TreeSet<CkStoreEntity> stores = new TreeSet<>();
-		for (CkStockRecordEntity en : stockRecordEntities){
-			CkStoreEntity storeEntity = en.getStoreEntity();
-			stores.add(storeEntity);
+		if(stockRecordEntities.size() > 0) {
+			TreeSet<CkStoreEntity> stores = new TreeSet<>();
+			for (CkStockRecordEntity en : stockRecordEntities){
+				CkStoreEntity storeEntity = en.getStoreEntity();
+				stores.add(storeEntity);
+			}
+			return R.ok().put("data",stores);
+		}else {
+			return R.ok().put("data",null);
 		}
-		return R.ok().put("data",stores);
+
 	}
 
 
@@ -145,8 +109,11 @@ public class CkStockRecordController {
 	@RequiresPermissions("ckstockrecord:save")
 	public R save(@RequestBody List<CkStockRecordEntity> ckStockRecords){
 
+		System.out.println("sanjiaoyan");
 		for (CkStockRecordEntity record : ckStockRecords) {
+			System.out.println("haihaiidmfmdafma" + record.getQuantity());
 
+			System.out.println(record.getSubTotal() + "ttttt");
 			//1. 新增添出货记录
 			record.setDeliveryStatus(0);
 			record.setInOutType(0);
@@ -162,15 +129,11 @@ public class CkStockRecordController {
 			//3. 更新商品库存
 			Integer goodsId = record.getStGoodsId();
 			CkGoodsEntity ckGoodsEntity = ckGoodsService.queryObject(goodsId);
-			Float f1 = 0.1f;
-
-			String stockPurStandard = ckGoodsEntity.getStockPurStandard();
-			String quantity = record.getQuantity();
-			float v = Float.parseFloat(stockPurStandard) + f1;
-			float v1 = Float.parseFloat(quantity) + f1;
-			float v2 = v - v1;
-			String s = Float.toString(v2);
-			ckGoodsEntity.setStockPurStandard(s);
+			Float stockPurStandard = ckGoodsEntity.getStockPurStandard();
+			Float orderNumber = ckGoodsEntity.getTodayQuantity();
+			Float quantity = record.getQuantity();
+			ckGoodsEntity.setStockPurStandard(stockPurStandard- quantity);
+			ckGoodsEntity.setTodayQuantity(orderNumber - quantity);
 			ckGoodsService.update(ckGoodsEntity);
 		}
 		return R.ok();
@@ -183,6 +146,9 @@ public class CkStockRecordController {
 	@RequestMapping("/update")
 	@RequiresPermissions("ckstockrecord:update")
 	public R update(@RequestBody CkStockRecordEntity ckStockRecord){
+		System.out.println(".>>>>>>>>>>>>>>>>>>>>>");
+		System.out.println(ckStockRecord);
+		System.out.println("update=======");
 		ckStockRecordService.update(ckStockRecord);
 		return R.ok();
 	}

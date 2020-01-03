@@ -3,194 +3,329 @@
 
 <mapper namespace="com.grain.dao.CkGoodsDao">
 
-	<select id="queryObject" resultType="com.grain.entity.CkGoodsEntity">
-		select * from ck_goods where goods_id = #{value} ORDER BY g_sort
-	</select>
+    <select id="queryObject" resultType="com.grain.entity.CkGoodsEntity">
+        select *
+        from ck_goods
+        where goods_id = #{value}
+        ORDER BY g_sort
+    </select>
 
-	<select id="queryList" resultType="com.grain.entity.CkGoodsEntity">
-		select * from ck_goods ORDER BY g_sort
-		<if test="offset != null and limit != null">
-			limit #{offset}, #{limit}
-		</if>
-	</select>
-	
- 	<select id="queryTotal" resultType="int">
-		select count(*) from ck_goods
+    <select id="queryList" resultType="com.grain.entity.CkGoodsEntity">
+        select * from ck_goods ORDER BY g_sort
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+
+    <select id="queryTotal" resultType="int">
+        select count(*)
+        from ck_goods
     </select>
 
 
-	<select id="queryTypeGoods" resultType="com.grain.entity.CkGoodsEntity">
-		select * from ck_goods where type = #{type} and father_id = #{fatherId} ORDER BY g_sort
-		<if test="offset != null and limit != null">
-			limit #{offset}, #{limit}
-		</if>
-	</select>
+    <select id="queryTypeGoods" resultType="com.grain.entity.CkGoodsEntity">
+        select * from ck_goods where type = #{type} and father_id = #{fatherId} ORDER BY g_sort
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
 
     <select id="queryCateGoods" resultType="com.grain.entity.CkGoodsEntity">
-		select * from ck_goods where father_id = 0  ORDER BY g_sort;
-	</select>
+        select *
+        from ck_goods
+        where father_id = 0
+        ORDER BY g_sort;
+    </select>
 
-	<resultMap id="goods" type="CkGoodsEntity">
-		<id property="goodsId" column="goods_id"/>
-		<result property="goodsName" column="goods_name"/>
-		<result property="purStandardName" column="pur_standard_name"/>
-		<result property="sellStandardName" column="sell_standard_name"/>
-		<result property="applyStandardName" column="apply_standard_name"/>
-		<result property="stockPurStandard" column="stock_pur_standard"/>
-		<result property="stockApplyStandard" column="stock_apply_standard"/>
-		<result property="stockSellStandard" column="stock_sell_standard"/>
-		<result property="price" column="price"/>
-		<result property="alarmWeight" column="alarm_weight"/>
-		<result property="gSort" column="g_sort"/>
-		<result property="pinyin" column="pinyin"/>
-		<result property="outDepId" column="out_dep_id"/>
-		<result property="headPinyin" column="head_pinyin"/>
-		<result property="fatherId" column="father_id"/>
-		<association property="depEntity" javaType="CkDepEntity">
-			<id property="depId" column="dep_id"/>
-			<result property="depName" column="dep_name"/>
-		</association>
-	</resultMap>
+    <resultMap id="goods" type="CkGoodsEntity">
+        <id property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="purStandardName" column="pur_standard_name"/>
+        <result property="sellStandardName" column="sell_standard_name"/>
+        <result property="applyStandardName" column="apply_standard_name"/>
+        <result property="stockPurStandard" column="stock_pur_standard"/>
+        <result property="stockApplyStandard" column="stock_apply_standard"/>
+        <result property="stockSellStandard" column="stock_sell_standard"/>
+        <result property="price" column="price"/>
+        <result property="alarmWeight" column="alarm_weight"/>
+        <result property="gSort" column="g_sort"/>
+        <result property="pinyin" column="pinyin"/>
+        <result property="outDepId" column="out_dep_id"/>
+        <result property="headPinyin" column="head_pinyin"/>
+        <result property="fatherId" column="father_id"/>
+        <result property="planPurchase" column="plan_purchase"/>
+        <result property="purDepId" column="pur_dep_id"/>
+        <result property="type" column="type"/>
+        <result property="todayQuantity" column="today_quantity"/>
+        <association property="depEntity" javaType="CkDepEntity">
+            <id property="depId" column="dep_id"/>
+            <result property="depName" column="dep_name"/>
+        </association>
+    </resultMap>
 
 
-	<select id="queryGoodsList" resultMap="goods">
-		select * from ck_goods as g
-		LEFT JOIN ck_dep  as d ON g.out_dep_id = d.dep_id
-		where father_id =  #{fatherId} ORDER BY g_sort
+    <select id="queryGoodsList" resultMap="goods">
+        select * from ck_goods as g
+        LEFT JOIN ck_dep as d ON g.out_dep_id = d.dep_id
+        where father_id = #{fatherId} ORDER BY g_sort
 
-		<if test="offset != null and limit != null">
-			limit #{offset}, #{limit}
-		</if>
-</select>
-	<select id="queryPinyin" resultType="com.grain.entity.CkGoodsEntity">
-		select * from ck_goods where pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
-		                          or head_pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </select>
+    <select id="queryPinyin" resultType="com.grain.entity.CkGoodsEntity">
+        select *
+        from ck_goods
+        where pinyin like concat('%', #{pinyin}, '%') and father_id != 0
+           or head_pinyin like concat('%', #{pinyin}, '%') and father_id != 0
 
-	</select>
-	<select id="queryHeadPinyin" resultType="com.grain.entity.CkGoodsEntity">
-		select * from ck_goods where head_pinyin like  concat('%', #{pinyin}, '%') and father_id != 0
-	</select>
+    </select>
+    <select id="queryHeadPinyin" resultType="com.grain.entity.CkGoodsEntity">
+        select *
+        from ck_goods
+        where head_pinyin like concat('%', #{pinyin}, '%')
+          and father_id != 0
+    </select>
 
-	<select id="queryOutDepCateList" resultType="com.grain.entity.CkGoodsEntity">
-		select  * from  ck_goods where out_dep_id = #{depId} and father_id = 0
-	</select>
-
-	<select id="queryOutDepGoodsListAll" resultType="com.grain.entity.CkGoodsEntity">
-		select * from  ck_goods where out_dep_id = #{depId} and father_id != 0
-	</select>
-	<select id="queryOutDepGoodsListByFatherId" resultType="com.grain.entity.CkGoodsEntity">
-		select  * from ck_goods where out_dep_id = #{depId} and father_id = #{fatherId}
-		ORDER BY g_sort
-
-		<if test="offset != null and limit != null">
-			limit #{offset}, #{limit}
-		</if>
-
-	</select>
     <select id="queryGoodsListByRecord" resultType="com.grain.entity.CkGoodsEntity">
-		select  * from ck_goods where pinyin like concat(concat('%',#{substring}),'%')
-	</select>
+        select *
+        from ck_goods
+        where pinyin like concat(concat('%', #{substring}), '%')
+    </select>
     <select id="getAll" resultType="com.grain.entity.CkGoodsEntity">
-		select
-			`goods_id`,
-			`goods_name`,
-			`father_id`,
-			`apply_standard_name`,
-			`pur_standard_name`,
-		    `sell_standard_name`,
-			`is_weight`,
-			`status`,
-			`out_dep_id`,
-			`alarm_weight`,
-			`quality_period`,
-			`price`,
-			`g_sort`
+        select `goods_id`,
+               `goods_name`,
+               `father_id`,
+               `apply_standard_name`,
+               `pur_standard_name`,
+               `sell_standard_name`,
+               `is_weight`,
+               `status`,
+               `out_dep_id`,
+               `alarm_weight`,
+               `quality_period`,
+               `price`,
+               `g_sort`,
+               `plan_purchase`,
+               `today_quantity`
+        from ck_goods
+        where father_id != 0
+    </select>
 
-		       from  ck_goods where father_id != 0
-	</select>
+    <resultMap id="applyStore" type="CkStoreEntity">
+        <id property="storeId" column="store_id"/>
+        <result property="storeName" column="store_name"/>
+    </resultMap>
+
+
+    <resultMap id="purchaseGoods" type="CkGoodsEntity">
+        <id property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="purStandardName" column="pur_standard_name"/>
+        <result property="sellStandardName" column="sell_standard_name"/>
+        <result property="applyStandardName" column="apply_standard_name"/>
+        <result property="stockPurStandard" column="stock_pur_standard"/>
+        <result property="stockApplyStandard" column="stock_apply_standard"/>
+        <result property="stockSellStandard" column="stock_sell_standard"/>
+        <result property="fatherId" column="father_id"/>
+        <result property="planPurchase" column="plan_purchase"/>
+        <result property="purDepId" column="pur_dep_id"/>
+        <result property="todayQuantity" column="today_quantity"/>
+        <collection property="ckApplysEntities" ofType="CkApplysEntity">
+            <id property="applyId" column="apply_id"/>
+            <result property="applyNumber" column="apply_number"/>
+            <association property="storeEntity" resultMap="applyStore"/>
+        </collection>
+    </resultMap>
+
+
+    <select id="querypurchaseGoodsByFatherId" resultMap="purchaseGoods">
+
+        select * from ck_goods as g
+        left join ck_applys as a on a.apply_goods_id = g.goods_id
+        left join ck_store as s on a.apply_store_id = s.store_id
+        where today_quantity > 0 and type = 1
+        <if test="purDepId != null">
+            and pur_dep_id = #{purDepId}
+        </if>
+        <if test="fatherId != null">
+            and father_id = #{fatherId}
+        </if>
+    </select>
+
+    <select id="queryPurchaseGoods" resultMap="purchaseGoods">
+
+        select * from ck_goods as g
+        left join ck_applys as a on a.apply_goods_id = g.goods_id
+        left join ck_store as s on a.apply_store_id = s.store_id
+        where today_quantity > 0 and type = 1
+        <if test="purDepId != 0">
+            and pur_dep_id = #{purDepId}
+        </if>
+
+    </select>
+
+
+    <resultMap id="paramGoods" type="CkGoodsEntity">
+        <id property="goodsId" column="goods_id"/>
+        <result property="goodsName" column="goods_name"/>
+        <result property="purStandardName" column="pur_standard_name"/>
+        <result property="sellStandardName" column="sell_standard_name"/>
+        <result property="applyStandardName" column="apply_standard_name"/>
+        <result property="stockPurStandard" column="stock_pur_standard"/>
+        <result property="stockApplyStandard" column="stock_apply_standard"/>
+        <result property="stockSellStandard" column="stock_sell_standard"/>
+        <result property="fatherId" column="father_id"/>
+        <result property="planPurchase" column="plan_purchase"/>
+        <result property="purDepId" column="pur_dep_id"/>
+        <result property="todayQuantity" column="today_quantity"/>
+        <result property="outDepId" column="out_dep_id"/>
+        <result property="price" column="price"/>
+        <association property="depEntity" javaType="CkDepEntity">
+            <id property="depId" column="dep_id"/>
+            <result property="depName" column="dep_name"/>
+        </association>
+
+    </resultMap>
+
+    <select id="queryGoodsByParams" resultMap="paramGoods">
+        select * from ck_goods as g
+          left join ck_dep as d on g.out_dep_id = d.dep_id
+        <trim prefix="where" prefixOverrides="and">
+          <choose>
+              <when test="fatherId != -1">
+                  g.father_id = #{fatherId}
+              </when>
+              <otherwise>
+                  g.father_id > 0
+              </otherwise>
+          </choose>
+                    
+            <if test="depId != -1">
+                and g.out_dep_id = #{depId}
+            </if>
+          <if test="type != -1">
+              and g.type = #{type}
+          </if>
+        <if test="fatherId != -1">
+            and g.father_id != 0
+        </if>
+
+            <if test="offset != null and limit != null">
+                limit #{offset}, #{limit}
+            </if>
+
+        </trim>
+
+
+    </select>
+    <select id="queryTotalByParams" resultType="java.lang.Integer">
+        select count(*) from ck_goods
+        <!--<if test="fatherId != -1">-->
+        <!--where father_id = #{fatherId}-->
+        <!--</if>-->
+        <!--<if test="depId != -1">-->
+        <!--and out_dep_id = #{depId}-->
+        <!--</if>-->
+        <!--<if test="type != -1">-->
+        <!--and type = #{type}-->
+        <!--</if>-->
+
+        <!--<if test="offset != null and limit != null">-->
+        <!--limit #{offset}, #{limit}-->
+        <!--</if>-->
+
+    </select>
+
 
 
     <insert id="save" parameterType="com.grain.entity.CkGoodsEntity">
-		insert into ck_goods
-		(
-			`goods_id`, 
-			`goods_name`, 
-			`father_id`, 
-			`apply_standard_name`,
-			`pur_standard_name`,
-			`sell_standard_name`,
-			`stock_apply_standard`,
-			`stock_pur_standard`,
-			`stock_sell_standard`,
-			`type`,
-			`is_weight`,
-			`status`,
-		    `out_dep_id`,
-		 	`alarm_weight`,
-		    `quality_period`,
-		 	`price`,
-		 	`g_sort`,
-		 	`pinyin`,
-		 	`head_pinyin`
-		)
-		values
-		(
-			#{goodsId}, 
-			#{goodsName}, 
-			#{fatherId}, 
-			#{applyStandardName},
-			#{purStandardName},
-			#{sellStandardName},
-			#{stockApplyStandard},
-			#{stockPurStandard},
-			#{stockSellStandard},
-			#{type},
-			#{isWeight},
-			#{status},
-		 	#{outDepId},
-		    #{alarmWeight},
-		    #{qualityPeriod},
-		    #{price},
-		 	#{gSort},
-		 	#{pinyin},
-		 	#{headPinyin}
-		)
-	</insert>
-	 
-	<update id="update" parameterType="com.grain.entity.CkGoodsEntity">
-		update ck_goods 
-		<set>
-			<if test="goodsName != null">`goods_name` = #{goodsName}, </if>
-			<if test="fatherId != null">`father_id` = #{fatherId}, </if>
-			<if test="applyStandardName != null">`apply_standard_name` = #{applyStandardName}, </if>
-			<if test="purStandardName != null">`pur_standard_name` = #{purStandardName}, </if>
-			<if test="sellStandardName != null">`sell_standard_name` = #{sellStandardName}, </if>
-			<if test="stockApplyStandard != null">`stock_apply_standard` = #{stockApplyStandard}, </if>
-			<if test="stockPurStandard != null">`stock_pur_standard` = #{stockPurStandard}, </if>
-			<if test="stockSellStandard != null">`stock_sell_standard` = #{stockSellStandard}, </if>
-			<if test="type != null">`type` = #{type}, </if>
-			<if test="isWeight != null">`is_weight` = #{isWeight}, </if>
-			<if test="outDepId != null">`out_dep_id` = #{outDepId}, </if>
-			<if test="qualityPeriod != null">`quality_period` = #{qualityPeriod}, </if>
-			<if test="alarmWeight != null">`alarm_weight` = #{alarmWeight}, </if>
-			<if test="price != null">`price` = #{price}, </if>
-			<if test="status != null">`status` = #{status}, </if>
-			<if test="gSort != null">`g_sort` = #{gSort}, </if>
-			<if test="pinyin != null">`pinyin` = #{pinyin}, </if>
-			<if test="headPinyin != null">`head_pinyin` = #{headPinyin}</if>
-		</set>
-		where goods_id = #{goodsId}
-	</update>
-	
-	<delete id="delete">
-		delete from ck_goods where goods_id = #{value}
-	</delete>
-	
-	<delete id="deleteBatch">
-		delete from ck_goods where goods_id in 
-		<foreach item="goodsId" collection="array" open="(" separator="," close=")">
-			#{goodsId}
-		</foreach>
-	</delete>
+        insert into ck_goods
+        (`goods_id`,
+         `goods_name`,
+         `father_id`,
+         `apply_standard_name`,
+         `pur_standard_name`,
+         `sell_standard_name`,
+         `stock_apply_standard`,
+         `stock_pur_standard`,
+         `stock_sell_standard`,
+         `type`,
+         `is_weight`,
+         `status`,
+         `out_dep_id`,
+         `alarm_weight`,
+         `quality_period`,
+         `price`,
+         `g_sort`,
+         `pinyin`,
+         `head_pinyin`,
+         `plan_purchase`,
+         `pur_dep_id`,
+         `today_quantity`)
+        values (#{goodsId},
+                #{goodsName},
+                #{fatherId},
+                #{applyStandardName},
+                #{purStandardName},
+                #{sellStandardName},
+                #{stockApplyStandard},
+                #{stockPurStandard},
+                #{stockSellStandard},
+                #{type},
+                #{isWeight},
+                #{status},
+                #{outDepId},
+                #{alarmWeight},
+                #{qualityPeriod},
+                #{price},
+                #{gSort},
+                #{pinyin},
+                #{headPinyin},
+                #{planPurchase},
+                #{purDepId},
+                #{todayQuantity})
+    </insert>
+
+    <update id="update" parameterType="com.grain.entity.CkGoodsEntity">
+        update ck_goods
+        <set>
+            <if test="goodsName != null">`goods_name` = #{goodsName},</if>
+            <if test="fatherId != null">`father_id` = #{fatherId},</if>
+            <if test="applyStandardName != null">`apply_standard_name` = #{applyStandardName},</if>
+            <if test="purStandardName != null">`pur_standard_name` = #{purStandardName},</if>
+            <if test="sellStandardName != null">`sell_standard_name` = #{sellStandardName},</if>
+            <if test="stockApplyStandard != null">`stock_apply_standard` = #{stockApplyStandard},</if>
+            <if test="stockPurStandard != null">`stock_pur_standard` = #{stockPurStandard},</if>
+            <if test="stockSellStandard != null">`stock_sell_standard` = #{stockSellStandard},</if>
+            <if test="type != null">`type` = #{type},</if>
+            <if test="isWeight != null">`is_weight` = #{isWeight},</if>
+            <if test="outDepId != null">`out_dep_id` = #{outDepId},</if>
+            <if test="qualityPeriod != null">`quality_period` = #{qualityPeriod},</if>
+            <if test="alarmWeight != null">`alarm_weight` = #{alarmWeight},</if>
+            <if test="price != null">`price` = #{price},</if>
+            <if test="status != null">`status` = #{status},</if>
+            <if test="gSort != null">`g_sort` = #{gSort},</if>
+            <if test="pinyin != null">`pinyin` = #{pinyin},</if>
+            <if test="planPurchase != null">`plan_purchase` = #{planPurchase},</if>
+            <if test="purDepId != null">`pur_dep_id` = #{purDepId},</if>
+            <if test="todayQuantity != null">`today_quantity` = #{todayQuantity},</if>
+            <if test="headPinyin != null">`head_pinyin` = #{headPinyin}</if>
+        </set>
+        where goods_id = #{goodsId}
+    </update>
+
+    <delete id="delete">
+        delete
+        from ck_goods
+        where goods_id = #{value}
+    </delete>
+
+    <delete id="deleteBatch">
+        delete from ck_goods where goods_id in
+        <foreach item="goodsId" collection="array" open="(" separator="," close=")">
+            #{goodsId}
+        </foreach>
+    </delete>
 
 </mapper>

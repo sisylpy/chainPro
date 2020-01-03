@@ -13,6 +13,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.swing.*;
+
 
 @Setter@Getter@ToString
 
@@ -30,7 +32,7 @@ public class CkStockRecordEntity implements Serializable {
 	/**
 	 *  出库数量
 	 */
-	private String quantity;
+	private Float quantity;
 	/**
 	 *  出库时间
 	 */
@@ -70,7 +72,7 @@ public class CkStockRecordEntity implements Serializable {
 	/**
 	 * danjia
 	 */
-	private String discountPrice;
+	private Float discountPrice;
 	/**
 	 * shifoudazhe
 	 */
@@ -78,11 +80,11 @@ public class CkStockRecordEntity implements Serializable {
 	/**
 	 * 出库单id
 	 */
-	private Integer stockBillId;
+	private Integer ckStockBillId;
 	/**
 	 * 小计
 	 */
-	private String subTotal;
+	private Float subTotal;
 
 	/**
 	 * fendian

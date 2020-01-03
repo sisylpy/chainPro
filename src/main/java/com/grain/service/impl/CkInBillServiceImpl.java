@@ -1,6 +1,8 @@
 package com.grain.service.impl;
 
+import com.grain.entity.CkGoodsEntity;
 import com.grain.entity.CkInSubBillEntity;
+import com.grain.service.CkGoodsService;
 import com.grain.service.CkInSubBillService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import java.util.Map;
 import com.grain.dao.CkInBillDao;
 import com.grain.entity.CkInBillEntity;
 import com.grain.service.CkInBillService;
+import static com.grain.utils.DateUtils.formatWhatDay;
 
 
 
@@ -23,6 +26,8 @@ public class CkInBillServiceImpl implements CkInBillService {
 	private CkInBillDao ckInBillDao;
 	@Autowired
 	private CkInSubBillService subBillService;
+	@Autowired
+	private CkGoodsService ckGoodsService;
 	
 	@Override
 	public CkInBillEntity queryObject(Integer inBillId){
@@ -42,9 +47,8 @@ public class CkInBillServiceImpl implements CkInBillService {
 	@Override
 	public void save(CkInBillEntity ckInBill){
 
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/mm/dd");
-		String todayDate = dateFormat.format(new Date());
-		ckInBill.setInDatetime(todayDate);
+
+		ckInBill.setInDatetime(formatWhatDay(0));
 
 		ckInBillDao.save(ckInBill);
 
@@ -52,9 +56,18 @@ public class CkInBillServiceImpl implements CkInBillService {
 
 		List<CkInSubBillEntity> subBillEntities = ckInBill.getSubBillEntities();
 		for (CkInSubBillEntity s : subBillEntities) {
+
 			subBillService.save(s);
 			s.setMainBillId(inBillId);
+
 			subBillService.update(s);
+
+			Float inQuantity = s.getInQuantity();
+			CkGoodsEntity goodsEntity = ckGoodsService.queryObject(s.getSGoodsId());
+			Float stockPurStandard = goodsEntity.getStockPurStandard();
+			stockPurStandard = stockPurStandard + inQuantity;
+			goodsEntity.setStockPurStandard(stockPurStandard);
+			ckGoodsService.update(goodsEntity);
 		}
 
 	}

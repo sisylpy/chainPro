@@ -7,17 +7,18 @@ package com.grain.controller;
  * @date 2019-12-28 10:30:47
  */
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.grain.entity.CkInBillEntity;
+import com.grain.entity.CkStockRecordEntity;
+import com.grain.service.CkStockRecordService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 
 import com.grain.entity.CkStockBillEntity;
@@ -25,25 +26,69 @@ import com.grain.service.CkStockBillService;
 import com.grain.utils.PageUtils;
 import com.grain.utils.R;
 
+import static com.grain.utils.DateUtils.formatWhatDayTime;
+
 
 @Controller
 @RequestMapping("/sys/ckstockbill")
 public class CkStockBillController {
 	@Autowired
 	private CkStockBillService ckStockBillService;
+	@Autowired
+	private CkStockRecordService ckStockRecordService;
 
 
-	@RequestMapping(value = "/queryLastThreeInBillByStoreId/{storeId}")
+	@RequestMapping(value = "/getLastThreeInBillByStoreId/{storeId}")
 	@ResponseBody
-	public R queryStoreInBill (@PathVariable Integer storeId ) {
-		System.out.println("ssssstoreId" + storeId);
+	public R getStoreInBill (@PathVariable Integer storeId) {
+		System.out.println("houtaile" + storeId);
 		List<CkStockBillEntity> stockBillEntities  = ckStockBillService.queryByInStoreId(storeId);
-		System.out.println(stockBillEntities);
-
-		return R.ok().put("data", stockBillEntities);
+		if(stockBillEntities.size() > 0){
+			List<CkStockBillEntity> bills = new ArrayList<>();
+			for(int i = 0; i < stockBillEntities.size(); i++) {
+				if(i < 3) {
+					CkStockBillEntity bill = stockBillEntities.get(i);
+					bills.add(bill);
+				}
+			}
+			return R.ok().put("data", bills);
+		}else {
+			return R.ok().put("data", null);
+		}
 	}
 
+	/**
+	 * 出货单打印完成
+	 * @param stockBillEntity 出库单
+	 * @return r
+	 */
+	@RequestMapping(value = "/deliveryPrintSuccess", method = RequestMethod.POST)
+	@ResponseBody
+	public R applysPrintSuccess(@RequestBody CkStockBillEntity stockBillEntity) {
+		System.out.println(stockBillEntity);
+		System.out.println("haihaihai");
+		CkStockBillEntity bill = new CkStockBillEntity();
+		bill.setInStoreId(stockBillEntity.getInStoreId());
+		bill.setBillDate(formatWhatDayTime(0));
+		bill.setTotal(stockBillEntity.getTotal());
+		ckStockBillService.save(bill);
 
+		System.out.println(bill.getStockBillId() + "ididididiididd");
+
+		List<CkStockRecordEntity> recordEntities = stockBillEntity.getCkStockRecordEntities();
+
+
+		for (CkStockRecordEntity record : recordEntities) {
+			record.setDeliveryStatus(1);
+			record.setCkStockBillId(bill.getStockBillId());
+			ckStockRecordService.update(record);
+
+		}
+
+
+
+		return R.ok();
+	}
 	/**
 	 * 列表
 	 */
