@@ -56,14 +56,10 @@ public class CkGoodsController {
     @RequestMapping(value = "/getPurchaseByFatherId")
     @ResponseBody
     public R getPurchaseByFatherId(@RequestParam Integer purDepId, @RequestParam Integer fatherId) {
-        System.out.println("hehhehehheeh");
-        System.out.println(fatherId);
         Map<String, Object> map = new HashMap<>();
         map.put("purDepId",purDepId );
         map.put("fatherId", fatherId);
         List<CkGoodsEntity> goodsEntities =  ckGoodsService.queryPurchaseGoodsByFatherId(map);
-
-
         return R.ok().put("data", goodsEntities);
     }
 
@@ -72,14 +68,18 @@ public class CkGoodsController {
     @RequestMapping(value = "/getPurchase/{purDepId}")
     @ResponseBody
     public R getPurchase(@PathVariable Integer purDepId) {
-        System.out.println(purDepId);
-
-        System.out.println("easy");
         //查询计划商品
         List<CkGoodsEntity> goodsEntities = ckGoodsService.queryPurchaseGoods(purDepId);
-        System.out.println(goodsEntities.size() + "ssssiziiii!!!");
         List<Map<String, Object>> mapList = treeGoods(goodsEntities);
-
+        return R.ok().put("data", mapList);
+    }
+    @RequestMapping(value = "/getTypePurchase/{type}")
+    @ResponseBody
+    public R getTypePurchase(@PathVariable Integer type) {
+        System.out.println("type======" + type);
+        //查询计划商品
+        List<CkGoodsEntity> goodsEntities = ckGoodsService.queryPurchaseGoodsByType(type);
+        List<Map<String, Object>> mapList = treeGoods(goodsEntities);
         return R.ok().put("data", mapList);
     }
 
@@ -129,9 +129,7 @@ public class CkGoodsController {
         System.out.println("newmap!!!" + map);
         List<CkGoodsEntity> goodsEntities = ckGoodsService.queryGoodsByParams(map);
 
-
         int total = ckGoodsService.queryTotalByParams(map);
-
         PageUtils pageUtil = new PageUtils(goodsEntities, total, limit, page);
         return R.ok().put("page", pageUtil);
     }
@@ -145,8 +143,6 @@ public class CkGoodsController {
         map.put("depId", -1);
         map.put("type", type);
         map.put("fatherId", -1);
-        System.out.println(map);
-        System.out.println("??>...");
         List<CkGoodsEntity> goodsEntities = ckGoodsService.queryGoodsByParams(map);
         Map<String, Object> map1 = sortsGoodList(goodsEntities);
 
@@ -327,8 +323,9 @@ public class CkGoodsController {
      */
     @ResponseBody
     @RequestMapping("/update")
-    @RequiresPermissions("ckgoods:update")
+//    @RequiresPermissions("ckgoods:update")
     public R update(@RequestBody String ckGoods) {
+        System.out.println(ckGoods+"!!");
 
         String obj = ParseObject.parseObj(ckGoods);
         CkGoodsEntity ckGoodsEntity = JSON.parseObject(obj, CkGoodsEntity.class);
@@ -550,19 +547,20 @@ public class CkGoodsController {
 
     }
 
-
     /**
      * ok
      * 查询商品类别
      *
      * @return 商品类别列表
      */
-    @RequestMapping("/cateList")
+    @RequestMapping("/cateListByType/{type}")
     @ResponseBody
-    public R cateGoods() {
-        List<CkGoodsEntity> list = ckGoodsService.queryCateGoods();
+    public R cateGoodsByType(@PathVariable Integer type) {
+        System.out.println("ahahahah" + type);
+        List<CkGoodsEntity> list = ckGoodsService.queryTypeCateList(type);
         return R.ok().put("data", list);
     }
+
 
 
 }

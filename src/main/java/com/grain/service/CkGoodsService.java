@@ -28,8 +28,6 @@ public interface CkGoodsService {
 	
 	void deleteBatch(Integer[] goodsIds);
 
-	List<CkGoodsEntity> queryCateGoods();
-
 	List<CkGoodsEntity> queryGoodsList(Map<String, Object> map);
 
 	List<CkGoodsEntity> queryPinyin(String pinyin);
@@ -45,4 +43,8 @@ public interface CkGoodsService {
 	int queryTotalByParams(Map<String, Object> map);
 
 	List<CkGoodsEntity> queryPurchaseGoodsByFatherId(Map<String, Object> map);
+
+	List<CkGoodsEntity> queryTypeCateList(Integer type);
+
+	List<CkGoodsEntity> queryPurchaseGoodsByType(Integer type);
 }

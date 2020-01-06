@@ -203,21 +203,32 @@ public class CkApplysController {
         System.out.println("?????????");
 
         if(goodsEntities.size()>0){
-            CkGoodsEntity goodsEntity = (CkGoodsEntity)goodsEntities.toArray()[0];
-            Integer goodsId = goodsEntity.getGoodsId();
-            Map<String, Object> map = new HashMap<>();
-            map.put("goodsId", goodsId);
-            map.put("delivery", formatWhatDay(1));
-            List<CkApplysEntity> applysEntities1 =  ckApplysService.queryApplysByGoodsIdForWeigh(map);
-            List<Map<String, Object>> mapList = gatherApplysAmount(applysEntities1);
 
-            Map<String, Object> reMap = new HashMap<>();
-            reMap.put("fatherList", resList);
-            reMap.put("applys", mapList);
+            CkDepEntity depEntity = (CkDepEntity)depEntities.toArray()[0];
+            Integer depId = depEntity.getDepId();
+            for(CkGoodsEntity goods: goodsEntities){
+                if(depId.equals(goods.getOutDepId())){
+                    Integer goodsId = goods.getGoodsId();
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("goodsId", goodsId);
+                    map.put("delivery", formatWhatDay(1));
+                    List<CkApplysEntity> applysEntities1 =  ckApplysService.queryApplysByGoodsIdForWeigh(map);
+                    List<Map<String, Object>> mapList = gatherApplysAmount(applysEntities1);
 
-            System.out.println(reMap+"remapp");
+                    Map<String, Object> reMap = new HashMap<>();
+                    reMap.put("fatherList", resList);
+                    reMap.put("applys", mapList);
 
-            return reMap;
+                    System.out.println(reMap+"remapp");
+
+                    return reMap;
+
+                }
+            }
+
+
+
+
         }
 
 

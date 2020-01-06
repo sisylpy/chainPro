@@ -18,7 +18,6 @@ public interface CkGoodsDao extends BaseDao<CkGoodsEntity> {
 
     List<CkGoodsEntity> queryTypeGoods(Map<String, Object> map);
 
-    List<CkGoodsEntity> queryCateGoods();
 
     List<CkGoodsEntity> queryGoodsList(Map<String, Object> map);
 
@@ -37,4 +36,8 @@ public interface CkGoodsDao extends BaseDao<CkGoodsEntity> {
     int queryTotalByParams(Map<String, Object> map);
 
     List<CkGoodsEntity> querypurchaseGoodsByFatherId(Map<String, Object> map);
+
+    List<CkGoodsEntity> queryCateList(Integer type);
+
+    List<CkGoodsEntity> queryPurchaseGoodsByType(Integer type);
 }

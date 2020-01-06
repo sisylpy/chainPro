@@ -87,7 +87,7 @@ public class SysLoginController {
 		}
 
 
-		return R.ok().put("session",session);
+		return R.ok().put("token",session.getId());
 	}
 
 

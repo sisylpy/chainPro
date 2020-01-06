@@ -30,12 +30,7 @@
         </if>
     </select>
 
-    <select id="queryCateGoods" resultType="com.grain.entity.CkGoodsEntity">
-        select *
-        from ck_goods
-        where father_id = 0
-        ORDER BY g_sort;
-    </select>
+
 
     <resultMap id="goods" type="CkGoodsEntity">
         <id property="goodsId" column="goods_id"/>
@@ -56,7 +51,10 @@
         <result property="planPurchase" column="plan_purchase"/>
         <result property="purDepId" column="pur_dep_id"/>
         <result property="type" column="type"/>
+        <result property="alarmWeight" column="alarm_weight"/>
+        <result property="qualityPeriod" column="quality_period"/>
         <result property="todayQuantity" column="today_quantity"/>
+        <result property="status" column="status"/>
         <association property="depEntity" javaType="CkDepEntity">
             <id property="depId" column="dep_id"/>
             <result property="depName" column="dep_name"/>
@@ -115,6 +113,10 @@
     <resultMap id="applyStore" type="CkStoreEntity">
         <id property="storeId" column="store_id"/>
         <result property="storeName" column="store_name"/>
+        <result property="printLabel" column="print_label"/>
+        <result property="outLabel" column="out_label"/>
+        <result property="wxNickName" column="wx_nick_name"/>
+        <result property="wxAvatarUrl" column="wx_avatar_url"/>
     </resultMap>
 
 
@@ -130,7 +132,11 @@
         <result property="fatherId" column="father_id"/>
         <result property="planPurchase" column="plan_purchase"/>
         <result property="purDepId" column="pur_dep_id"/>
+        <result property="type" column="type"/>
         <result property="todayQuantity" column="today_quantity"/>
+        <result property="status" column="status"/>
+        <result property="alarmWeight" column="alarm_weight"/>
+        <result property="qualityPeriod" column="quality_period"/>
         <collection property="ckApplysEntities" ofType="CkApplysEntity">
             <id property="applyId" column="apply_id"/>
             <result property="applyNumber" column="apply_number"/>
@@ -144,13 +150,14 @@
         select * from ck_goods as g
         left join ck_applys as a on a.apply_goods_id = g.goods_id
         left join ck_store as s on a.apply_store_id = s.store_id
-        where today_quantity > 0 and type = 1
+        where (today_quantity > 0 or plan_purchase > 0 ) and type = 1
         <if test="purDepId != null">
             and pur_dep_id = #{purDepId}
         </if>
         <if test="fatherId != null">
             and father_id = #{fatherId}
         </if>
+        order by g.goods_id
     </select>
 
     <select id="queryPurchaseGoods" resultMap="purchaseGoods">
@@ -158,13 +165,20 @@
         select * from ck_goods as g
         left join ck_applys as a on a.apply_goods_id = g.goods_id
         left join ck_store as s on a.apply_store_id = s.store_id
-        where today_quantity > 0 and type = 1
+        where (today_quantity > 0 or plan_purchase > 0 )  and type = 1
         <if test="purDepId != 0">
             and pur_dep_id = #{purDepId}
         </if>
-
+        order by g.goods_id
     </select>
 
+    <select id="queryPurchaseGoodsByType" resultMap="purchaseGoods">
+        select * from ck_goods as g
+                          left join ck_applys as a on a.apply_goods_id = g.goods_id
+                          left join ck_store as s on a.apply_store_id = s.store_id
+        where (today_quantity > 0 or plan_purchase > 0 ) and type = #{type} order by g.goods_id
+
+    </select>
 
     <resultMap id="paramGoods" type="CkGoodsEntity">
         <id property="goodsId" column="goods_id"/>
@@ -181,6 +195,10 @@
         <result property="todayQuantity" column="today_quantity"/>
         <result property="outDepId" column="out_dep_id"/>
         <result property="price" column="price"/>
+        <result property="todayQuantity" column="today_quantity"/>
+        <result property="status" column="status"/>
+        <result property="alarmWeight" column="alarm_weight"/>
+        <result property="qualityPeriod" column="quality_period"/>
         <association property="depEntity" javaType="CkDepEntity">
             <id property="depId" column="dep_id"/>
             <result property="depName" column="dep_name"/>
@@ -210,12 +228,14 @@
         <if test="fatherId != -1">
             and g.father_id != 0
         </if>
+        </trim>
+        order by g.goods_id
 
             <if test="offset != null and limit != null">
                 limit #{offset}, #{limit}
             </if>
 
-        </trim>
+
 
 
     </select>
@@ -235,6 +255,10 @@
         <!--limit #{offset}, #{limit}-->
         <!--</if>-->
 
+    </select>
+
+    <select id="queryCateList" resultType="com.grain.entity.CkGoodsEntity">
+        select  * from ck_goods where  father_id = 0 and type = #{type} order by goods_id
     </select>
 
 
