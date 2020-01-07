@@ -9,7 +9,10 @@ package com.grain.dao;
 
 import com.grain.entity.CkInBillEntity;
 
+import java.util.List;
+
 
 public interface CkInBillDao extends BaseDao<CkInBillEntity> {
 
+    List<CkInBillEntity> queryListByInDepId(Integer depId);
 }

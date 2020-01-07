@@ -36,12 +36,21 @@ public class CkInSubBillEntity implements Serializable {
 	 */
 	private Float inQuantity;
 	/**
-	 *  库存数量
+	 *  退货数量
 	 */
-	private Float stockQuantity;
+	private Float outQuantity;
 	/**
 	 * 单价
 	 */
 	private Float unitPrice;
+	/**
+	 * 小计
+	 */
+	private Float inSubTotal;
+
+	/**
+	 * shangpin
+	 */
+	private CkGoodsEntity ckGoodsEntity;
 
 }

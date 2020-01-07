@@ -7,15 +7,46 @@
 		select * from ck_in_bill where in_bill_id = #{value}
 	</select>
 
-	<select id="queryList" resultType="com.grain.entity.CkInBillEntity">
-		select * from ck_in_bill where in_dep_id = #{depId}
-		<if test="offset != null and limit != null">
-			limit #{offset}, #{limit}
-		</if>
-	</select>
+
 	
  	<select id="queryTotal" resultType="int">
 		select count(*) from ck_in_bill 
+	</select>
+
+	<resultMap id="subBillGoods" type="CkGoodsEntity">
+		<id property="goodsId" column="goods_id"/>
+		<result property="goodsName" column="goods_name"/>
+		<result property="purStandardName" column="pur_standard_name"/>
+	</resultMap>
+
+	<resultMap id="supplier" type="CkSupplierEntity">
+		<id property="supplierId" column="supplier_id"/>
+		<result property="supplierName" column="supplier_name"/>
+	</resultMap>
+
+	<resultMap id="inDepBills" type="CkInBillEntity">
+		<id property="inBillId" column="in_bill_id"/>
+		<result property="inDatetime" column="in_datetime"/>
+		<result property="billSum" column="bill_sum"/>
+		<association property="ckSupplierEntity" resultMap="supplier"/>
+		<collection property="subBillEntities" ofType="CkInSubBillEntity">
+			<id property="inSubBillId" column="in_sub_bill_id"/>
+			<result property="inQuantity" column="in_quantity"/>
+			<result property="unitPrice" column="unit_price"/>
+			<result property="inSubTotal" column="in_sub_total"/>
+			<association property="ckGoodsEntity" resultMap="subBillGoods"/>
+		</collection>
+	</resultMap>
+
+	<select id="queryListByInDepId" resultMap="inDepBills">
+		select * from ck_in_bill  as m
+		left join ck_in_sub_bill as s on m.in_bill_id = s.main_bill_id
+		left join ck_goods as g on  g.goods_id = s.s_goods_id
+		left join ck_supplier p on p.supplier_id = m.in_supplier_id
+		where in_user_id = 0
+		 <if test="depId != null">
+			and in_dep_id = #{depId}
+		 </if>
 	</select>
 
 
@@ -29,7 +60,8 @@
 			`in_dep_id`, 
 			`in_user_id`, 
 			`is_pay`, 
-			`pay_mode`
+			`pay_mode`,
+		 	`bill_sum`
 		)
 		values
 		(
@@ -39,7 +71,8 @@
 			#{inDepId}, 
 			#{inUserId}, 
 			#{isPay}, 
-			#{payMode}
+			#{payMode},
+		 	#{billSum}
 		)
 	</insert>
 	 
@@ -51,6 +84,7 @@
 			<if test="inDepId != null">`in_dep_id` = #{inDepId}, </if>
 			<if test="inUserId != null">`in_user_id` = #{inUserId}, </if>
 			<if test="isPay != null">`is_pay` = #{isPay}, </if>
+			<if test="billSum != null">`bill_sum` = #{billSum}, </if>
 			<if test="payMode != null">`pay_mode` = #{payMode}</if>
 		</set>
 		where in_bill_id = #{inBillId}

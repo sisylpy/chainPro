@@ -174,33 +174,27 @@ public class CkApplysController {
     private  Map<String, Object> gatherApplysByFatherGoodsInOutDep(List<CkApplysEntity> applysEntities) {
         Set<CkDepEntity> depEntities = new TreeSet<>();
         Set<CkGoodsEntity> goodsEntities = new TreeSet<>();
+
         List<Map<String, Object>> resList = new ArrayList<>();
         for (CkApplysEntity apply : applysEntities) {
-            System.out.println(apply.getOutDepId()+ "aaapapapapaapapap");
             depEntities.add(ckDepService.queryObject(apply.getOutDepId()));
             goodsEntities.add(ckGoodsService.queryObject(apply.getApplyGoodsFatherId()));
         }
 
-        System.out.println("lookkkkk");
 
-        System.out.println(depEntities.size());
-        System.out.println(goodsEntities.size());
 
         for (CkDepEntity depEntity : depEntities) {
             Map<String, Object> depMap = new HashMap<>();
             List<CkGoodsEntity> goodsEntities1 = new ArrayList<>();
             depMap.put("dep", depEntity.getDepName());
             for (CkGoodsEntity goods : goodsEntities) {
-                System.out.println(depEntity.getDepId() +"=====>><<<===" +goods.getGoodsName()+":"+ goods.getOutDepId());
                 if (depEntity.getDepId().equals(goods.getOutDepId())) {
                     goodsEntities1.add(goods);
                 }
                 depMap.put("fathers",goodsEntities1);
             }
-            System.out.println(depMap + "depmapdepmap");
             resList.add(depMap);
         }
-        System.out.println("?????????");
 
         if(goodsEntities.size()>0){
 
@@ -226,15 +220,7 @@ public class CkApplysController {
                 }
             }
 
-
-
-
         }
-
-
-//        if(depEntities.size() > 0) {
-//
-//        }
 
 
         return null;

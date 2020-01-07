@@ -26,8 +26,9 @@
 			`main_bill_id`, 
 			`s_goods_id`, 
 			`in_quantity`,
-			`stock_quantity`,
-		 	`unit_price`
+			`out_quantity`,
+		 	`unit_price`,
+		 	`in_sub_total`
 		)
 		values
 		(
@@ -35,8 +36,9 @@
 			#{mainBillId}, 
 			#{sGoodsId}, 
 			#{inQuantity},
-			#{stockQuantity},
-		 	#{unitPrice}
+			#{outQuantity},
+		 	#{unitPrice},
+		 	#{inSubTotal}
 		)
 	</insert>
 	 
@@ -46,9 +48,10 @@
 			<if test="mainBillId != null">`main_bill_id` = #{mainBillId}, </if>
 			<if test="sGoodsId != null">`s_goods_id` = #{sGoodsId}, </if>
 			<if test="inQuantity != null">`in_quantity` = #{inQuantity}, </if>
-			<if test="stockQuantity != null">`stock_quantity` = #{stockQuantity}</if>
-			<if test="unitPrice != null">`unit_price` = #{unitPrice}</if>
-		</set>
+			<if test="outQuantity != null">`out_quantity` = #{outQuantity}, </if>
+			<if test="unitPrice != null">`unit_price` = #{unitPrice},</if>
+			<if test="inSubTotal !=null">`in_sub_total` = #{inSubTotal}</if>
+		  		</set>
 		where in_sub_bill_id = #{inSubBillId}
 	</update>
 	

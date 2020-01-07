@@ -47,6 +47,10 @@ public class CkInBillEntity implements Serializable {
 	 *  支付方式：“1:现金”，“2, 记账”“3，微信”
 	 */
 	private Integer payMode;
+	/**
+	 *
+	 */
+	private Float billSum;
 
 	/**
 	 * 子订单

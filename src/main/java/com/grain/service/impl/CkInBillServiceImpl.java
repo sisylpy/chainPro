@@ -34,10 +34,7 @@ public class CkInBillServiceImpl implements CkInBillService {
 		return ckInBillDao.queryObject(inBillId);
 	}
 	
-	@Override
-	public List<CkInBillEntity> queryList(Map<String, Object> map){
-		return ckInBillDao.queryList(map);
-	}
+
 	
 	@Override
 	public int queryTotal(Map<String, Object> map){
@@ -49,18 +46,25 @@ public class CkInBillServiceImpl implements CkInBillService {
 
 
 		ckInBill.setInDatetime(formatWhatDay(0));
+		ckInBill.setInUserId(0);
 
 		ckInBillDao.save(ckInBill);
+		System.out.println("ckckkckckckckckckkcckk");
 
 		Integer inBillId = ckInBill.getInBillId();
+		System.out.println(ckInBill);
 
 		List<CkInSubBillEntity> subBillEntities = ckInBill.getSubBillEntities();
 		for (CkInSubBillEntity s : subBillEntities) {
+			System.out.println(s);
 
 			subBillService.save(s);
-			s.setMainBillId(inBillId);
 
+			System.out.println("0000-------??????");
+			s.setMainBillId(inBillId);
+			System.out.println("1111111111========");
 			subBillService.update(s);
+			System.out.println("33333333---====---==--=-==");
 
 			Float inQuantity = s.getInQuantity();
 			CkGoodsEntity goodsEntity = ckGoodsService.queryObject(s.getSGoodsId());
@@ -87,6 +91,10 @@ public class CkInBillServiceImpl implements CkInBillService {
 		ckInBillDao.deleteBatch(inBillIds);
 	}
 
+	@Override
+	public List<CkInBillEntity> queryListByInDepId(Integer depId) {
+		return   ckInBillDao.queryListByInDepId(depId);
+	}
 
 
 }

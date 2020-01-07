@@ -29,4 +29,5 @@ public interface CkDepService {
 	void deleteBatch(Integer[] depIds);
 
     List<CkDepEntity> queryTypeDepList(Integer type);
+
 }

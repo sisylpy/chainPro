@@ -15,9 +15,7 @@ import java.util.Map;
 public interface CkInBillService {
 	
 	CkInBillEntity queryObject(Integer inBillId);
-	
-	List<CkInBillEntity> queryList(Map<String, Object> map);
-	
+
 	int queryTotal(Map<String, Object> map);
 	
 	void save(CkInBillEntity ckInBill);
@@ -28,4 +26,5 @@ public interface CkInBillService {
 	
 	void deleteBatch(Integer[] inBillIds);
 
+	List<CkInBillEntity> queryListByInDepId(Integer depId);
 }

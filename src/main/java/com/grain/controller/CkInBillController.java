@@ -32,29 +32,22 @@ public class CkInBillController {
 
 
 
-
 	/**
-	 * 列表
+	 * 出货部门的未入库的入库单
 	 */
 	@ResponseBody
-	@RequestMapping( value = "/list", method = RequestMethod.POST)
+	@RequestMapping( value = "/listByInDepId/{depId}")
 	@RequiresPermissions("ckinbill:list")
-	public R list(@RequestParam  Integer page,@RequestParam  Integer limit,@RequestParam  Integer depId){
-		System.out.println("hai lei");
-		Map<String, Object> map = new HashMap<>();
-		map.put("offset", (page - 1) * limit);
-		map.put("limit", limit);
-		map.put("depId",depId);
+	public R list(@PathVariable  Integer depId){
+		if(depId.equals(-1)){
+			depId = null;
+		}
 		
 		//查询列表数据
-		List<CkInBillEntity> ckInBillList = ckInBillService.queryList(map);
-		int total = ckInBillService.queryTotal(map);
-		
-		PageUtils pageUtil = new PageUtils(ckInBillList, total, limit, page);
-		System.out.println(page);
-		System.out.println("kankanpage?");
-		
-		return R.ok().put("page", pageUtil);
+		List<CkInBillEntity> ckInBillList = ckInBillService.queryListByInDepId(depId);
+
+
+		return R.ok().put("data", ckInBillList);
 	}
 	
 	

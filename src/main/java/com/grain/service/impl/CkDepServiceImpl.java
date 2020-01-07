@@ -58,4 +58,6 @@ public class CkDepServiceImpl implements CkDepService {
 		return ckDepDao.queryTypeList(type);
     }
 
+
+
 }
