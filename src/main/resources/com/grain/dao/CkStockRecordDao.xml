@@ -99,7 +99,8 @@
 		 	`discount_price`,
 		 	`is_discount`,
 		 	`ck_stock_bill_id`,
-		 	`sub_total`
+		 	`sub_total`,
+		 	`symb_id`
 		)
 		values
 		(
@@ -118,7 +119,8 @@
 		 	#{discountPrice},
 		 	#{isDiscount},
 		 	#{ckStockBillId},
-		 	#{subTotal}
+		 	#{subTotal},
+		 	#{symbId}
 		)
 	</insert>
 	 
@@ -139,6 +141,7 @@
 			<if test="isDiscount != null">`is_discount` = #{isDiscount}, </if>
 			<if test="ckStockBillId != null">`ck_stock_bill_id` = #{ckStockBillId}, </if>
 			<if test="subTotal != null">`sub_total` = #{subTotal}, </if>
+			<if test="symbId != null">`symb_id` = #{symbId}, </if>
 			<if test="enterUserId != null">`enter_user_id` = #{enterUserId}</if>
 		</set>
 		where stock_record_id = #{stockRecordId}

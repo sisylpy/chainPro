@@ -69,8 +69,6 @@ public class CkInBillController {
 	@RequestMapping("/save")
 	@RequiresPermissions("ckinbill:save")
 	public R save(@RequestBody CkInBillEntity ckInBill){
-		System.out.println("zhudanju....");
-		System.out.println(ckInBill);
 		ckInBillService.save(ckInBill);
 		
 		return R.ok();
@@ -83,6 +81,7 @@ public class CkInBillController {
 	@RequestMapping("/update")
 	@RequiresPermissions("ckinbill:update")
 	public R update(@RequestBody CkInBillEntity ckInBill){
+		System.out.println("ennenen" + ckInBill );
 		ckInBillService.update(ckInBill);
 		
 		return R.ok();

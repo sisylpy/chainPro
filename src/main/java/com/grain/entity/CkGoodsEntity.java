@@ -106,7 +106,12 @@ public class CkGoodsEntity implements Serializable, Comparable{
 	/**
 	 * 出货部门
 	 */
-	private CkDepEntity depEntity;
+	private CkDepEntity outDepEntity;
+
+	/**
+	 * 采购部门
+	 */
+	private CkDepEntity purDepEntity;
 
 	/**
 	 * 计划采购数量
@@ -158,13 +163,13 @@ public class CkGoodsEntity implements Serializable, Comparable{
 				Objects.equals(planPurchase, that.planPurchase) &&
 				Objects.equals(purDepId, that.purDepId) &&
 				Objects.equals(todayQuantity, that.todayQuantity) &&
-				Objects.equals(depEntity, that.depEntity);
+				Objects.equals(outDepEntity, that.outDepEntity);
 	}
 
 	@Override
 	public int hashCode() {
 		return Objects.hash(goodsId, goodsName, fatherId, purStandardName, applyStandardName, sellStandardName, stockPurStandard, stockApplyStandard, stockSellStandard, type, isWeight,
-				status, outDepId, alarmWeight, qualityPeriod, price, gSort, pinyin, headPinyin, depEntity,planPurchase,purDepId, todayQuantity);
+				status, outDepId, alarmWeight, qualityPeriod, price, gSort, pinyin, headPinyin, outDepEntity,planPurchase,purDepId, todayQuantity);
 	}
 
 	@Override

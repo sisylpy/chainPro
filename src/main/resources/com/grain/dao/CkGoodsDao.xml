@@ -55,16 +55,21 @@
         <result property="qualityPeriod" column="quality_period"/>
         <result property="todayQuantity" column="today_quantity"/>
         <result property="status" column="status"/>
-        <association property="depEntity" javaType="CkDepEntity">
+        <association property="outDepEntity" javaType="CkDepEntity">
             <id property="depId" column="dep_id"/>
             <result property="depName" column="dep_name"/>
+        </association>
+        <association property="purDepEntity" javaType="CkDepEntity" >
+            <id property="depId" column="dep_id"/>
+            <result property="depName" column="purDepName" />
         </association>
     </resultMap>
 
 
     <select id="queryGoodsList" resultMap="goods">
-        select * from ck_goods as g
+        select  g.* ,  dd.dep_name 'purDepName' , d.dep_name 'dep_name' from ck_goods as g
         LEFT JOIN ck_dep as d ON g.out_dep_id = d.dep_id
+        left join ck_dep as dd on g.pur_dep_id = dd.dep_id
         where father_id = #{fatherId} ORDER BY g_sort
 
         <if test="offset != null and limit != null">
@@ -142,6 +147,7 @@
             <result property="applyNumber" column="apply_number"/>
             <association property="storeEntity" resultMap="applyStore"/>
         </collection>
+
     </resultMap>
 
 
@@ -199,16 +205,24 @@
         <result property="status" column="status"/>
         <result property="alarmWeight" column="alarm_weight"/>
         <result property="qualityPeriod" column="quality_period"/>
-        <association property="depEntity" javaType="CkDepEntity">
+        <association property="outDepEntity" javaType="CkDepEntity">
             <id property="depId" column="dep_id"/>
             <result property="depName" column="dep_name"/>
         </association>
+        <association property="purDepEntity" javaType="CkDepEntity">
+            <id property="depId" column="dep_id"/>
+            <result property="depName" column="dep_name"/>
+        </association>
+
+
 
     </resultMap>
 
     <select id="queryGoodsByParams" resultMap="paramGoods">
         select * from ck_goods as g
           left join ck_dep as d on g.out_dep_id = d.dep_id
+          and g.pur_dep_id = d.dep_id
+
         <trim prefix="where" prefixOverrides="and">
           <choose>
               <when test="fatherId != -1">

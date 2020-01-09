@@ -34,8 +34,6 @@ public class CkApplysController {
 
 
 
-
-
     /** ok
      * 分拣 -- 根据商品类别id获取申请
      * @param fatherId 商品类别id
@@ -44,15 +42,60 @@ public class CkApplysController {
    @RequestMapping(value = "/getWeighByFatherId/{fatherId}")
    @ResponseBody
    public R getWeighByFatherId(@PathVariable Integer fatherId) {
-       System.out.println(fatherId + "fatherIdd????");
+       List<CkApplysEntity> weighApply = getWeighApply(fatherId);
+       List<Map<String, Object>> mapList = gatherApplysAmount(weighApply);
+       return R.ok().put("data", mapList);
+   }
+
+   @RequestMapping(value = "/getSymbolizeWeighByFatherId/{fatherId}")
+   @ResponseBody
+   public R getSymbolizeWeighByFatherId(@PathVariable Integer fatherId) {
+
+       List<CkApplysEntity> weighApply = getWeighApply(fatherId);
+       List<Map<String, Object>> mapList  = gatherApplysStore(weighApply);
+       return R.ok().put("data", mapList);
+   }
+
+   private List<Map<String, Object>> gatherApplysStore (List<CkApplysEntity> applysEntities){
+       List<Map<String, Object>> mapList = new ArrayList<>();
+       TreeSet<CkStoreEntity> storeEntityTreeSet = new TreeSet<>();
+       for (CkApplysEntity applys : applysEntities) {
+           CkStoreEntity storeEntity = applys.getStoreEntity();
+           storeEntityTreeSet.add(storeEntity);
+       }
+
+
+       for (CkStoreEntity store : storeEntityTreeSet) {
+           Map<String, Object> map = new HashMap<>();
+           map.put("store", store);
+           List<CkApplysEntity> applyList = new ArrayList<>();
+
+           for(CkApplysEntity apply: applysEntities){
+             if(apply.getApplyStoreId().equals(store.getStoreId())){
+                   applyList.add(apply);
+               }
+           }
+           map.put("applys", applyList);
+
+           mapList.add(map);
+       }
+
+
+       return mapList;
+
+   }
+
+    private  List<CkApplysEntity> getWeighApply(Integer fatherId) {
        Map<String, Object> map = new HashMap<>();
        map.put("delivery", formatWhatDay(1));
        map.put("goodsId", fatherId);
        List<CkApplysEntity> applysEntities1 =  ckApplysService.queryApplysByGoodsIdForWeigh(map);
-       List<Map<String, Object>> mapList = gatherApplysAmount(applysEntities1);
-       System.out.println(mapList + "maplistttt");
-       return R.ok().put("data", mapList);
+
+       return  applysEntities1;
    }
+
+
+
 
     /** ok
      * 分拣 - 初始化
@@ -212,8 +255,6 @@ public class CkApplysController {
                     Map<String, Object> reMap = new HashMap<>();
                     reMap.put("fatherList", resList);
                     reMap.put("applys", mapList);
-
-                    System.out.println(reMap+"remapp");
 
                     return reMap;
 

@@ -1,4 +1,7 @@
+
+
 var goodsId = T.p("goodsId");
+
 var vm = new Vue({
 	el:'#rrapp',
 	data:{

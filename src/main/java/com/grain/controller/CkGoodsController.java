@@ -204,6 +204,8 @@ public class CkGoodsController {
         map.put("limit", limit);
         map.put("fatherId", fatherId);
         List<CkGoodsEntity> cateGoodsList = ckGoodsService.queryGoodsList(map);
+        System.out.println(cateGoodsList);
+        System.out.println("cccccccccc");
         int total = ckGoodsService.queryTotal(map);
 
         PageUtils pageUtil = new PageUtils(cateGoodsList, total, limit, page);
@@ -214,7 +216,6 @@ public class CkGoodsController {
     /**
      * ok
      * 读句子识别结果
-     *
      * @param file
      * @param session
      * @return
@@ -299,10 +300,12 @@ public class CkGoodsController {
     @ResponseBody
     @RequestMapping("/save")
     @RequiresPermissions("ckgoods:save")
-    public R save(@RequestBody String param) {
+    public R save(@RequestBody CkGoodsEntity ckGoodsEntity) {
+        System.out.println("saassve");
+        System.out.println(ckGoodsEntity);
 
-        String s = ParseObject.parseObj(param);
-        CkGoodsEntity ckGoodsEntity = JSON.parseObject(s, CkGoodsEntity.class);
+//        String s = ParseObject.parseObj(param);
+//        CkGoodsEntity ckGoodsEntity = JSON.parseObject(s, CkGoodsEntity.class);
 
         if (ckGoodsEntity != null) {
             String goodsName = ckGoodsEntity.getGoodsName();
@@ -335,6 +338,15 @@ public class CkGoodsController {
         return R.ok();
     }
 
+    @RequestMapping(value = "/deleteOne/{goodsId}")
+    @ResponseBody
+    public R deleteOne(@PathVariable Integer goodsId) {
+        System.out.println("ggggggg" + goodsId);
+            ckGoodsService.delete(goodsId);
+
+        return R.ok();
+    }
+
 
     /**
      * ok
@@ -344,6 +356,7 @@ public class CkGoodsController {
     @RequestMapping("/delete")
     @RequiresPermissions("ckgoods:delete")
     public R delete(@RequestBody Integer[] goodsIds) {
+        System.out.println("delkkdkdkfdkf");
         ckGoodsService.deleteBatch(goodsIds);
 
         return R.ok();
